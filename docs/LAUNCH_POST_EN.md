@@ -3,7 +3,7 @@
 ## Title candidates
 
 1. Show HN: RoboAudit — a health check for LeRobot datasets, before you train on them
-2. I audited three public robot datasets. One was missing an entire camera.
+2. I audited three public robot datasets. One copy was missing an entire camera.
 3. Before you train on it, audit it: rule-based dataset audits for LeRobot (v2.1 and v3.0)
 
 ## Body
@@ -21,9 +21,13 @@ It is a small CLI for LeRobot datasets — no robot, no GPU, CPU only:
 
 ```
 git clone https://github.com/parkjb0826/roboaudit
-cd roboaudit && pip install .
+cd roboaudit
+python3 -m venv .venv && source .venv/bin/activate   # recommended
+pip install .
 roboaudit /path/to/dataset --out ./audit_out
 ```
+
+(Not on PyPI yet — install from the cloned repository.)
 
 It runs 12 rule-and-threshold checks (structure, video, action,
 instruction — no AI inside the checks, so every deduction traces back to
@@ -39,7 +43,9 @@ Three numbers from our own testing:
    43 known defects across both LeRobot formats, RoboAudit caught all of
    them with zero false-positive verdicts on 40 clean synthetic episodes. The comparable
    open-source auditor (RDA, on PyPI) reached a verdict on 22 of the
-   same 43. Fair warning: we built the test suite, so it is a home-field
+   same 43 (15 exclude + 7 correctly pinpointed as unverifiable),
+   recorded 2 more as findings only, and the remaining 19 fell outside
+   its check set. Fair warning: we built the test suite, so it is a home-field
    result — RDA is more conservative by design and has its own blind
    test.
 2. **Legacy v2.1 datasets are audited directly, without conversion** —
@@ -47,12 +53,16 @@ Three numbers from our own testing:
    LeRobot 0.7.0, the official loader refuses to load
    (BackwardCompatibilityError).
 3. **On real public data it stays honest about uncertainty.** Auditing
-   three Hub datasets gave 79/C, 84/B, and 44/F. The F was a partial
+   three Hub datasets gave 79/C, 84/B, and 44/F. (These are the same
+   three datasets the disposition thresholds were calibrated on, so
+   read their grades as in-sample results.) The F was a partial
    copy (a 166 MB download covering only one of its two declared
    cameras — the upstream dataset may be complete) — instead of
    passing it silently, the audit flags itself *incomplete*. Borderline episodes
    (a "shake" flag that is really just a busy episode) go to `review`
-   for a human, not into the bin.
+   for a human, not into the bin. You can browse the three report
+   cards in a static demo — precomputed reports, no live auditing:
+   https://huggingface.co/spaces/jbpark0826/roboaudit-demo
 
 The limitations are real, and they are printed in the report: the score
 is a relative indicator, not an absolute quality measure; nothing here
@@ -70,5 +80,5 @@ the case: adjudicated real-world audits are what turns a provisional
 threshold into a validated one.
 
 The code, the full measured results, and the comparison method are in
-the repository. Criticism of the checks and thresholds is especially
+the repository: https://github.com/parkjb0826/roboaudit. Criticism of the checks and thresholds is especially
 welcome — that is the part that needs more eyes.

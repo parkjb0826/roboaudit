@@ -8,6 +8,13 @@ kept episodes will perform.*
 
 Tool: RoboAudit 0.2.x · 12 rule/threshold checks · full audit (no sampling)
 
+Repository: https://github.com/parkjb0826/roboaudit · These same three
+report cards are browsable in the static demo (precomputed reports, no
+live auditing): https://huggingface.co/spaces/jbpark0826/roboaudit-demo
+
+*Calibration note: these are the same three datasets used to calibrate
+the disposition thresholds, so read their grades as in-sample results.*
+
 ---
 
 ## 1. `lerobot/aloha_sim_transfer_cube_scripted` — **79 / C**

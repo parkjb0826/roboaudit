@@ -1,0 +1,792 @@
+{
+  "summary": {
+    "dataset": "sreetz_so101_teleop_vials",
+    "path": "real_data/sreetz_so101_teleop_vials",
+    "format": "v3.0",
+    "video_key": "observation.images.external_D455",
+    "video_keys": [
+      "observation.images.ego",
+      "observation.images.external_D455"
+    ],
+    "robot_type": "so101_follower",
+    "total_episodes": 75,
+    "total_frames_meta": 18250,
+    "fps": 30,
+    "total_tasks": 1,
+    "incomplete_audit": true,
+    "sample_frames": null
+  },
+  "score": 44,
+  "grade": "F",
+  "total_deduction": 56,
+  "incomplete_audit": true,
+  "notices": [
+    "범위 고지: RoboAudit는 데이터셋의 구조·통계적 이상을 검사하는 도구이며, 학습 성능이나 로봇의 안전성을 보증하지 않습니다.",
+    "A2(급격한 점프) 해석 고지: A2 보류(review)는 측정값이 경계 근처라는 뜻이며, 이 검사만으로는 기록 결함과 운용 특성(프레임 드롭·빠른 동작 등)을 구분할 수 없습니다. 보류는 무해하다는 판정이 아닙니다."
+  ],
+  "top_factors": [
+    {
+      "check": "A2",
+      "name": "급격한 점프",
+      "findings": 15,
+      "deduction": 45,
+      "share_pct": 80.4
+    },
+    {
+      "check": "S1",
+      "name": "메타·파일 무결성",
+      "findings": 1,
+      "deduction": 10,
+      "share_pct": 17.9
+    },
+    {
+      "check": "L2",
+      "name": "성공·실패 표시 없음",
+      "findings": 1,
+      "deduction": 1,
+      "share_pct": 1.8
+    }
+  ],
+  "checks": [
+    {
+      "check": "S1",
+      "name": "메타·파일 무결성",
+      "severity": "critical",
+      "findings": 1,
+      "deduction": 10,
+      "status": "FAIL",
+      "run_status": "complete",
+      "scope": "데이터 75/75 에피소드",
+      "error": null
+    },
+    {
+      "check": "S2",
+      "name": "차원·스키마 정합성",
+      "severity": "critical",
+      "findings": 0,
+      "deduction": 0,
+      "status": "PASS",
+      "run_status": "complete",
+      "scope": "데이터 75/75 에피소드",
+      "error": null
+    },
+    {
+      "check": "S3",
+      "name": "시간축",
+      "severity": "warning",
+      "findings": 0,
+      "deduction": 0,
+      "status": "PASS",
+      "run_status": "complete",
+      "scope": "데이터 75/75 에피소드",
+      "error": null
+    },
+    {
+      "check": "V1",
+      "name": "검은·정지 화면",
+      "severity": "critical",
+      "findings": 0,
+      "deduction": 0,
+      "status": "PASS",
+      "run_status": "partial",
+      "scope": "observation.images.ego: 디코딩 0/75, 실패 0, 파일없음 75; observation.images.external_D455: 디코딩 75/75, 실패 0, 파일없음 0",
+      "error": null
+    },
+    {
+      "check": "V2",
+      "name": "흔들림·흐림",
+      "severity": "warning",
+      "findings": 0,
+      "deduction": 0,
+      "status": "PASS",
+      "run_status": "partial",
+      "scope": "observation.images.ego: 디코딩 0/75, 실패 0, 파일없음 75; observation.images.external_D455: 디코딩 75/75, 실패 0, 파일없음 0",
+      "error": null
+    },
+    {
+      "check": "V3",
+      "name": "에피소드 길이 이상",
+      "severity": "warning",
+      "findings": 0,
+      "deduction": 0,
+      "status": "PASS",
+      "run_status": "partial",
+      "scope": "observation.images.ego: 디코딩 0/75, 실패 0, 파일없음 75; observation.images.external_D455: 디코딩 75/75, 실패 0, 파일없음 0",
+      "error": null
+    },
+    {
+      "check": "A1",
+      "name": "범위 이탈",
+      "severity": "critical",
+      "findings": 0,
+      "deduction": 0,
+      "status": "PASS",
+      "run_status": "complete",
+      "scope": "데이터 75/75 에피소드",
+      "error": null
+    },
+    {
+      "check": "A2",
+      "name": "급격한 점프",
+      "severity": "warning",
+      "findings": 15,
+      "deduction": 45,
+      "status": "FAIL",
+      "run_status": "complete",
+      "scope": "데이터 75/75 에피소드",
+      "error": null
+    },
+    {
+      "check": "A3",
+      "name": "무동작 차원",
+      "severity": "warning",
+      "findings": 0,
+      "deduction": 0,
+      "status": "PASS",
+      "run_status": "complete",
+      "scope": "데이터 75/75 에피소드",
+      "error": null
+    },
+    {
+      "check": "A4",
+      "name": "중복 에피소드",
+      "severity": "info",
+      "findings": 0,
+      "deduction": 0,
+      "status": "PASS",
+      "run_status": "complete",
+      "scope": "데이터 75/75 에피소드",
+      "error": null
+    },
+    {
+      "check": "L1",
+      "name": "지시문 누락·전부 동일",
+      "severity": "warning",
+      "findings": 0,
+      "deduction": 0,
+      "status": "PASS",
+      "run_status": "complete",
+      "scope": "데이터 75/75 에피소드",
+      "error": null
+    },
+    {
+      "check": "L2",
+      "name": "성공·실패 표시 없음",
+      "severity": "info",
+      "findings": 1,
+      "deduction": 1,
+      "status": "FAIL",
+      "run_status": "complete",
+      "scope": "데이터 75/75 에피소드",
+      "error": null
+    }
+  ],
+  "findings": [
+    {
+      "check": "A2",
+      "severity": "warning",
+      "episode_index": 1,
+      "detail": "action: max step 21.493 > 5.0 x median step 2.002 and > dataset floor 21.448 at frame 95",
+      "evidence": {
+        "column": "action",
+        "max_step": 21.4932,
+        "median_step": 2.0016,
+        "dataset_floor": 21.4482,
+        "frame": 95
+      },
+      "margin_ratio": 1.002
+    },
+    {
+      "check": "A2",
+      "severity": "warning",
+      "episode_index": 4,
+      "detail": "action: max step 31.951 > 5.0 x median step 2.487 and > dataset floor 21.448 at frame 199",
+      "evidence": {
+        "column": "action",
+        "max_step": 31.9511,
+        "median_step": 2.4865,
+        "dataset_floor": 21.4482,
+        "frame": 199
+      },
+      "margin_ratio": 1.49
+    },
+    {
+      "check": "A2",
+      "severity": "warning",
+      "episode_index": 21,
+      "detail": "action: max step 33.702 > 5.0 x median step 2.194 and > dataset floor 21.448 at frame 118",
+      "evidence": {
+        "column": "action",
+        "max_step": 33.7024,
+        "median_step": 2.1935,
+        "dataset_floor": 21.4482,
+        "frame": 118
+      },
+      "margin_ratio": 1.571
+    },
+    {
+      "check": "A2",
+      "severity": "warning",
+      "episode_index": 23,
+      "detail": "action: max step 25.255 > 5.0 x median step 1.961 and > dataset floor 21.448 at frame 124",
+      "evidence": {
+        "column": "action",
+        "max_step": 25.2553,
+        "median_step": 1.9607,
+        "dataset_floor": 21.4482,
+        "frame": 124
+      },
+      "margin_ratio": 1.178
+    },
+    {
+      "check": "A2",
+      "severity": "warning",
+      "episode_index": 25,
+      "detail": "action: max step 36.989 > 5.0 x median step 2.234 and > dataset floor 21.448 at frame 217",
+      "evidence": {
+        "column": "action",
+        "max_step": 36.9888,
+        "median_step": 2.2336,
+        "dataset_floor": 21.4482,
+        "frame": 217
+      },
+      "margin_ratio": 1.725
+    },
+    {
+      "check": "A2",
+      "severity": "warning",
+      "episode_index": 30,
+      "detail": "action: max step 30.365 > 5.0 x median step 2.433 and > dataset floor 21.448 at frame 83",
+      "evidence": {
+        "column": "action",
+        "max_step": 30.3646,
+        "median_step": 2.433,
+        "dataset_floor": 21.4482,
+        "frame": 83
+      },
+      "margin_ratio": 1.416
+    },
+    {
+      "check": "A2",
+      "severity": "warning",
+      "episode_index": 31,
+      "detail": "action: max step 28.472 > 5.0 x median step 2.409 and > dataset floor 21.448 at frame 221",
+      "evidence": {
+        "column": "action",
+        "max_step": 28.4719,
+        "median_step": 2.409,
+        "dataset_floor": 21.4482,
+        "frame": 221
+      },
+      "margin_ratio": 1.327
+    },
+    {
+      "check": "A2",
+      "severity": "warning",
+      "episode_index": 34,
+      "detail": "action: max step 31.747 > 5.0 x median step 2.157 and > dataset floor 21.448 at frame 240",
+      "evidence": {
+        "column": "action",
+        "max_step": 31.7467,
+        "median_step": 2.1573,
+        "dataset_floor": 21.4482,
+        "frame": 240
+      },
+      "margin_ratio": 1.48
+    },
+    {
+      "check": "A2",
+      "severity": "warning",
+      "episode_index": 42,
+      "detail": "action: max step 21.919 > 5.0 x median step 2.387 and > dataset floor 21.448 at frame 276",
+      "evidence": {
+        "column": "action",
+        "max_step": 21.9186,
+        "median_step": 2.3869,
+        "dataset_floor": 21.4482,
+        "frame": 276
+      },
+      "margin_ratio": 1.022
+    },
+    {
+      "check": "A2",
+      "severity": "warning",
+      "episode_index": 47,
+      "detail": "action: max step 38.207 > 5.0 x median step 2.812 and > dataset floor 21.448 at frame 224",
+      "evidence": {
+        "column": "action",
+        "max_step": 38.2069,
+        "median_step": 2.8116,
+        "dataset_floor": 21.4482,
+        "frame": 224
+      },
+      "margin_ratio": 1.781
+    },
+    {
+      "check": "A2",
+      "severity": "warning",
+      "episode_index": 57,
+      "detail": "action: max step 42.509 > 5.0 x median step 2.656 and > dataset floor 21.448 at frame 195",
+      "evidence": {
+        "column": "action",
+        "max_step": 42.5093,
+        "median_step": 2.6557,
+        "dataset_floor": 21.4482,
+        "frame": 195
+      },
+      "margin_ratio": 1.982
+    },
+    {
+      "check": "A2",
+      "severity": "warning",
+      "episode_index": 59,
+      "detail": "action: max step 32.317 > 5.0 x median step 2.961 and > dataset floor 21.448 at frame 173",
+      "evidence": {
+        "column": "action",
+        "max_step": 32.3168,
+        "median_step": 2.9609,
+        "dataset_floor": 21.4482,
+        "frame": 173
+      },
+      "margin_ratio": 1.507
+    },
+    {
+      "check": "A2",
+      "severity": "warning",
+      "episode_index": 61,
+      "detail": "action: max step 23.836 > 5.0 x median step 2.384 and > dataset floor 21.448 at frame 252",
+      "evidence": {
+        "column": "action",
+        "max_step": 23.8357,
+        "median_step": 2.3838,
+        "dataset_floor": 21.4482,
+        "frame": 252
+      },
+      "margin_ratio": 1.111
+    },
+    {
+      "check": "A2",
+      "severity": "warning",
+      "episode_index": 64,
+      "detail": "action: max step 32.208 > 5.0 x median step 2.784 and > dataset floor 21.448 at frame 147",
+      "evidence": {
+        "column": "action",
+        "max_step": 32.2082,
+        "median_step": 2.7839,
+        "dataset_floor": 21.4482,
+        "frame": 147
+      },
+      "margin_ratio": 1.502
+    },
+    {
+      "check": "A2",
+      "severity": "warning",
+      "episode_index": 67,
+      "detail": "action: max step 39.698 > 5.0 x median step 2.254 and > dataset floor 21.448 at frame 257",
+      "evidence": {
+        "column": "action",
+        "max_step": 39.698,
+        "median_step": 2.2536,
+        "dataset_floor": 21.4482,
+        "frame": 257
+      },
+      "margin_ratio": 1.851
+    },
+    {
+      "check": "L2",
+      "severity": "info",
+      "episode_index": null,
+      "detail": "no success/failure label found in episode metadata (failed episodes cannot be told apart)",
+      "evidence": {
+        "episodes": 75
+      },
+      "margin_ratio": null
+    },
+    {
+      "check": "S1",
+      "severity": "critical",
+      "episode_index": null,
+      "detail": "camera 'observation.images.ego' declared but no video files present for any of 75 episodes",
+      "evidence": {
+        "camera": "observation.images.ego",
+        "episodes_missing": 75
+      },
+      "margin_ratio": null
+    }
+  ],
+  "errors": {},
+  "manifest": {
+    "tool": {
+      "name": "roboaudit",
+      "version": "0.2.1"
+    },
+    "rules_version": "rules-2026-11-15.2",
+    "thresholds": {
+      "black_brightness": 12.0,
+      "static_diff": 0.5,
+      "static_ratio": 0.9,
+      "blur_ratio": 0.3,
+      "shake_ratio": 1.6,
+      "shake_median_abs": 0.5,
+      "shake_single_abs": 40.0,
+      "gap_factor": 1.5,
+      "fps_tol": 0.2,
+      "range_frac": 0.1,
+      "range_qlo": 0.001,
+      "range_qhi": 0.999,
+      "range_band_margin": 0.5,
+      "jump_factor": 5.0,
+      "jump_abs": 1.0,
+      "jump_dataset_factor": 3.0,
+      "dead_std": 1e-06,
+      "len_ratio": 2.0
+    },
+    "disposition": {
+      "borderline_margin": 1.5,
+      "note": "margin_ratio >= 1.5 -> exclude, < 1.5 or info-only -> review"
+    },
+    "input_fingerprint": {
+      "algorithm": "sha256(file list: relpath, size, sha256)",
+      "value": "0e3fea515dd94f5ef3e2737bae723a495a8aefd47e7a5010e6d2882ea371331f",
+      "n_files": 690,
+      "total_bytes": 165971869
+    },
+    "video_decode": {
+      "backends_available": {
+        "opencv": true,
+        "ffmpeg": "/usr/bin/ffmpeg"
+      },
+      "per_camera": {
+        "observation.images.ego": {
+          "episodes_decoded": 0,
+          "episodes_failed": [],
+          "episodes_missing_file": [
+            0,
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7,
+            8,
+            9,
+            10,
+            11,
+            12,
+            13,
+            14,
+            15,
+            16,
+            17,
+            18,
+            19,
+            20,
+            21,
+            22,
+            23,
+            24,
+            25,
+            26,
+            27,
+            28,
+            29,
+            30,
+            31,
+            32,
+            33,
+            34,
+            35,
+            36,
+            37,
+            38,
+            39,
+            40,
+            41,
+            42,
+            43,
+            44,
+            45,
+            46,
+            47,
+            48,
+            49,
+            50,
+            51,
+            52,
+            53,
+            54,
+            55,
+            56,
+            57,
+            58,
+            59,
+            60,
+            61,
+            62,
+            63,
+            64,
+            65,
+            66,
+            67,
+            68,
+            69,
+            70,
+            71,
+            72,
+            73,
+            74
+          ],
+          "frames_decoded_full": 0,
+          "frames_used_sampled": 0,
+          "backends_used": []
+        },
+        "observation.images.external_D455": {
+          "episodes_decoded": 75,
+          "episodes_failed": [],
+          "episodes_missing_file": [],
+          "frames_decoded_full": 18250,
+          "frames_used_sampled": 18250,
+          "backends_used": [
+            "ffmpeg"
+          ]
+        }
+      }
+    },
+    "sample_frames": null,
+    "audit_seconds": 124.7
+  },
+  "clean_episodes": [
+    0,
+    2,
+    3,
+    5,
+    6,
+    7,
+    8,
+    9,
+    10,
+    11,
+    12,
+    13,
+    14,
+    15,
+    16,
+    17,
+    18,
+    19,
+    20,
+    22,
+    24,
+    26,
+    27,
+    28,
+    29,
+    32,
+    33,
+    35,
+    36,
+    37,
+    38,
+    39,
+    40,
+    41,
+    43,
+    44,
+    45,
+    46,
+    48,
+    49,
+    50,
+    51,
+    52,
+    53,
+    54,
+    55,
+    56,
+    58,
+    60,
+    62,
+    63,
+    65,
+    66,
+    68,
+    69,
+    70,
+    71,
+    72,
+    73,
+    74
+  ],
+  "excluded_episodes": [
+    {
+      "episode_index": 21,
+      "checks": [
+        "A2"
+      ]
+    },
+    {
+      "episode_index": 25,
+      "checks": [
+        "A2"
+      ]
+    },
+    {
+      "episode_index": 47,
+      "checks": [
+        "A2"
+      ]
+    },
+    {
+      "episode_index": 57,
+      "checks": [
+        "A2"
+      ]
+    },
+    {
+      "episode_index": 59,
+      "checks": [
+        "A2"
+      ]
+    },
+    {
+      "episode_index": 64,
+      "checks": [
+        "A2"
+      ]
+    },
+    {
+      "episode_index": 67,
+      "checks": [
+        "A2"
+      ]
+    }
+  ],
+  "review_episodes": [
+    {
+      "episode_index": 1,
+      "checks": [
+        "A2"
+      ]
+    },
+    {
+      "episode_index": 4,
+      "checks": [
+        "A2"
+      ]
+    },
+    {
+      "episode_index": 23,
+      "checks": [
+        "A2"
+      ]
+    },
+    {
+      "episode_index": 30,
+      "checks": [
+        "A2"
+      ]
+    },
+    {
+      "episode_index": 31,
+      "checks": [
+        "A2"
+      ]
+    },
+    {
+      "episode_index": 34,
+      "checks": [
+        "A2"
+      ]
+    },
+    {
+      "episode_index": 42,
+      "checks": [
+        "A2"
+      ]
+    },
+    {
+      "episode_index": 61,
+      "checks": [
+        "A2"
+      ]
+    }
+  ],
+  "dispositions": {
+    "0": "keep",
+    "1": "review",
+    "2": "keep",
+    "3": "keep",
+    "4": "review",
+    "5": "keep",
+    "6": "keep",
+    "7": "keep",
+    "8": "keep",
+    "9": "keep",
+    "10": "keep",
+    "11": "keep",
+    "12": "keep",
+    "13": "keep",
+    "14": "keep",
+    "15": "keep",
+    "16": "keep",
+    "17": "keep",
+    "18": "keep",
+    "19": "keep",
+    "20": "keep",
+    "21": "exclude",
+    "22": "keep",
+    "23": "review",
+    "24": "keep",
+    "25": "exclude",
+    "26": "keep",
+    "27": "keep",
+    "28": "keep",
+    "29": "keep",
+    "30": "review",
+    "31": "review",
+    "32": "keep",
+    "33": "keep",
+    "34": "review",
+    "35": "keep",
+    "36": "keep",
+    "37": "keep",
+    "38": "keep",
+    "39": "keep",
+    "40": "keep",
+    "41": "keep",
+    "42": "review",
+    "43": "keep",
+    "44": "keep",
+    "45": "keep",
+    "46": "keep",
+    "47": "exclude",
+    "48": "keep",
+    "49": "keep",
+    "50": "keep",
+    "51": "keep",
+    "52": "keep",
+    "53": "keep",
+    "54": "keep",
+    "55": "keep",
+    "56": "keep",
+    "57": "exclude",
+    "58": "keep",
+    "59": "exclude",
+    "60": "keep",
+    "61": "review",
+    "62": "keep",
+    "63": "keep",
+    "64": "exclude",
+    "65": "keep",
+    "66": "keep",
+    "67": "exclude",
+    "68": "keep",
+    "69": "keep",
+    "70": "keep",
+    "71": "keep",
+    "72": "keep",
+    "73": "keep",
+    "74": "keep"
+  }
+}

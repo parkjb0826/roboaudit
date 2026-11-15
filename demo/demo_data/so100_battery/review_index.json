@@ -1,0 +1,39 @@
+{
+  "dataset": "so100_battery",
+  "format": "v2.1",
+  "score": 84,
+  "grade": "B",
+  "note": "경계 측정값이라 자동 제외하지 않은 에피소드. 사람 확인 후 제외/유지 결정 필요.",
+  "review_episodes": [
+    {
+      "episode_index": 13,
+      "checks": [
+        "V2"
+      ]
+    },
+    {
+      "episode_index": 17,
+      "checks": [
+        "V2"
+      ]
+    },
+    {
+      "episode_index": 28,
+      "checks": [
+        "V2"
+      ]
+    },
+    {
+      "episode_index": 39,
+      "checks": [
+        "V2"
+      ]
+    },
+    {
+      "episode_index": 48,
+      "checks": [
+        "V2"
+      ]
+    }
+  ]
+}

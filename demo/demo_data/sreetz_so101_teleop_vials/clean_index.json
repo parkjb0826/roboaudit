@@ -1,0 +1,163 @@
+{
+  "dataset": "sreetz_so101_teleop_vials",
+  "format": "v3.0",
+  "score": 44,
+  "grade": "F",
+  "total_episodes": 75,
+  "clean_episodes": [
+    0,
+    2,
+    3,
+    5,
+    6,
+    7,
+    8,
+    9,
+    10,
+    11,
+    12,
+    13,
+    14,
+    15,
+    16,
+    17,
+    18,
+    19,
+    20,
+    22,
+    24,
+    26,
+    27,
+    28,
+    29,
+    32,
+    33,
+    35,
+    36,
+    37,
+    38,
+    39,
+    40,
+    41,
+    43,
+    44,
+    45,
+    46,
+    48,
+    49,
+    50,
+    51,
+    52,
+    53,
+    54,
+    55,
+    56,
+    58,
+    60,
+    62,
+    63,
+    65,
+    66,
+    68,
+    69,
+    70,
+    71,
+    72,
+    73,
+    74
+  ],
+  "excluded_episodes": [
+    {
+      "episode_index": 21,
+      "checks": [
+        "A2"
+      ]
+    },
+    {
+      "episode_index": 25,
+      "checks": [
+        "A2"
+      ]
+    },
+    {
+      "episode_index": 47,
+      "checks": [
+        "A2"
+      ]
+    },
+    {
+      "episode_index": 57,
+      "checks": [
+        "A2"
+      ]
+    },
+    {
+      "episode_index": 59,
+      "checks": [
+        "A2"
+      ]
+    },
+    {
+      "episode_index": 64,
+      "checks": [
+        "A2"
+      ]
+    },
+    {
+      "episode_index": 67,
+      "checks": [
+        "A2"
+      ]
+    }
+  ],
+  "review_episodes": [
+    {
+      "episode_index": 1,
+      "checks": [
+        "A2"
+      ]
+    },
+    {
+      "episode_index": 4,
+      "checks": [
+        "A2"
+      ]
+    },
+    {
+      "episode_index": 23,
+      "checks": [
+        "A2"
+      ]
+    },
+    {
+      "episode_index": 30,
+      "checks": [
+        "A2"
+      ]
+    },
+    {
+      "episode_index": 31,
+      "checks": [
+        "A2"
+      ]
+    },
+    {
+      "episode_index": 34,
+      "checks": [
+        "A2"
+      ]
+    },
+    {
+      "episode_index": 42,
+      "checks": [
+        "A2"
+      ]
+    },
+    {
+      "episode_index": 61,
+      "checks": [
+        "A2"
+      ]
+    }
+  ]
+}

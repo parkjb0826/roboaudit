@@ -1,0 +1,448 @@
+{
+  "summary": {
+    "dataset": "so100_battery",
+    "path": "real_data/so100_battery",
+    "format": "v2.1",
+    "video_key": "observation.images.laptop",
+    "video_keys": [
+      "observation.images.laptop",
+      "observation.images.phone"
+    ],
+    "robot_type": "so100",
+    "total_episodes": 50,
+    "total_frames_meta": 24263,
+    "fps": 30,
+    "total_tasks": 1,
+    "incomplete_audit": false,
+    "sample_frames": null
+  },
+  "score": 84,
+  "grade": "B",
+  "total_deduction": 16,
+  "incomplete_audit": false,
+  "notices": [
+    "범위 고지: RoboAudit는 데이터셋의 구조·통계적 이상을 검사하는 도구이며, 학습 성능이나 로봇의 안전성을 보증하지 않습니다."
+  ],
+  "top_factors": [
+    {
+      "check": "V2",
+      "name": "흔들림·흐림",
+      "findings": 5,
+      "deduction": 15,
+      "share_pct": 93.8
+    },
+    {
+      "check": "L2",
+      "name": "성공·실패 표시 없음",
+      "findings": 1,
+      "deduction": 1,
+      "share_pct": 6.2
+    }
+  ],
+  "checks": [
+    {
+      "check": "S1",
+      "name": "메타·파일 무결성",
+      "severity": "critical",
+      "findings": 0,
+      "deduction": 0,
+      "status": "PASS",
+      "run_status": "complete",
+      "scope": "데이터 50/50 에피소드",
+      "error": null
+    },
+    {
+      "check": "S2",
+      "name": "차원·스키마 정합성",
+      "severity": "critical",
+      "findings": 0,
+      "deduction": 0,
+      "status": "PASS",
+      "run_status": "complete",
+      "scope": "데이터 50/50 에피소드",
+      "error": null
+    },
+    {
+      "check": "S3",
+      "name": "시간축",
+      "severity": "warning",
+      "findings": 0,
+      "deduction": 0,
+      "status": "PASS",
+      "run_status": "complete",
+      "scope": "데이터 50/50 에피소드",
+      "error": null
+    },
+    {
+      "check": "V1",
+      "name": "검은·정지 화면",
+      "severity": "critical",
+      "findings": 0,
+      "deduction": 0,
+      "status": "PASS",
+      "run_status": "complete",
+      "scope": "observation.images.laptop: 디코딩 50/50, 실패 0, 파일없음 0; observation.images.phone: 디코딩 50/50, 실패 0, 파일없음 0",
+      "error": null
+    },
+    {
+      "check": "V2",
+      "name": "흔들림·흐림",
+      "severity": "warning",
+      "findings": 5,
+      "deduction": 15,
+      "status": "FAIL",
+      "run_status": "complete",
+      "scope": "observation.images.laptop: 디코딩 50/50, 실패 0, 파일없음 0; observation.images.phone: 디코딩 50/50, 실패 0, 파일없음 0",
+      "error": null
+    },
+    {
+      "check": "V3",
+      "name": "에피소드 길이 이상",
+      "severity": "warning",
+      "findings": 0,
+      "deduction": 0,
+      "status": "PASS",
+      "run_status": "complete",
+      "scope": "observation.images.laptop: 디코딩 50/50, 실패 0, 파일없음 0; observation.images.phone: 디코딩 50/50, 실패 0, 파일없음 0",
+      "error": null
+    },
+    {
+      "check": "A1",
+      "name": "범위 이탈",
+      "severity": "critical",
+      "findings": 0,
+      "deduction": 0,
+      "status": "PASS",
+      "run_status": "complete",
+      "scope": "데이터 50/50 에피소드",
+      "error": null
+    },
+    {
+      "check": "A2",
+      "name": "급격한 점프",
+      "severity": "warning",
+      "findings": 0,
+      "deduction": 0,
+      "status": "PASS",
+      "run_status": "complete",
+      "scope": "데이터 50/50 에피소드",
+      "error": null
+    },
+    {
+      "check": "A3",
+      "name": "무동작 차원",
+      "severity": "warning",
+      "findings": 0,
+      "deduction": 0,
+      "status": "PASS",
+      "run_status": "complete",
+      "scope": "데이터 50/50 에피소드",
+      "error": null
+    },
+    {
+      "check": "A4",
+      "name": "중복 에피소드",
+      "severity": "info",
+      "findings": 0,
+      "deduction": 0,
+      "status": "PASS",
+      "run_status": "complete",
+      "scope": "데이터 50/50 에피소드",
+      "error": null
+    },
+    {
+      "check": "L1",
+      "name": "지시문 누락·전부 동일",
+      "severity": "warning",
+      "findings": 0,
+      "deduction": 0,
+      "status": "PASS",
+      "run_status": "complete",
+      "scope": "데이터 50/50 에피소드",
+      "error": null
+    },
+    {
+      "check": "L2",
+      "name": "성공·실패 표시 없음",
+      "severity": "info",
+      "findings": 1,
+      "deduction": 1,
+      "status": "FAIL",
+      "run_status": "complete",
+      "scope": "데이터 50/50 에피소드",
+      "error": null
+    }
+  ],
+  "findings": [
+    {
+      "check": "L2",
+      "severity": "info",
+      "episode_index": null,
+      "detail": "no success/failure label found in episode metadata (failed episodes cannot be told apart)",
+      "evidence": {
+        "episodes": 50
+      },
+      "margin_ratio": null
+    },
+    {
+      "check": "V2",
+      "severity": "warning",
+      "episode_index": 13,
+      "detail": "unstable video [observation.images.laptop]: median frame diff 2.88 > 1.6 x dataset median 1.27",
+      "evidence": {
+        "camera": "observation.images.laptop",
+        "median_diff": 2.877,
+        "dataset_median_diff": 1.273
+      },
+      "margin_ratio": 1.413
+    },
+    {
+      "check": "V2",
+      "severity": "warning",
+      "episode_index": 17,
+      "detail": "unstable video [observation.images.laptop]: median frame diff 2.07 > 1.6 x dataset median 1.27",
+      "evidence": {
+        "camera": "observation.images.laptop",
+        "median_diff": 2.068,
+        "dataset_median_diff": 1.273
+      },
+      "margin_ratio": 1.015
+    },
+    {
+      "check": "V2",
+      "severity": "warning",
+      "episode_index": 28,
+      "detail": "unstable video [observation.images.laptop]: median frame diff 2.82 > 1.6 x dataset median 1.27",
+      "evidence": {
+        "camera": "observation.images.laptop",
+        "median_diff": 2.821,
+        "dataset_median_diff": 1.273
+      },
+      "margin_ratio": 1.385
+    },
+    {
+      "check": "V2",
+      "severity": "warning",
+      "episode_index": 39,
+      "detail": "unstable video [observation.images.laptop]: median frame diff 2.18 > 1.6 x dataset median 1.27",
+      "evidence": {
+        "camera": "observation.images.laptop",
+        "median_diff": 2.183,
+        "dataset_median_diff": 1.273
+      },
+      "margin_ratio": 1.072
+    },
+    {
+      "check": "V2",
+      "severity": "warning",
+      "episode_index": 48,
+      "detail": "unstable video [observation.images.laptop]: median frame diff 2.49 > 1.6 x dataset median 1.27",
+      "evidence": {
+        "camera": "observation.images.laptop",
+        "median_diff": 2.485,
+        "dataset_median_diff": 1.273
+      },
+      "margin_ratio": 1.22
+    }
+  ],
+  "errors": {},
+  "manifest": {
+    "tool": {
+      "name": "roboaudit",
+      "version": "0.2.1"
+    },
+    "rules_version": "rules-2026-11-15.2",
+    "thresholds": {
+      "black_brightness": 12.0,
+      "static_diff": 0.5,
+      "static_ratio": 0.9,
+      "blur_ratio": 0.3,
+      "shake_ratio": 1.6,
+      "shake_median_abs": 0.5,
+      "shake_single_abs": 40.0,
+      "gap_factor": 1.5,
+      "fps_tol": 0.2,
+      "range_frac": 0.1,
+      "range_qlo": 0.001,
+      "range_qhi": 0.999,
+      "range_band_margin": 0.5,
+      "jump_factor": 5.0,
+      "jump_abs": 1.0,
+      "jump_dataset_factor": 3.0,
+      "dead_std": 1e-06,
+      "len_ratio": 2.0
+    },
+    "disposition": {
+      "borderline_margin": 1.5,
+      "note": "margin_ratio >= 1.5 -> exclude, < 1.5 or info-only -> review"
+    },
+    "input_fingerprint": {
+      "algorithm": "sha256(file list: relpath, size, sha256)",
+      "value": "e009f084b5f310bf6a2b8fecc40301c59583cbf2ebaaf59f1689d7383e320d50",
+      "n_files": 471,
+      "total_bytes": 141175775
+    },
+    "video_decode": {
+      "backends_available": {
+        "opencv": true,
+        "ffmpeg": "/usr/bin/ffmpeg"
+      },
+      "per_camera": {
+        "observation.images.laptop": {
+          "episodes_decoded": 50,
+          "episodes_failed": [],
+          "episodes_missing_file": [],
+          "frames_decoded_full": 24263,
+          "frames_used_sampled": 24263,
+          "backends_used": [
+            "ffmpeg"
+          ]
+        },
+        "observation.images.phone": {
+          "episodes_decoded": 50,
+          "episodes_failed": [],
+          "episodes_missing_file": [],
+          "frames_decoded_full": 24263,
+          "frames_used_sampled": 24263,
+          "backends_used": [
+            "ffmpeg"
+          ]
+        }
+      }
+    },
+    "sample_frames": null,
+    "audit_seconds": 264.2
+  },
+  "clean_episodes": [
+    0,
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8,
+    9,
+    10,
+    11,
+    12,
+    14,
+    15,
+    16,
+    18,
+    19,
+    20,
+    21,
+    22,
+    23,
+    24,
+    25,
+    26,
+    27,
+    29,
+    30,
+    31,
+    32,
+    33,
+    34,
+    35,
+    36,
+    37,
+    38,
+    40,
+    41,
+    42,
+    43,
+    44,
+    45,
+    46,
+    47,
+    49
+  ],
+  "excluded_episodes": [],
+  "review_episodes": [
+    {
+      "episode_index": 13,
+      "checks": [
+        "V2"
+      ]
+    },
+    {
+      "episode_index": 17,
+      "checks": [
+        "V2"
+      ]
+    },
+    {
+      "episode_index": 28,
+      "checks": [
+        "V2"
+      ]
+    },
+    {
+      "episode_index": 39,
+      "checks": [
+        "V2"
+      ]
+    },
+    {
+      "episode_index": 48,
+      "checks": [
+        "V2"
+      ]
+    }
+  ],
+  "dispositions": {
+    "0": "keep",
+    "1": "keep",
+    "2": "keep",
+    "3": "keep",
+    "4": "keep",
+    "5": "keep",
+    "6": "keep",
+    "7": "keep",
+    "8": "keep",
+    "9": "keep",
+    "10": "keep",
+    "11": "keep",
+    "12": "keep",
+    "13": "review",
+    "14": "keep",
+    "15": "keep",
+    "16": "keep",
+    "17": "review",
+    "18": "keep",
+    "19": "keep",
+    "20": "keep",
+    "21": "keep",
+    "22": "keep",
+    "23": "keep",
+    "24": "keep",
+    "25": "keep",
+    "26": "keep",
+    "27": "keep",
+    "28": "review",
+    "29": "keep",
+    "30": "keep",
+    "31": "keep",
+    "32": "keep",
+    "33": "keep",
+    "34": "keep",
+    "35": "keep",
+    "36": "keep",
+    "37": "keep",
+    "38": "keep",
+    "39": "review",
+    "40": "keep",
+    "41": "keep",
+    "42": "keep",
+    "43": "keep",
+    "44": "keep",
+    "45": "keep",
+    "46": "keep",
+    "47": "keep",
+    "48": "review",
+    "49": "keep"
+  }
+}

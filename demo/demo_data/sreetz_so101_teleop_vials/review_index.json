@@ -1,0 +1,57 @@
+{
+  "dataset": "sreetz_so101_teleop_vials",
+  "format": "v3.0",
+  "score": 44,
+  "grade": "F",
+  "note": "경계 측정값이라 자동 제외하지 않은 에피소드. 사람 확인 후 제외/유지 결정 필요.",
+  "review_episodes": [
+    {
+      "episode_index": 1,
+      "checks": [
+        "A2"
+      ]
+    },
+    {
+      "episode_index": 4,
+      "checks": [
+        "A2"
+      ]
+    },
+    {
+      "episode_index": 23,
+      "checks": [
+        "A2"
+      ]
+    },
+    {
+      "episode_index": 30,
+      "checks": [
+        "A2"
+      ]
+    },
+    {
+      "episode_index": 31,
+      "checks": [
+        "A2"
+      ]
+    },
+    {
+      "episode_index": 34,
+      "checks": [
+        "A2"
+      ]
+    },
+    {
+      "episode_index": 42,
+      "checks": [
+        "A2"
+      ]
+    },
+    {
+      "episode_index": 61,
+      "checks": [
+        "A2"
+      ]
+    }
+  ]
+}

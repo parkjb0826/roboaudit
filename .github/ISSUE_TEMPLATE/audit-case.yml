@@ -1,0 +1,81 @@
+name: Audit case (opt-in share bundle)
+description: Share an anonymised RoboAudit result so thresholds can be validated across real datasets. Optional and manual - the tool never sends anything by itself.
+title: "[audit-case] "
+labels: ["audit-case"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        ## Share an audit case
+
+        Thank you for sharing. Cases collected here are aggregated with
+        `tools/collect_cases.py` to validate RoboAudit's provisional
+        disposition thresholds (for example the 1.5x borderline margin)
+        across many real datasets, and to track which checks produce
+        false positives in the field.
+
+        **How to create your bundle** (nothing is sent automatically -
+        the file is written locally, and attaching it here is your
+        decision):
+
+        ```bash
+        roboaudit share path/to/audit_out/result.json
+        # or, at audit time:
+        roboaudit <dataset> --out <out_dir> --share-bundle
+        ```
+
+        **The bundle contains only anonymised summaries**: tool/rules
+        versions, dataset format, episode/frame/camera counts, score and
+        grade, per-check finding counts and margin distributions,
+        disposition totals, and an optional adjudication template.
+
+        **It never contains**: dataset names, file or folder paths, file
+        names, task/instruction text or hashes of it, video frames, raw
+        sensor/action values, camera/feature key names, robot type, or
+        any user/machine information.
+  - type: checkboxes
+    id: privacy-check
+    attributes:
+      label: Privacy check (required)
+      description: The share bundle is anonymised by construction, but please confirm you looked at it before submitting.
+      options:
+        - label: I opened my share_bundle.json and confirmed it contains no dataset name, no file paths, no task text, and no raw data values.
+          required: true
+        - label: I understand that submitting is voluntary, and that this issue is public.
+          required: true
+  - type: textarea
+    id: bundle
+    attributes:
+      label: Share bundle (share_bundle.json)
+      description: Paste the full contents of your share_bundle.json file.
+      render: json
+    validations:
+      required: true
+  - type: textarea
+    id: adjudication-notes
+    attributes:
+      label: False positives / adjudication notes (optional)
+      description: |
+        If you inspected flagged episodes yourself, tell us which findings
+        were wrong (check code + episode index + what it actually was).
+        You can also fill in the "adjudications" entries inside the bundle
+        itself (verdict: agree / false_positive / unsure) and just mention
+        here that you did. Human-adjudicated cases are the most valuable
+        ones - they are what turns provisional thresholds into validated
+        ones.
+      placeholder: "Example: A2, episode 12 - false positive. The jump is a teleoperation frame drop; the recording is fine."
+    validations:
+      required: false
+  - type: dropdown
+    id: context
+    attributes:
+      label: Dataset context (optional, coarse)
+      description: A rough category helps interpret margins. Do not name the dataset.
+      options:
+        - Prefer not to say
+        - Simulation
+        - Real robot - teleoperation
+        - Real robot - scripted / autonomous
+        - Mixed / other
+    validations:
+      required: false

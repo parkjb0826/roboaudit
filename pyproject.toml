@@ -1,0 +1,35 @@
+[build-system]
+requires = ["setuptools>=61"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "roboaudit"
+version = "0.2.2"
+description = "Health-check CLI for LeRobot robot datasets: 100-point score, per-episode dispositions (exclude / review / keep), and an auditable report."
+readme = "README.md"
+requires-python = ">=3.10"
+license = { text = "MIT" }
+keywords = ["lerobot", "robotics", "dataset", "data-quality", "audit"]
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: OS Independent",
+    "Topic :: Scientific/Engineering :: Artificial Intelligence",
+]
+# Runtime dependencies: only what the package actually imports
+# (numpy / cv2 / pyarrow.parquet / jinja2). Verified on Python 3.12 with
+# numpy 2.2.6, opencv-python-headless 4.13, pyarrow 26.0.1, Jinja2 3.1.6.
+# Optional: a system `ffmpeg` binary is used as a fallback video decoder
+# for codecs OpenCV cannot read (e.g. AV1). It is not a pip dependency.
+dependencies = [
+    "numpy>=1.24",
+    "opencv-python-headless>=4.8",
+    "pyarrow>=12",
+    "jinja2>=3.0",
+]
+
+[project.scripts]
+roboaudit = "roboaudit.__main__:main"
+
+[tool.setuptools.packages.find]
+where = ["src"]

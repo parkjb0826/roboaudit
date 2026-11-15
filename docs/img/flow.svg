@@ -1,0 +1,66 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="980" height="300" viewBox="0 0 980 300" font-family="sans-serif">
+  <defs>
+    <marker id="arr" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#2c5282"/>
+    </marker>
+  </defs>
+  <rect x="0" y="0" width="980" height="300" fill="#ffffff"/>
+
+  <!-- Input -->
+  <rect x="10" y="95" width="150" height="110" rx="8" fill="#eef2f7" stroke="#2c5282" stroke-width="1.5"/>
+  <text x="85" y="128" text-anchor="middle" font-size="15" font-weight="bold" fill="#1f3a5f">LeRobot dataset</text>
+  <text x="85" y="150" text-anchor="middle" font-size="12.5" fill="#4a5568">v2.1 · v3.0</text>
+  <text x="85" y="170" text-anchor="middle" font-size="12" fill="#4a5568">own parser —</text>
+  <text x="85" y="186" text-anchor="middle" font-size="12" fill="#4a5568">no conversion</text>
+
+  <line x1="162" y1="150" x2="190" y2="150" stroke="#2c5282" stroke-width="2" marker-end="url(#arr)"/>
+
+  <!-- Checks group -->
+  <rect x="195" y="40" width="330" height="220" rx="8" fill="#f7fafc" stroke="#2c5282" stroke-width="1.5"/>
+  <text x="360" y="64" text-anchor="middle" font-size="14.5" font-weight="bold" fill="#1f3a5f">12 rule-based checks</text>
+
+  <rect x="210" y="78" width="148" height="80" rx="6" fill="#ffffff" stroke="#b6c2d2"/>
+  <text x="284" y="100" text-anchor="middle" font-size="13" font-weight="bold" fill="#1f3a5f">Structure · 3</text>
+  <text x="284" y="120" text-anchor="middle" font-size="11.5" fill="#4a5568">S1 metadata &amp; files</text>
+  <text x="284" y="136" text-anchor="middle" font-size="11.5" fill="#4a5568">S2 schema · S3 time axis</text>
+
+  <rect x="366" y="78" width="148" height="80" rx="6" fill="#ffffff" stroke="#b6c2d2"/>
+  <text x="440" y="100" text-anchor="middle" font-size="13" font-weight="bold" fill="#1f3a5f">Video · 3</text>
+  <text x="440" y="120" text-anchor="middle" font-size="11.5" fill="#4a5568">V1 black / frozen</text>
+  <text x="440" y="136" text-anchor="middle" font-size="11.5" fill="#4a5568">V2 shake &amp; blur · V3 length</text>
+
+  <rect x="210" y="166" width="148" height="80" rx="6" fill="#ffffff" stroke="#b6c2d2"/>
+  <text x="284" y="188" text-anchor="middle" font-size="13" font-weight="bold" fill="#1f3a5f">Action · 4</text>
+  <text x="284" y="208" text-anchor="middle" font-size="11.5" fill="#4a5568">A1 range · A2 jumps</text>
+  <text x="284" y="224" text-anchor="middle" font-size="11.5" fill="#4a5568">A3 dead dims · A4 duplicates</text>
+
+  <rect x="366" y="166" width="148" height="80" rx="6" fill="#ffffff" stroke="#b6c2d2"/>
+  <text x="440" y="188" text-anchor="middle" font-size="13" font-weight="bold" fill="#1f3a5f">Instruction · 2</text>
+  <text x="440" y="208" text-anchor="middle" font-size="11.5" fill="#4a5568">L1 task text</text>
+  <text x="440" y="224" text-anchor="middle" font-size="11.5" fill="#4a5568">L2 success / failure labels</text>
+
+  <line x1="527" y1="150" x2="555" y2="150" stroke="#2c5282" stroke-width="2" marker-end="url(#arr)"/>
+
+  <!-- Scoring -->
+  <rect x="560" y="95" width="160" height="110" rx="8" fill="#eef2f7" stroke="#2c5282" stroke-width="1.5"/>
+  <text x="640" y="126" text-anchor="middle" font-size="15" font-weight="bold" fill="#1f3a5f">Score &amp; grade</text>
+  <text x="640" y="148" text-anchor="middle" font-size="12.5" fill="#4a5568">100-point score</text>
+  <text x="640" y="166" text-anchor="middle" font-size="12" fill="#4a5568">Top-3 deduction factors</text>
+  <text x="640" y="184" text-anchor="middle" font-size="12" fill="#4a5568">exclude / review / keep</text>
+
+  <line x1="722" y1="150" x2="750" y2="150" stroke="#2c5282" stroke-width="2" marker-end="url(#arr)"/>
+
+  <!-- Outputs -->
+  <rect x="755" y="40" width="215" height="220" rx="8" fill="#f7fafc" stroke="#2c5282" stroke-width="1.5"/>
+  <text x="862" y="64" text-anchor="middle" font-size="14.5" font-weight="bold" fill="#1f3a5f">Outputs</text>
+  <text x="770" y="92" font-size="12.5" fill="#1f3a5f" font-weight="bold">report.html</text>
+  <text x="770" y="108" font-size="11.5" fill="#4a5568">human-readable report card</text>
+  <text x="770" y="130" font-size="12.5" fill="#1f3a5f" font-weight="bold">result.json</text>
+  <text x="770" y="146" font-size="11.5" fill="#4a5568">full result + run manifest</text>
+  <text x="770" y="168" font-size="12.5" fill="#1f3a5f" font-weight="bold">clean_index.json</text>
+  <text x="770" y="184" font-size="11.5" fill="#4a5568">episodes to keep for training</text>
+  <text x="770" y="206" font-size="12.5" fill="#1f3a5f" font-weight="bold">review_index.json</text>
+  <text x="770" y="222" font-size="11.5" fill="#4a5568">borderline episodes for a human</text>
+  <rect x="766" y="230" width="193" height="22" rx="4" fill="#ffffff" stroke="#b6c2d2" stroke-dasharray="4 3"/>
+  <text x="862" y="245" text-anchor="middle" font-size="11" fill="#4a5568">optional: share_bundle.json (opt-in)</text>
+</svg>

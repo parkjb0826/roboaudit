@@ -1,0 +1,29 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="980" height="330" viewBox="0 0 980 330" font-family="sans-serif">
+  <rect x="0" y="0" width="980" height="330" fill="#ffffff"/>
+  <text x="20" y="34" font-size="17" font-weight="bold" fill="#1f3a5f">Planted-defect test — 43 known defects, same data, same ground truth</text>
+
+  <!-- Group 1: reached a verdict -->
+  <text x="20" y="72" font-size="13.5" font-weight="bold" fill="#4a5568">Reached a verdict</text>
+  <text x="20" y="102" font-size="13" fill="#1f3a5f">RoboAudit</text>
+  <rect x="130" y="84" width="560" height="26" fill="#2c5282"/>
+  <text x="700" y="102" font-size="14" font-weight="bold" fill="#1f3a5f">43</text>
+  <text x="20" y="136" font-size="13" fill="#1f3a5f">RDA 0.12.4</text>
+  <rect x="130" y="118" width="286" height="26" fill="#a0aec0"/>
+  <text x="426" y="136" font-size="14" font-weight="bold" fill="#1f3a5f">22</text>
+  <text x="458" y="136" font-size="12" fill="#4a5568">(15 exclude + 7 correctly pinpointed as unverifiable)</text>
+
+  <!-- Group 2: missed entirely -->
+  <text x="20" y="182" font-size="13.5" font-weight="bold" fill="#4a5568">Missed entirely</text>
+  <text x="20" y="212" font-size="13" fill="#1f3a5f">RoboAudit</text>
+  <rect x="130" y="194" width="3" height="26" fill="#2c5282"/>
+  <text x="143" y="212" font-size="14" font-weight="bold" fill="#1f3a5f">0</text>
+  <text x="20" y="246" font-size="13" fill="#1f3a5f">RDA 0.12.4</text>
+  <rect x="130" y="228" width="247" height="26" fill="#a0aec0"/>
+  <text x="387" y="246" font-size="14" font-weight="bold" fill="#1f3a5f">19</text>
+  <text x="419" y="246" font-size="12" fill="#4a5568">(mostly check types RDA does not implement)</text>
+
+  <line x1="20" y1="272" x2="960" y2="272" stroke="#b6c2d2"/>
+  <text x="20" y="294" font-size="12" fill="#4a5568">The defect suite was built by the RoboAudit authors — a home-field test, so read it as one. RDA was run in its most</text>
+  <text x="20" y="312" font-size="12" fill="#4a5568">complete mode (--full) without a platform profile, and it has its own separate blind test. On clean data both tools</text>
+  <text x="20" y="330" font-size="12" fill="#4a5568">produced 0 false-positive verdicts (40 episodes).</text>
+</svg>

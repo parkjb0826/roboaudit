@@ -1,0 +1,21 @@
+{
+  "dataset": "aloha_sim_transfer_cube_scripted",
+  "format": "v3.0",
+  "score": 79,
+  "grade": "C",
+  "note": "경계 측정값이라 자동 제외하지 않은 에피소드. 사람 확인 후 제외/유지 결정 필요.",
+  "review_episodes": [
+    {
+      "episode_index": 45,
+      "checks": [
+        "A1"
+      ]
+    },
+    {
+      "episode_index": 46,
+      "checks": [
+        "A1"
+      ]
+    }
+  ]
+}

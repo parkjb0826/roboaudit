@@ -1,0 +1,296 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<title>RoboAudit 성적표 - so100_battery</title>
+<style>
+  body { font-family: 'Malgun Gothic', 'Apple SD Gothic Neo', sans-serif; background:#f4f6fb; color:#1c2434; margin:0; padding:24px 16px 48px; }
+  .wrap { max-width: 900px; margin: 0 auto; }
+  .card { background:#fff; border-radius:16px; padding:24px; margin-bottom:20px; box-shadow:0 2px 10px rgba(30,50,90,.08); }
+  h1 { font-size:24px; margin:0 0 4px; }
+  .sub { color:#5a6a85; font-size:14px; }
+  .scorebox { display:flex; align-items:center; gap:28px; }
+  .score { font-size:64px; font-weight:800; line-height:1; }
+  .grade { font-size:40px; font-weight:800; padding:10px 22px; border-radius:14px; color:#fff; }
+  .gA { background:#2e7d32; } .gB { background:#558b2f; } .gC { background:#e0a800; }
+  .gD { background:#e07b00; } .gF { background:#c62828; }
+  table { width:100%; border-collapse:collapse; font-size:14px; }
+  th, td { border:1px solid #dde3ef; padding:7px 10px; text-align:left; vertical-align:top; }
+  th { background:#f0f3fa; }
+  .fail { color:#c62828; font-weight:700; } .pass { color:#2e7d32; font-weight:700; }
+  .sev-critical { color:#c62828; font-weight:700; } .sev-warning { color:#e07b00; font-weight:700; } .sev-info { color:#5a6a85; font-weight:700; }
+  .meta { display:grid; grid-template-columns:repeat(auto-fit,minmax(150px,1fr)); gap:10px; margin-top:14px; }
+  .meta div { background:#f7f9fd; border-radius:10px; padding:10px 12px; font-size:13px; }
+  .meta b { display:block; font-size:15px; margin-top:2px; }
+  code { background:#eef1f7; padding:1px 5px; border-radius:5px; font-size:12px; }
+  .warn-banner { background:#fff3e0; border:2px solid #e07b00; color:#7a4a00; border-radius:12px; padding:14px 18px; margin-bottom:20px; font-weight:700; }
+  .top3 { background:#eef4ff; border-radius:12px; padding:14px 18px; margin-top:16px; font-size:15px; line-height:1.7; }
+  .disp-exclude { color:#c62828; font-weight:700; } .disp-review { color:#e07b00; font-weight:700; }
+  .rs-partial, .rs-error { color:#c62828; font-weight:700; } .rs-complete { color:#2e7d32; } .rs-not_applicable { color:#5a6a85; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="card">
+    <h1>🩺 RoboAudit 데이터셋 성적표</h1>
+    <div class="sub">so100_battery · LeRobot v2.1 · 로봇 so100</div>
+    <div class="meta">
+      <div>에피소드<b>50개</b></div>
+      <div>총 프레임(메타)<b>24263</b></div>
+      <div>FPS<b>30</b></div>
+      <div>지시문 종류<b>1종</b></div>
+      <div>제외 에피소드<b>0개</b></div>
+      <div>보류 에피소드<b>5개</b></div>
+      <div>깨끗한 에피소드<b>45개</b></div>
+      <div>감사 카메라<b>observation.images.laptop, observation.images.phone</b></div>
+    </div>
+  </div>
+
+  
+
+  
+
+  <div class="card">
+    <div class="scorebox">
+      <div class="score">84<span style="font-size:22px; color:#5a6a85;">/100</span></div>
+      <div class="grade gB">B</div>
+      <div style="font-size:14px; color:#44506a; line-height:1.6;">
+        총 감점 <b>16점</b> (치명 -10 · 경고 -3 · 참고 -1)<br>
+        발견된 문제 <b>6건</b> · 검사 오류 0건
+        
+      </div>
+    </div>
+    
+    <div class="top3">
+      <b>감점 이유 Top 2</b><br>
+      
+      1. <code>V2</code> 흔들림·흐림 — 5건, -15점 (감점의 93.8%)<br>
+      
+      2. <code>L2</code> 성공·실패 표시 없음 — 1건, -1점 (감점의 6.2%)<br>
+      
+    </div>
+    
+  </div>
+
+  <div class="card">
+    <h2 style="margin-top:0; font-size:19px;">검사 12종 결과</h2>
+    <table>
+      <tr><th>검사</th><th>항목</th><th>심각도</th><th>결과</th><th>실행 상태</th><th>검사 범위</th><th>발견</th><th>감점</th></tr>
+      
+      <tr>
+        <td><code>S1</code></td><td>메타·파일 무결성</td>
+        <td class="sev-critical">critical</td>
+        <td class="pass">PASS</td>
+        <td class="rs-complete">complete</td>
+        <td style="font-size:12px;">데이터 50/50 에피소드</td>
+        <td>0건</td><td>0점</td>
+      </tr>
+      
+      <tr>
+        <td><code>S2</code></td><td>차원·스키마 정합성</td>
+        <td class="sev-critical">critical</td>
+        <td class="pass">PASS</td>
+        <td class="rs-complete">complete</td>
+        <td style="font-size:12px;">데이터 50/50 에피소드</td>
+        <td>0건</td><td>0점</td>
+      </tr>
+      
+      <tr>
+        <td><code>S3</code></td><td>시간축</td>
+        <td class="sev-warning">warning</td>
+        <td class="pass">PASS</td>
+        <td class="rs-complete">complete</td>
+        <td style="font-size:12px;">데이터 50/50 에피소드</td>
+        <td>0건</td><td>0점</td>
+      </tr>
+      
+      <tr>
+        <td><code>V1</code></td><td>검은·정지 화면</td>
+        <td class="sev-critical">critical</td>
+        <td class="pass">PASS</td>
+        <td class="rs-complete">complete</td>
+        <td style="font-size:12px;">observation.images.laptop: 디코딩 50/50, 실패 0, 파일없음 0; observation.images.phone: 디코딩 50/50, 실패 0, 파일없음 0</td>
+        <td>0건</td><td>0점</td>
+      </tr>
+      
+      <tr>
+        <td><code>V2</code></td><td>흔들림·흐림</td>
+        <td class="sev-warning">warning</td>
+        <td class="fail">FAIL</td>
+        <td class="rs-complete">complete</td>
+        <td style="font-size:12px;">observation.images.laptop: 디코딩 50/50, 실패 0, 파일없음 0; observation.images.phone: 디코딩 50/50, 실패 0, 파일없음 0</td>
+        <td>5건</td><td>15점</td>
+      </tr>
+      
+      <tr>
+        <td><code>V3</code></td><td>에피소드 길이 이상</td>
+        <td class="sev-warning">warning</td>
+        <td class="pass">PASS</td>
+        <td class="rs-complete">complete</td>
+        <td style="font-size:12px;">observation.images.laptop: 디코딩 50/50, 실패 0, 파일없음 0; observation.images.phone: 디코딩 50/50, 실패 0, 파일없음 0</td>
+        <td>0건</td><td>0점</td>
+      </tr>
+      
+      <tr>
+        <td><code>A1</code></td><td>범위 이탈</td>
+        <td class="sev-critical">critical</td>
+        <td class="pass">PASS</td>
+        <td class="rs-complete">complete</td>
+        <td style="font-size:12px;">데이터 50/50 에피소드</td>
+        <td>0건</td><td>0점</td>
+      </tr>
+      
+      <tr>
+        <td><code>A2</code></td><td>급격한 점프</td>
+        <td class="sev-warning">warning</td>
+        <td class="pass">PASS</td>
+        <td class="rs-complete">complete</td>
+        <td style="font-size:12px;">데이터 50/50 에피소드</td>
+        <td>0건</td><td>0점</td>
+      </tr>
+      
+      <tr>
+        <td><code>A3</code></td><td>무동작 차원</td>
+        <td class="sev-warning">warning</td>
+        <td class="pass">PASS</td>
+        <td class="rs-complete">complete</td>
+        <td style="font-size:12px;">데이터 50/50 에피소드</td>
+        <td>0건</td><td>0점</td>
+      </tr>
+      
+      <tr>
+        <td><code>A4</code></td><td>중복 에피소드</td>
+        <td class="sev-info">info</td>
+        <td class="pass">PASS</td>
+        <td class="rs-complete">complete</td>
+        <td style="font-size:12px;">데이터 50/50 에피소드</td>
+        <td>0건</td><td>0점</td>
+      </tr>
+      
+      <tr>
+        <td><code>L1</code></td><td>지시문 누락·전부 동일</td>
+        <td class="sev-warning">warning</td>
+        <td class="pass">PASS</td>
+        <td class="rs-complete">complete</td>
+        <td style="font-size:12px;">데이터 50/50 에피소드</td>
+        <td>0건</td><td>0점</td>
+      </tr>
+      
+      <tr>
+        <td><code>L2</code></td><td>성공·실패 표시 없음</td>
+        <td class="sev-info">info</td>
+        <td class="fail">FAIL</td>
+        <td class="rs-complete">complete</td>
+        <td style="font-size:12px;">데이터 50/50 에피소드</td>
+        <td>1건</td><td>1점</td>
+      </tr>
+      
+    </table>
+  </div>
+
+  <div class="card">
+    <h2 style="margin-top:0; font-size:19px;">카메라별 디코딩</h2>
+    <table>
+      <tr><th>카메라</th><th>디코딩 성공</th><th>디코딩 실패</th><th>파일 없음</th><th>프레임(전체/표본)</th><th>백엔드</th></tr>
+      
+      <tr>
+        <td><code>observation.images.laptop</code></td>
+        <td>50개 에피소드</td>
+        <td>0개</td>
+        <td>0개</td>
+        <td>24263 / 24263</td>
+        <td>ffmpeg</td>
+      </tr>
+      
+      <tr>
+        <td><code>observation.images.phone</code></td>
+        <td>50개 에피소드</td>
+        <td>0개</td>
+        <td>0개</td>
+        <td>24263 / 24263</td>
+        <td>ffmpeg</td>
+      </tr>
+      
+    </table>
+  </div>
+
+  <div class="card">
+    <h2 style="margin-top:0; font-size:19px;">에피소드별 결함 목록</h2>
+    
+    <table>
+      <tr><th>검사</th><th>에피소드</th><th>심각도</th><th>처분</th><th>내용 (근거 수치 포함)</th></tr>
+      
+      <tr>
+        <td><code>L2</code></td>
+        <td>전체</td>
+        <td class="sev-info">info</td>
+        <td>-</td>
+        <td>no success/failure label found in episode metadata (failed episodes cannot be told apart)</td>
+      </tr>
+      
+      <tr>
+        <td><code>V2</code></td>
+        <td>13</td>
+        <td class="sev-warning">warning</td>
+        <td><span class="disp-review">review</span></td>
+        <td>unstable video [observation.images.laptop]: median frame diff 2.88 &gt; 1.6 x dataset median 1.27</td>
+      </tr>
+      
+      <tr>
+        <td><code>V2</code></td>
+        <td>17</td>
+        <td class="sev-warning">warning</td>
+        <td><span class="disp-review">review</span></td>
+        <td>unstable video [observation.images.laptop]: median frame diff 2.07 &gt; 1.6 x dataset median 1.27</td>
+      </tr>
+      
+      <tr>
+        <td><code>V2</code></td>
+        <td>28</td>
+        <td class="sev-warning">warning</td>
+        <td><span class="disp-review">review</span></td>
+        <td>unstable video [observation.images.laptop]: median frame diff 2.82 &gt; 1.6 x dataset median 1.27</td>
+      </tr>
+      
+      <tr>
+        <td><code>V2</code></td>
+        <td>39</td>
+        <td class="sev-warning">warning</td>
+        <td><span class="disp-review">review</span></td>
+        <td>unstable video [observation.images.laptop]: median frame diff 2.18 &gt; 1.6 x dataset median 1.27</td>
+      </tr>
+      
+      <tr>
+        <td><code>V2</code></td>
+        <td>48</td>
+        <td class="sev-warning">warning</td>
+        <td><span class="disp-review">review</span></td>
+        <td>unstable video [observation.images.laptop]: median frame diff 2.49 &gt; 1.6 x dataset median 1.27</td>
+      </tr>
+      
+    </table>
+    
+    
+    <p>보류(review) 에피소드 5개는 review_index.json에 따로 정리했습니다 — 경계 측정값이라 자동 제외하지 않고 사람 확인이 필요합니다.</p>
+    
+    
+  </div>
+
+  
+  <div class="card">
+    <h2 style="margin-top:0; font-size:19px;">고지 · 해석 범위</h2>
+    <ul style="margin:0; padding-left:20px; line-height:1.8; font-size:14px;">
+      
+      <li>범위 고지: RoboAudit는 데이터셋의 구조·통계적 이상을 검사하는 도구이며, 학습 성능이나 로봇의 안전성을 보증하지 않습니다.</li>
+      
+    </ul>
+  </div>
+  
+
+  <p style="text-align:center; color:#8a97ad; font-size:12.5px;">
+    RoboAudit v0.2.1 · 규칙 rules-2026-11-15.2 · 입력 지문 e009f084b5f310bf…<br>
+    원본 데이터는 읽기만 했습니다 · 깨끗한 에피소드 목록은 clean_index.json, 보류 목록은 review_index.json 참조
+  </p>
+</div>
+</body>
+</html>

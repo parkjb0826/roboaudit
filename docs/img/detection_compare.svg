@@ -1,5 +1,5 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="980" height="330" viewBox="0 0 980 330" font-family="sans-serif">
-  <rect x="0" y="0" width="980" height="330" fill="#ffffff"/>
+<svg xmlns="http://www.w3.org/2000/svg" width="980" height="452" viewBox="0 0 980 452" font-family="sans-serif">
+  <rect x="0" y="0" width="980" height="452" fill="#ffffff"/>
   <text x="20" y="34" font-size="17" font-weight="bold" fill="#1f3a5f">Planted-defect test — 43 known defects, same data, same ground truth</text>
 
   <!-- Group 1: reached a verdict -->
@@ -12,18 +12,28 @@
   <text x="426" y="136" font-size="14" font-weight="bold" fill="#1f3a5f">22</text>
   <text x="458" y="136" font-size="12" fill="#4a5568">(15 exclude + 7 correctly pinpointed as unverifiable)</text>
 
-  <!-- Group 2: missed entirely -->
-  <text x="20" y="182" font-size="13.5" font-weight="bold" fill="#4a5568">Missed entirely</text>
+  <!-- Group 2: recorded as a finding only -->
+  <text x="20" y="182" font-size="13.5" font-weight="bold" fill="#4a5568">Recorded as a finding only (no verdict)</text>
   <text x="20" y="212" font-size="13" fill="#1f3a5f">RoboAudit</text>
   <rect x="130" y="194" width="3" height="26" fill="#2c5282"/>
   <text x="143" y="212" font-size="14" font-weight="bold" fill="#1f3a5f">0</text>
   <text x="20" y="246" font-size="13" fill="#1f3a5f">RDA 0.12.4</text>
-  <rect x="130" y="228" width="247" height="26" fill="#a0aec0"/>
-  <text x="387" y="246" font-size="14" font-weight="bold" fill="#1f3a5f">19</text>
-  <text x="419" y="246" font-size="12" fill="#4a5568">(mostly check types RDA does not implement)</text>
+  <rect x="130" y="228" width="26" height="26" fill="#a0aec0"/>
+  <text x="166" y="246" font-size="14" font-weight="bold" fill="#1f3a5f">2</text>
+  <text x="188" y="246" font-size="12" fill="#4a5568">(signal recorded at metric level; the verdict stayed PASS)</text>
 
-  <line x1="20" y1="272" x2="960" y2="272" stroke="#b6c2d2"/>
-  <text x="20" y="294" font-size="12" fill="#4a5568">The defect suite was built by the RoboAudit authors — a home-field test, so read it as one. RDA was run in its most</text>
-  <text x="20" y="312" font-size="12" fill="#4a5568">complete mode (--full) without a platform profile, and it has its own separate blind test. On clean data both tools</text>
-  <text x="20" y="330" font-size="12" fill="#4a5568">produced 0 false-positive verdicts (40 episodes).</text>
+  <!-- Group 3: outside the tool's check set -->
+  <text x="20" y="292" font-size="13.5" font-weight="bold" fill="#4a5568">Outside the tool's check set (no verdict, no finding)</text>
+  <text x="20" y="322" font-size="13" fill="#1f3a5f">RoboAudit</text>
+  <rect x="130" y="304" width="3" height="26" fill="#2c5282"/>
+  <text x="143" y="322" font-size="14" font-weight="bold" fill="#1f3a5f">0</text>
+  <text x="20" y="356" font-size="13" fill="#1f3a5f">RDA 0.12.4</text>
+  <rect x="130" y="338" width="247" height="26" fill="#a0aec0"/>
+  <text x="387" y="356" font-size="14" font-weight="bold" fill="#1f3a5f">19</text>
+  <text x="419" y="356" font-size="12" fill="#4a5568">(check types RDA does not implement)</text>
+
+  <line x1="20" y1="382" x2="960" y2="382" stroke="#b6c2d2"/>
+  <text x="20" y="404" font-size="12" fill="#4a5568">The defect suite was built by the RoboAudit authors — a home-field test, so read it as one. RDA was run with</text>
+  <text x="20" y="422" font-size="12" fill="#4a5568">--full (all checks enabled) but without a platform profile, and it has its own separate blind test. On clean data</text>
+  <text x="20" y="440" font-size="12" fill="#4a5568">both tools produced 0 false-positive verdicts (40 episodes).</text>
 </svg>

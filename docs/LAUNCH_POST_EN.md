@@ -48,16 +48,17 @@ Three numbers from our own testing:
    (BackwardCompatibilityError).
 3. **On real public data it stays honest about uncertainty.** Auditing
    three Hub datasets gave 79/C, 84/B, and 44/F. The F was a partial
-   copy missing one camera's files entirely — instead of passing it
-   silently, the audit flags itself *incomplete*. Borderline episodes
+   copy (a 166 MB download covering only one of its two declared
+   cameras — the upstream dataset may be complete) — instead of
+   passing it silently, the audit flags itself *incomplete*. Borderline episodes
    (a "shake" flag that is really just a busy episode) go to `review`
    for a human, not into the bin.
 
 The limitations are real, and they are printed in the report: the score
 is a relative indicator, not an absolute quality measure; nothing here
 guarantees better training outcomes; and the borderline threshold
-(1.5×) is provisional — calibrated on synthetic injections plus a
-handful of real datasets.
+(1.5×) is provisional — calibrated on synthetic injections plus
+three real datasets.
 
 That last point is why I am posting. RoboAudit has an opt-in case
 sharing mechanism: `roboaudit share` produces a whitelist-extracted summary

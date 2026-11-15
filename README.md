@@ -50,25 +50,29 @@ mode, exit codes) are in [Install](#install) and [Usage](#usage) below.
 ![Report cards for three real public datasets: aloha transfer cube (sim) scores 79 out of 100, grade C, with 0 episodes excluded and 2 sent to review; so100_battery scores 84, grade B, with 0 excluded and 5 in review; so101_teleop_vials (partial copy) scores 44, grade F, flagged as an incomplete audit, with 7 excluded and 8 in review.](docs/img/report_cards.svg)
 
 Real audits of three public datasets — not demos, not synthetic data
-(full method and caveats in [Measured results](#measured-results-not-marketing-numbers)):
+(full method and caveats in [Measured results](#measured-results-not-marketing-numbers)).
+One caveat up front: these three datasets were also used to calibrate
+the disposition thresholds, so read their grades as in-sample results:
 
 | Dataset | Format | Episodes | Score | Exclude / Review | One-line verdict |
 |---|---|---|---|---|---|
 | `lerobot/aloha_sim_transfer_cube_scripted` | v3.0 | 50 | **79 / C** | 0 / 2 | Two episodes sit just past a range-band edge (measured at 0.28–0.44 of the exclusion margin) — sent to a human, not dropped |
 | `00ri/so100_battery` | v2.1 | 50 | **84 / B** | 0 / 5 | Five "shake" flags that look like busy episodes rather than camera shake — all review, none auto-dropped; both declared cameras audited |
-| `sreetz-nv/so101_teleop_vials_rack_left` (partial copy) | v3.0 | 75 | **44 / F** | 7 / 8 | One declared camera's files are missing entirely, so the audit is flagged **incomplete** instead of passing silently; 15 jump findings split by measured strength |
+| `sreetz-nv/so101_teleop_vials_rack_left` (partial copy) | v3.0 | 75 | **44 / F** | 7 / 8 | Audited from a **partial copy** (a 166 MB download covering only one of the two declared cameras): the missing camera is a property of this copy — the upstream dataset may be complete. The audit is flagged **incomplete** instead of passing silently; 15 jump findings split by measured strength |
 
 ## How it compares
 
-![Bar chart of the planted-defect test with 43 known defects: RoboAudit reached a verdict on all 43 and missed 0; RDA 0.12.4 reached a verdict on 22 (15 exclude plus 7 unverifiable) and missed 19. The defect suite was built by the RoboAudit authors — a home-field test.](docs/img/detection_compare.svg)
+![Bar chart of the planted-defect test with 43 known defects: RoboAudit reached a verdict on all 43; RDA 0.12.4 reached a verdict on 22 (15 exclude plus 7 unverifiable), recorded 2 more as findings only, and the remaining 19 fell outside its check set. The defect suite was built by the RoboAudit authors — a home-field test.](docs/img/detection_compare.svg)
 
 Head-to-head with RDA (Robot Data Audit, the comparable open-source
-auditor on PyPI), run in its most complete mode on the same data:
+auditor on PyPI), run on the same data in its full mode (`--full`, every
+check enabled) but without a platform profile:
 
 | | RoboAudit | RDA 0.12.4 |
 |---|---|---|
 | Planted defects (43) reaching a verdict | **43** | 22 (15 exclude + 7 correctly pinpointed as unverifiable) |
-| Planted defects missed entirely | **0** | 19 — mostly check types it does not implement (state jumps, range violations, dead dimensions, duplicates, instruction problems, episode boundaries) |
+| Recorded as a finding only (no verdict) | 0 | 2 |
+| Outside the tool's check set (no verdict, no finding) | **0** | 19 — check types RDA does not implement (state jumps, range violations, dead dimensions, duplicates, instruction problems, episode boundaries) |
 | False-positive verdicts on clean data (40 episodes) | 0 | 0 |
 | Behaviour on the 3 real datasets above | Borderline findings → `review` | All-pass on the two complete datasets; refused a verdict on the partial copy |
 
@@ -164,9 +168,9 @@ Exit codes are part of the interface, so the tool can gate a pipeline:
 | Code | Meaning |
 |---|---|
 | 0 | Audit complete — every check covered its full scope (regardless of how many defects were found) |
-| 3 | Audit finished but **incomplete** — some check ran partially or errored; the report says which and why |
-| 2 | Input error — not a LeRobot dataset folder, or `--out` points inside the dataset folder (refused, to protect the original data) |
 | 1 | Unexpected runtime failure |
+| 2 | Input error — not a LeRobot dataset folder, or `--out` points inside the dataset folder (refused, to protect the original data) |
+| 3 | Audit finished but **incomplete** — some check ran partially or errored; the report says which and why |
 
 **Exit code 0 means the audit ran to completion with full coverage. It
 does NOT mean the dataset passed** — a complete audit can still find
@@ -198,10 +202,26 @@ are recorded, with the checks that flagged them, in the
 import json
 
 index = json.load(open("audit_out/clean_index.json"))
-keep = set(index["clean_episodes"])   # episode_index values with no finding
+result = json.load(open("audit_out/result.json"))
 
-# keep only audited-clean episodes when building your training set:
-train_episodes = [ep for ep in my_episode_ids if ep in keep]
+# 1. If the audit was incomplete, the indexes are not final — a check
+#    that could not run may have missed defects (see report.html):
+if result["incomplete_audit"]:
+    raise SystemExit("Incomplete audit: indexes are not final")
+
+keep = set(index["clean_episodes"])   # episode_index values with no finding
+review = {e["episode_index"] for e in index["review_episodes"]}
+
+# 2. Decide on the review episodes explicitly — do not drop them by
+#    accident. Inspect them first, then name the ones you accept:
+approved_after_review = set()  # e.g. {3, 17}, once you have looked
+
+selected = sorted(keep | approved_after_review)
+
+# 3. Pass the selection to your training set — with LeRobot, the
+#    `episodes=` argument of LeRobotDataset takes exactly this list:
+#    ds = LeRobotDataset("you/dataset", episodes=selected)
+train_episodes = [ep for ep in my_episode_ids if ep in set(selected)]
 ```
 
 `review_episodes` and `excluded_episodes` in the same file are lists of
@@ -212,7 +232,7 @@ each episode was held back before deciding what to do with it.
 
 RoboAudit's disposition thresholds (such as the 1.5× borderline margin)
 are working values, not final constants: they were calibrated on
-synthetic injections plus a handful of real datasets and have not yet
+synthetic injections plus three real datasets and have not yet
 been validated against many adjudicated real-world cases. The honest
 way to validate them is to collect many real audit cases — which is
 why RoboAudit has an **opt-in** case sharing mechanism.
@@ -289,6 +309,19 @@ Each episode also gets a disposition:
 - **keep** — no finding was recorded for this episode by the checks
   that ran. Listed in `clean_index.json` (`clean_episodes`).
 
+Score and disposition are computed independently, so the two do not
+scale together. The score deducts per recorded finding by severity;
+a disposition instead depends on how far past its threshold a
+measurement sits (margin ratio ≥ 1.5× → exclude, below that → review;
+info findings are always review, and findings with no measurable
+margin — a missing file, a NaN — exclude at warning/critical
+severity). Dataset-level findings deduct from the score but do not by
+themselves change any episode's disposition. In the sreetz report
+card, for example, the seven excluded episodes carry warning-level
+jump findings (−3 each): the −56 total behind the 44 is 15 jump
+warnings (−45) plus one dataset-level critical for the missing
+camera (−10) and one info note (−1).
+
 Separately, if any check could not cover its full scope (e.g. a camera's
 files are missing, some videos failed to decode), the audit is flagged
 **incomplete** in the report and via exit code 3. A failed check never
@@ -297,9 +330,10 @@ masquerades as a pass.
 **Incomplete audits still write `clean_index.json`** — read it with the
 flag in mind. There, `clean_episodes` means "no finding was recorded
 by the checks that could run"; it does **not** mean the episode passed
-the checks that could not run. In the sreetz report card above, one
-declared camera was missing entirely, so no episode was ever checked
-against it — yet 60 episodes are listed as clean. Check
+the checks that could not run. In the sreetz report card above, the
+partial copy we audited was missing one declared camera entirely, so
+no episode was ever checked against it — yet 60 episodes are listed
+as clean. Check
 `incomplete_audit` in `result.json` (or the exit code) before treating
 the list as final.
 
@@ -321,15 +355,16 @@ On three real public datasets (audited on a small shared-CPU VM, roughly
 |---|---|---|---|---|
 | `lerobot/aloha_sim_transfer_cube_scripted` | v3.0 | 50 | **79 / C** | 2 borderline episodes sent to review |
 | `00ri/so100_battery` | v2.1 | 50 | **84 / B** | 5 borderline episodes sent to review; both cameras audited |
-| `sreetz-nv/so101_teleop_vials_rack_left` (partial copy) | v3.0 | 75 | **44 / F** | Audit flagged **incomplete**: one declared camera's files are entirely missing — previously this passed silently |
+| `sreetz-nv/so101_teleop_vials_rack_left` (partial copy) | v3.0 | 75 | **44 / F** | Partial copy (166 MB, one of the two declared cameras): audit flagged **incomplete** — that camera's files are absent from this copy; the upstream dataset may differ |
 
 On a defect-injection suite built by the RoboAudit authors (43 known defects
 planted across both formats — a home-field test, so read it as such),
 RoboAudit detected **43/43** with **0 false positives** on 40 clean synthetic episodes. The
 comparable open-source tool RDA (Robot Data Audit, PyPI) reached a verdict
 on 22 of the same 43 (15 exclude + 7 unverifiable), recorded 2 more as
-findings only, and missed 19 — mostly check types it does not implement
-(action-state jumps, instruction problems, episode boundaries). On real
+findings only, and the remaining 19 fell outside its check set — it
+implements no checks for action-state jumps, instruction problems,
+episode boundaries, and similar defect types. On real
 data, RDA's conservative all-pass behaviour was the more cautious one;
 RoboAudit's own early exclusions on real data were themselves borderline,
 which is exactly why the `review` disposition now exists.
@@ -412,7 +447,7 @@ MIT — see [LICENSE](LICENSE).
 |---|---|---|---|---|
 | `lerobot/aloha_sim_transfer_cube_scripted` | v3.0 | **79 / C** | 0 / 2 | 범위 경계를 살짝 넘은 2건은 자동 제외가 아니라 사람 확인(보류)으로 |
 | `00ri/so100_battery` | v2.1 | **84 / B** | 0 / 5 | 흔들림으로 잡힌 5건이 실제로는 동작 많은 에피소드로 보여 전부 보류; 카메라 2대 모두 감사 |
-| `sreetz-nv/so101_teleop_vials_rack_left` (부분 복사본) | v3.0 | **44 / F** | 7 / 8 | 선언된 카메라 1대의 파일이 통째로 없어 "불완전한 감사"라고 명시; 점프 15건은 측정 강도로 제외/보류 분리 |
+| `sreetz-nv/so101_teleop_vials_rack_left` (부분 복사본) | v3.0 | **44 / F** | 7 / 8 | 부분 복사본(166MB, 선언된 카메라 2대 중 1대만 다운로드)으로 감사 — 없는 카메라는 이 복사본의 속성이고 원본 데이터셋은 완전할 수 있음; "불완전한 감사"로 명시; 점프 15건은 측정 강도로 제외/보류 분리 |
 
 - v2.1·v3.0 형식을 자체 파서로 직접 읽습니다 (LeRobot 0.7.0 기준 공식
   로더가 거부하는 v2.1도 변환 없이 읽음).

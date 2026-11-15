@@ -59,7 +59,11 @@ two cameras, and one of them (the ego camera) has **no files at all** —
 every episode is missing it. RoboAudit records that as a dataset-level
 critical finding, marks the video checks partial, and stamps the whole
 audit **incomplete** (exit code 3). A missing camera must never
-masquerade as a passed check.
+masquerade as a passed check. To be plain about whose gap this is: our
+copy was a partial download (166 MB) that included only one of the two
+declared cameras, so the missing camera is a property of this copy —
+the upstream dataset as published may well be complete, and the 44/F
+grades the copy we held, not necessarily the original.
 
 Second: the camera that *is* present shows 15 abrupt-jump (A2)
 findings — command discontinuities of roughly 21°–43°, against a

@@ -1,7 +1,7 @@
 {
   "summary": {
     "dataset": "so100_battery",
-    "path": "real_data/so100_battery",
+    "path": "/home/hatch/workspace/your_files/engi-physical-ai/roboaudit/exp/real_data/so100_battery",
     "format": "v2.1",
     "video_key": "observation.images.laptop",
     "video_keys": [
@@ -23,6 +23,22 @@
   "notices": [
     "범위 고지: RoboAudit는 데이터셋의 구조·통계적 이상을 검사하는 도구이며, 학습 성능이나 로봇의 안전성을 보증하지 않습니다."
   ],
+  "diagnostics": {
+    "timestamp_grid": {
+      "is_grid": true,
+      "fps": 30.0,
+      "max_deviation_s": 8.9e-07,
+      "informative": false,
+      "episodes_checked": 50,
+      "rows_checked": 24263,
+      "intervals_checked": 24213,
+      "median_interval_s": 0.033333,
+      "intervals_deviating_gt_1ms": 0,
+      "frame_index_gap_episodes": 0,
+      "message": "Timestamps: synthetic grid (frame_index/fps) — interval-based reasoning not applicable",
+      "note": "grid if max |timestamp - frame_index/fps - episode offset| <= 0.001s across all episodes; offsets are removed per episode because a constant start shift carries no timing information"
+    }
+  },
   "top_factors": [
     {
       "check": "V2",
@@ -249,9 +265,9 @@
   "manifest": {
     "tool": {
       "name": "roboaudit",
-      "version": "0.2.1"
+      "version": "0.3.0"
     },
-    "rules_version": "rules-2026-11-15.2",
+    "rules_version": "rules-2026-11-17.1",
     "thresholds": {
       "black_brightness": 12.0,
       "static_diff": 0.5,
@@ -270,7 +286,11 @@
       "jump_abs": 1.0,
       "jump_dataset_factor": 3.0,
       "dead_std": 1e-06,
-      "len_ratio": 2.0
+      "len_ratio": 2.0,
+      "interval_drop_ratio": 1.5,
+      "interval_normal_lo": 0.8,
+      "interval_normal_hi": 1.25,
+      "state_follow_frac": 0.5
     },
     "disposition": {
       "borderline_margin": 1.5,
@@ -311,7 +331,7 @@
       }
     },
     "sample_frames": null,
-    "audit_seconds": 264.2
+    "audit_seconds": 301.1
   },
   "clean_episodes": [
     0,

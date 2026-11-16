@@ -14,6 +14,11 @@
 - S1: 대표 카메라 외 카메라가 전 에피소드에서 파일이 없으면 데이터셋 단위
   1건으로, 일부만 없으면 에피소드 단위로 보고한다.
 - Ctx가 표본 모드(sample_frames)와 카메라별 영상 통계를 지원한다.
+
+0.3.0 변경 (전부 증거 전용 — 검출·점수·처분 규칙은 바꾸지 않는다):
+- A2 finding에 증거를 덧붙인다: 타임스탬프가 정보성일 때만 계산하는 간격
+  비율 분류와, 지배 차원에서의 observation.state 추종 라벨. 타임스탬프
+  격자 진단은 diagnostics.py가 맡고 Ctx.timestamp_grid()로 공유한다.
 """
 from pathlib import Path
 
@@ -22,7 +27,7 @@ import numpy as np
 
 from .reader import DatasetReader
 
-RULES_VERSION = "rules-2026-11-15.2"
+RULES_VERSION = "rules-2026-11-17.1"
 
 SEVERITY = {
     "S1": "critical", "S2": "critical", "S3": "warning",
@@ -57,6 +62,11 @@ TH = {
     "jump_dataset_factor": 3.0,      # A2: 하한 = max(jump_abs, factor×데이터셋 스텝 q99) (4단계 추가)
     "dead_std": 1e-6,                # A3: 차원 표준편차 미만이면 무동작
     "len_ratio": 2.0,                # V3: 길이가 중앙값의 ratio배 이상/이하이면 이상
+    # --- 0.3.0 증거 전용 (점수·처분에 영향 없음) ---
+    "interval_drop_ratio": 1.5,      # A2 증거: 간격 비율 >= 이 값이면 dropped-frame-looking
+    "interval_normal_lo": 0.8,       # A2 증거: [lo, hi) 구간이면 normal-interval
+    "interval_normal_hi": 1.25,      # A2 증거: 그 외 구간은 ambiguous
+    "state_follow_frac": 0.5,        # A2 증거: state 동시/추종 판정 비율 (FOLLOWUP 방법)
 }
 
 
@@ -73,6 +83,16 @@ class Ctx:
         self.root = root
         self.reader = DatasetReader(root, sample_frames=sample_frames)
         self._vstats = {}
+        self._ts_grid = None
+
+    def timestamp_grid(self):
+        """타임스탬프 격자 진단 (diagnostics.py). 감사당 1회만 계산해 캐시한다.
+        검사 12종이 아니며 점수·처분에 쓰이지 않는다 — A2 증거 게이트와
+        result.json의 diagnostics 항목이 공유한다."""
+        if self._ts_grid is None:
+            from .diagnostics import timestamp_grid_diagnostic
+            self._ts_grid = timestamp_grid_diagnostic(self.reader)
+        return self._ts_grid
 
     def video_stats(self, ep_meta, video_key=None):
         """에피소드 영상 통계. 영상 없으면 None.
@@ -465,6 +485,111 @@ def check_a1(ctx: Ctx):
     return findings
 
 
+def _dim_name(reader, feature_key, dim):
+    """info.features[feature_key].names에서 차원 이름을 해석한다.
+    v2.1은 문자열 리스트, v3.0은 {"motors": [...]} 형태도 있어 둘 다 대응하고,
+    해석할 수 없으면 '키[차원]' 표기로 떨어진다."""
+    feats = reader.info.get("features", {})
+    names = feats.get(feature_key, {}).get("names")
+    if isinstance(names, dict):
+        for v in names.values():
+            if isinstance(v, list) and dim < len(v):
+                return str(v[dim])
+    elif isinstance(names, list) and dim < len(names):
+        return str(names[dim])
+    return f"{feature_key}[{dim}]"
+
+
+def _interval_evidence(ctx: Ctx, d, frame):
+    """A2 증거(0.3.0): 점프 구간 간격 비율. 증거 전용 — 처분에 쓰지 않는다.
+
+    타임스탬프가 정보성(격자가 아님)일 때만 계산한다. 격자 데이터에서는
+    비율이 항상 1.0이라 원인 정보를 담을 수 없기 때문이다
+    (a2_interval_test/RESULTS.md). frame은 np.diff 인덱스 — 점프는
+    row frame과 row frame+1 사이에 있다 (기존 A2와 같은 규약).
+    """
+    diag = ctx.timestamp_grid()
+    if not diag.get("informative"):
+        note = ("timestamps are a synthetic grid (frame_index/fps); "
+                "interval ratio not applicable") if diag.get("is_grid") else \
+               ("timestamp informativeness could not be assessed; "
+                "interval ratio not computed")
+        return {"interval_ratio": None, "interval_class": None,
+                "interval_note": note}
+    ts = np.asarray(d["timestamp"], dtype=np.float64)
+    diffs = np.diff(ts)
+    if frame >= len(diffs):
+        return {"interval_ratio": None, "interval_class": None,
+                "interval_note": "no interval at the jump frame"}
+    normal = float(np.median(diffs))
+    if not np.isfinite(normal) or normal <= 0:
+        return {"interval_ratio": None, "interval_class": None,
+                "interval_note": "episode median interval is not positive"}
+    jump_iv = float(diffs[frame])
+    ratio = jump_iv / normal
+    if ratio >= TH["interval_drop_ratio"]:
+        cls = "dropped-frame-looking"
+    elif TH["interval_normal_lo"] <= ratio < TH["interval_normal_hi"]:
+        cls = "normal-interval"
+    else:
+        cls = "ambiguous"
+    return {"jump_interval_s": round(jump_iv, 6),
+            "normal_interval_s": round(normal, 6),
+            "interval_ratio": round(ratio, 4),
+            "interval_class": cls}
+
+
+def _state_evidence(ctx: Ctx, d, col_name, frame):
+    """A2 증거(0.3.0): 지배 차원 + observation.state 추종 여부. 증거 전용.
+
+    방법은 a2_interval_test/followup_analyze.py와 동일하다: 점프 프레임의
+    지배 차원(스텝 절댓값이 가장 큰 차원)에서, state의 동시 스텝과 착지 후
+    10프레임 내 최대 이탈(점프 전 state 기준)을 재고, 지배 차원 action
+    스텝의 50%를 기준으로 state-simultaneous/follows/absent로 표기한다.
+    state 열 자체의 점프는 '명령에 대한 상태 추종' 개념이 성립하지 않아
+    지배 차원만 기록하고 라벨은 비운다.
+    """
+    arr = d[col_name].astype(np.float64)
+    land = frame + 1
+    if land < 1 or land >= len(arr):
+        return {}
+    step_vec = arr[land] - arr[land - 1]
+    dim = int(np.argmax(np.abs(step_vec)))
+    feat_key = "action" if col_name == "action" else "observation.state"
+    ev = {"dominant_dim": dim,
+          "dominant_dim_name": _dim_name(ctx.reader, feat_key, dim)}
+    if col_name != "action":
+        ev["state_label"] = None
+        ev["state_note"] = ("state-following evidence applies to "
+                            "action-command jumps; this jump is in "
+                            "observation.state itself")
+        return ev
+    sta = d["state"].astype(np.float64)
+    a_step = abs(float(step_vec[dim]))
+    s_step = float(sta[land, dim] - sta[land - 1, dim])
+    win_end = min(land + 10, len(sta) - 1)
+    window = sta[land:win_end + 1, dim]
+    excursion = float(np.max(np.abs(window - sta[land - 1, dim])))
+    follow = float(np.max(np.abs(window - sta[land, dim])))
+    ev.update({
+        "dominant_step": round(a_step, 4),
+        "state_step_at_jump": round(s_step, 4),
+        "state_max_follow_10f": round(follow, 4),
+        "state_max_excursion_10f": round(excursion, 4),
+        "state_follow_fraction": round(excursion / a_step, 3)
+        if a_step > 0 else None,
+    })
+    if a_step <= 0:
+        ev["state_label"] = None
+    elif abs(s_step) >= TH["state_follow_frac"] * a_step:
+        ev["state_label"] = "state-simultaneous"
+    elif excursion >= TH["state_follow_frac"] * a_step:
+        ev["state_label"] = "state-follows"
+    else:
+        ev["state_label"] = "state-absent"
+    return ev
+
+
 def check_a2(ctx: Ctx):
     """급격한 점프: 프레임간 스텝(L2)이 중앙값의 5배를 넘고, 데이터셋 전체
     스텝 분포 기준으로도 극단적인 순간이동.
@@ -473,16 +598,22 @@ def check_a2(ctx: Ctx):
     max(1.0, 3 × 데이터셋 풀링 스텝 q99)로 바꿨다. 실데이터 표본 판정에서
     기존 규칙의 검출 88건이 전부 '스텝형'(점프 후 유지 — 프레임 드롭·빠른
     동작으로 보임)이었고 스파이크형(글리치)은 0건이었다. 근거: stage4_results.md.
+
+    0.3.0: 검출 규칙은 그대로 두고 finding에 증거만 덧붙인다 — 게이트된
+    간격 비율(_interval_evidence)과 state 추종(_state_evidence). 점수·처분
+    산정에는 새 증거를 쓰지 않는다.
     """
     findings = []
     per = []  # (ep, col_name, steps)
     pooled = {"state": [], "action": []}
+    ep_data = {}
     for e in ctx.reader.episodes:
         ep = e["episode_index"]
         try:
             d = ctx.reader.episode_data(e)
         except Exception:
             continue
+        ep_data[ep] = d
         for col_name in ("state", "action"):
             arr = d[col_name].astype(np.float64)
             if len(arr) < 2:
@@ -506,12 +637,15 @@ def check_a2(ctx: Ctx):
         floor = floors.get(col_name, TH["jump_abs"])
         if mx > TH["jump_factor"] * med and mx > floor:
             frame = int(np.nonzero(finite)[0][int(np.argmax(steps_f))])
+            evidence = {"column": col_name, "max_step": round(mx, 4),
+                        "median_step": round(med, 4),
+                        "dataset_floor": round(floor, 4), "frame": frame}
+            evidence.update(_interval_evidence(ctx, ep_data[ep], frame))
+            evidence.update(_state_evidence(ctx, ep_data[ep], col_name, frame))
             findings.append(_f("A2", ep,
                                f"{col_name}: max step {mx:.3f} > {TH['jump_factor']} x median step "
                                f"{med:.3f} and > dataset floor {floor:.3f} at frame {frame}",
-                               {"column": col_name, "max_step": round(mx, 4),
-                                "median_step": round(med, 4),
-                                "dataset_floor": round(floor, 4), "frame": frame}))
+                               evidence))
     return findings
 
 

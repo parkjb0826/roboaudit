@@ -1,7 +1,7 @@
 {
   "summary": {
     "dataset": "sreetz_so101_teleop_vials",
-    "path": "real_data/sreetz_so101_teleop_vials",
+    "path": "/home/hatch/workspace/your_files/engi-physical-ai/roboaudit/exp/real_data/sreetz_so101_teleop_vials",
     "format": "v3.0",
     "video_key": "observation.images.external_D455",
     "video_keys": [
@@ -24,6 +24,22 @@
     "범위 고지: RoboAudit는 데이터셋의 구조·통계적 이상을 검사하는 도구이며, 학습 성능이나 로봇의 안전성을 보증하지 않습니다.",
     "A2(급격한 점프) 해석 고지: A2 보류(review)는 측정값이 경계 근처라는 뜻이며, 이 검사만으로는 기록 결함과 운용 특성(프레임 드롭·빠른 동작 등)을 구분할 수 없습니다. 보류는 무해하다는 판정이 아닙니다."
   ],
+  "diagnostics": {
+    "timestamp_grid": {
+      "is_grid": true,
+      "fps": 30.0,
+      "max_deviation_s": 4.45e-07,
+      "informative": false,
+      "episodes_checked": 75,
+      "rows_checked": 18250,
+      "intervals_checked": 18175,
+      "median_interval_s": 0.033333,
+      "intervals_deviating_gt_1ms": 0,
+      "frame_index_gap_episodes": 0,
+      "message": "Timestamps: synthetic grid (frame_index/fps) — interval-based reasoning not applicable",
+      "note": "grid if max |timestamp - frame_index/fps - episode offset| <= 0.001s across all episodes; offsets are removed per episode because a constant start shift carries no timing information"
+    }
+  },
   "top_factors": [
     {
       "check": "A2",
@@ -192,7 +208,18 @@
         "max_step": 21.4932,
         "median_step": 2.0016,
         "dataset_floor": 21.4482,
-        "frame": 95
+        "frame": 95,
+        "interval_ratio": null,
+        "interval_class": null,
+        "interval_note": "timestamps are a synthetic grid (frame_index/fps); interval ratio not applicable",
+        "dominant_dim": 3,
+        "dominant_dim_name": "wrist_flex.pos",
+        "dominant_step": 17.0268,
+        "state_step_at_jump": -6.6577,
+        "state_max_follow_10f": 40.2267,
+        "state_max_excursion_10f": 46.8844,
+        "state_follow_fraction": 2.754,
+        "state_label": "state-follows"
       },
       "margin_ratio": 1.002
     },
@@ -206,7 +233,18 @@
         "max_step": 31.9511,
         "median_step": 2.4865,
         "dataset_floor": 21.4482,
-        "frame": 199
+        "frame": 199,
+        "interval_ratio": null,
+        "interval_class": null,
+        "interval_note": "timestamps are a synthetic grid (frame_index/fps); interval ratio not applicable",
+        "dominant_dim": 3,
+        "dominant_dim_name": "wrist_flex.pos",
+        "dominant_step": 26.5341,
+        "state_step_at_jump": 10.0587,
+        "state_max_follow_10f": 34.7492,
+        "state_max_excursion_10f": 44.8079,
+        "state_follow_fraction": 1.689,
+        "state_label": "state-follows"
       },
       "margin_ratio": 1.49
     },
@@ -220,7 +258,18 @@
         "max_step": 33.7024,
         "median_step": 2.1935,
         "dataset_floor": 21.4482,
-        "frame": 118
+        "frame": 118,
+        "interval_ratio": null,
+        "interval_class": null,
+        "interval_note": "timestamps are a synthetic grid (frame_index/fps); interval ratio not applicable",
+        "dominant_dim": 3,
+        "dominant_dim_name": "wrist_flex.pos",
+        "dominant_step": 29.4728,
+        "state_step_at_jump": -10.0438,
+        "state_max_follow_10f": 32.4393,
+        "state_max_excursion_10f": 42.4832,
+        "state_follow_fraction": 1.441,
+        "state_label": "state-follows"
       },
       "margin_ratio": 1.571
     },
@@ -234,7 +283,18 @@
         "max_step": 25.2553,
         "median_step": 1.9607,
         "dataset_floor": 21.4482,
-        "frame": 124
+        "frame": 124,
+        "interval_ratio": null,
+        "interval_class": null,
+        "interval_note": "timestamps are a synthetic grid (frame_index/fps); interval ratio not applicable",
+        "dominant_dim": 3,
+        "dominant_dim_name": "wrist_flex.pos",
+        "dominant_step": 20.1383,
+        "state_step_at_jump": -8.4017,
+        "state_max_follow_10f": 32.7867,
+        "state_max_excursion_10f": 41.1883,
+        "state_follow_fraction": 2.045,
+        "state_label": "state-follows"
       },
       "margin_ratio": 1.178
     },
@@ -248,7 +308,18 @@
         "max_step": 36.9888,
         "median_step": 2.2336,
         "dataset_floor": 21.4482,
-        "frame": 217
+        "frame": 217,
+        "interval_ratio": null,
+        "interval_class": null,
+        "interval_note": "timestamps are a synthetic grid (frame_index/fps); interval ratio not applicable",
+        "dominant_dim": 1,
+        "dominant_dim_name": "shoulder_lift.pos",
+        "dominant_step": 27.9245,
+        "state_step_at_jump": -9.4915,
+        "state_max_follow_10f": 47.6422,
+        "state_max_excursion_10f": 57.1336,
+        "state_follow_fraction": 2.046,
+        "state_label": "state-follows"
       },
       "margin_ratio": 1.725
     },
@@ -262,7 +333,18 @@
         "max_step": 30.3646,
         "median_step": 2.433,
         "dataset_floor": 21.4482,
-        "frame": 83
+        "frame": 83,
+        "interval_ratio": null,
+        "interval_class": null,
+        "interval_note": "timestamps are a synthetic grid (frame_index/fps); interval ratio not applicable",
+        "dominant_dim": 5,
+        "dominant_dim_name": "gripper.pos",
+        "dominant_step": 30.0728,
+        "state_step_at_jump": -5.5284,
+        "state_max_follow_10f": 8.5567,
+        "state_max_excursion_10f": 14.0851,
+        "state_follow_fraction": 0.468,
+        "state_label": "state-absent"
       },
       "margin_ratio": 1.416
     },
@@ -276,7 +358,18 @@
         "max_step": 28.4719,
         "median_step": 2.409,
         "dataset_floor": 21.4482,
-        "frame": 221
+        "frame": 221,
+        "interval_ratio": null,
+        "interval_class": null,
+        "interval_note": "timestamps are a synthetic grid (frame_index/fps); interval ratio not applicable",
+        "dominant_dim": 3,
+        "dominant_dim_name": "wrist_flex.pos",
+        "dominant_step": 25.497,
+        "state_step_at_jump": 8.8146,
+        "state_max_follow_10f": 30.1781,
+        "state_max_excursion_10f": 38.9926,
+        "state_follow_fraction": 1.529,
+        "state_label": "state-follows"
       },
       "margin_ratio": 1.327
     },
@@ -290,7 +383,18 @@
         "max_step": 31.7467,
         "median_step": 2.1573,
         "dataset_floor": 21.4482,
-        "frame": 240
+        "frame": 240,
+        "interval_ratio": null,
+        "interval_class": null,
+        "interval_note": "timestamps are a synthetic grid (frame_index/fps); interval ratio not applicable",
+        "dominant_dim": 5,
+        "dominant_dim_name": "gripper.pos",
+        "dominant_step": 31.6896,
+        "state_step_at_jump": 4.1816,
+        "state_max_follow_10f": 14.3806,
+        "state_max_excursion_10f": 18.5623,
+        "state_follow_fraction": 0.586,
+        "state_label": "state-follows"
       },
       "margin_ratio": 1.48
     },
@@ -304,7 +408,18 @@
         "max_step": 21.9186,
         "median_step": 2.3869,
         "dataset_floor": 21.4482,
-        "frame": 276
+        "frame": 276,
+        "interval_ratio": null,
+        "interval_class": null,
+        "interval_note": "timestamps are a synthetic grid (frame_index/fps); interval ratio not applicable",
+        "dominant_dim": 3,
+        "dominant_dim_name": "wrist_flex.pos",
+        "dominant_step": 17.1132,
+        "state_step_at_jump": 8.2618,
+        "state_max_follow_10f": 5.9599,
+        "state_max_excursion_10f": 14.2217,
+        "state_follow_fraction": 0.831,
+        "state_label": "state-follows"
       },
       "margin_ratio": 1.022
     },
@@ -318,7 +433,18 @@
         "max_step": 38.2069,
         "median_step": 2.8116,
         "dataset_floor": 21.4482,
-        "frame": 224
+        "frame": 224,
+        "interval_ratio": null,
+        "interval_class": null,
+        "interval_note": "timestamps are a synthetic grid (frame_index/fps); interval ratio not applicable",
+        "dominant_dim": 3,
+        "dominant_dim_name": "wrist_flex.pos",
+        "dominant_step": 33.0164,
+        "state_step_at_jump": 10.0628,
+        "state_max_follow_10f": 52.2405,
+        "state_max_excursion_10f": 62.3033,
+        "state_follow_fraction": 1.887,
+        "state_label": "state-follows"
       },
       "margin_ratio": 1.781
     },
@@ -332,7 +458,18 @@
         "max_step": 42.5093,
         "median_step": 2.6557,
         "dataset_floor": 21.4482,
-        "frame": 195
+        "frame": 195,
+        "interval_ratio": null,
+        "interval_class": null,
+        "interval_note": "timestamps are a synthetic grid (frame_index/fps); interval ratio not applicable",
+        "dominant_dim": 3,
+        "dominant_dim_name": "wrist_flex.pos",
+        "dominant_step": 33.4486,
+        "state_step_at_jump": 10.0535,
+        "state_max_follow_10f": 59.3448,
+        "state_max_excursion_10f": 69.3984,
+        "state_follow_fraction": 2.075,
+        "state_label": "state-follows"
       },
       "margin_ratio": 1.982
     },
@@ -346,7 +483,18 @@
         "max_step": 32.3168,
         "median_step": 2.9609,
         "dataset_floor": 21.4482,
-        "frame": 173
+        "frame": 173,
+        "interval_ratio": null,
+        "interval_class": null,
+        "interval_note": "timestamps are a synthetic grid (frame_index/fps); interval ratio not applicable",
+        "dominant_dim": 3,
+        "dominant_dim_name": "wrist_flex.pos",
+        "dominant_step": 23.8548,
+        "state_step_at_jump": 9.7659,
+        "state_max_follow_10f": 40.3072,
+        "state_max_excursion_10f": 50.0731,
+        "state_follow_fraction": 2.099,
+        "state_label": "state-follows"
       },
       "margin_ratio": 1.507
     },
@@ -360,7 +508,18 @@
         "max_step": 23.8357,
         "median_step": 2.3838,
         "dataset_floor": 21.4482,
-        "frame": 252
+        "frame": 252,
+        "interval_ratio": null,
+        "interval_class": null,
+        "interval_note": "timestamps are a synthetic grid (frame_index/fps); interval ratio not applicable",
+        "dominant_dim": 3,
+        "dominant_dim_name": "wrist_flex.pos",
+        "dominant_step": 17.0268,
+        "state_step_at_jump": 7.6481,
+        "state_max_follow_10f": 25.6079,
+        "state_max_excursion_10f": 33.256,
+        "state_follow_fraction": 1.953,
+        "state_label": "state-follows"
       },
       "margin_ratio": 1.111
     },
@@ -374,7 +533,18 @@
         "max_step": 32.2082,
         "median_step": 2.7839,
         "dataset_floor": 21.4482,
-        "frame": 147
+        "frame": 147,
+        "interval_ratio": null,
+        "interval_class": null,
+        "interval_note": "timestamps are a synthetic grid (frame_index/fps); interval ratio not applicable",
+        "dominant_dim": 1,
+        "dominant_dim_name": "shoulder_lift.pos",
+        "dominant_step": 24.4864,
+        "state_step_at_jump": 9.0957,
+        "state_max_follow_10f": 29.2268,
+        "state_max_excursion_10f": 38.3225,
+        "state_follow_fraction": 1.565,
+        "state_label": "state-follows"
       },
       "margin_ratio": 1.502
     },
@@ -388,7 +558,18 @@
         "max_step": 39.698,
         "median_step": 2.2536,
         "dataset_floor": 21.4482,
-        "frame": 257
+        "frame": 257,
+        "interval_ratio": null,
+        "interval_class": null,
+        "interval_note": "timestamps are a synthetic grid (frame_index/fps); interval ratio not applicable",
+        "dominant_dim": 3,
+        "dominant_dim_name": "wrist_flex.pos",
+        "dominant_step": 33.3621,
+        "state_step_at_jump": 10.0526,
+        "state_max_follow_10f": 44.4687,
+        "state_max_excursion_10f": 54.5213,
+        "state_follow_fraction": 1.634,
+        "state_label": "state-follows"
       },
       "margin_ratio": 1.851
     },
@@ -418,9 +599,9 @@
   "manifest": {
     "tool": {
       "name": "roboaudit",
-      "version": "0.2.1"
+      "version": "0.3.0"
     },
-    "rules_version": "rules-2026-11-15.2",
+    "rules_version": "rules-2026-11-17.1",
     "thresholds": {
       "black_brightness": 12.0,
       "static_diff": 0.5,
@@ -439,7 +620,11 @@
       "jump_abs": 1.0,
       "jump_dataset_factor": 3.0,
       "dead_std": 1e-06,
-      "len_ratio": 2.0
+      "len_ratio": 2.0,
+      "interval_drop_ratio": 1.5,
+      "interval_normal_lo": 0.8,
+      "interval_normal_hi": 1.25,
+      "state_follow_frac": 0.5
     },
     "disposition": {
       "borderline_margin": 1.5,
@@ -554,7 +739,7 @@
       }
     },
     "sample_frames": null,
-    "audit_seconds": 124.7
+    "audit_seconds": 126.6
   },
   "clean_episodes": [
     0,

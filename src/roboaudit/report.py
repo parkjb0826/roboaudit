@@ -52,6 +52,9 @@ _TEMPLATE = Template("""<!DOCTYPE html>
       <div>깨끗한 에피소드<b>{{ r.clean_episodes | length }}개</b></div>
       <div>감사 카메라<b>{{ r.summary.video_keys | join(', ') }}</b></div>
     </div>
+    {% if r.diagnostics and r.diagnostics.timestamp_grid %}
+    <div style="margin-top:12px; font-size:14px; color:#44506a;">⏱ {{ r.diagnostics.timestamp_grid.message }}</div>
+    {% endif %}
   </div>
 
   {% if r.incomplete_audit %}

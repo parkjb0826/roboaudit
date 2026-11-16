@@ -6,6 +6,11 @@
   필수 검사가 불완전하면 incomplete_audit=True 로 종합에 명시한다.
 - 처분 3단계: 에피소드를 exclude/review/keep으로 나눈다 (disposition.py).
 - 감점 Top 3 요인과 재현 기록(run_manifest)을 결과에 포함한다.
+
+0.3.0 추가 (전부 증거·진단 전용, 점수·등급·처분 불변):
+- 타임스탬프 격자 진단(diagnostics.py)을 결과의 diagnostics 항목과
+  성적표 상단 한 줄로 보고한다. 검사 12종에는 넣지 않는다.
+- A2 finding에 게이트된 간격 비율과 state 추종 증거를 덧붙인다 (checks12.py).
 """
 import hashlib
 import shutil
@@ -179,6 +184,7 @@ def audit_dataset(root, sample_frames=None) -> dict:
         "total_deduction": total_deduction,
         "incomplete_audit": incomplete,
         "notices": notices,
+        "diagnostics": {"timestamp_grid": ctx.timestamp_grid()},
         "top_factors": top_factors,
         "checks": check_table,
         "findings": findings,

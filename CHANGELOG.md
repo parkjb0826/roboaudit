@@ -2,9 +2,53 @@
 
 All notable changes to RoboAudit are documented here.
 Rules version is tracked separately inside every report's run manifest
-(`rules-2026-11-15.2` as of 0.2.2).
+(`rules-2026-11-17.1` as of 0.3.0).
 
-## [0.2.2] - 2026-11-16
+## [0.3.0] - 2026-11-17
+
+Timestamp honesty and richer A2 evidence — evidence only. No check,
+threshold, score, grade, or disposition changed: the three published
+real-dataset baselines are reproduced exactly (aloha 79/C,
+so100_battery 84/B, sreetz vials 44/F, with identical dispositions).
+
+This release was prompted by community feedback on the Hugging Face
+forum: a reader proposed splitting A2 jump findings by the frame
+interval across each jump — a stretched interval suggests a dropped
+frame, a normal one a fast command. Testing that idea showed the
+timestamps in the audited datasets are a synthetic
+`frame_index / fps` grid, which carries no capture-timing information
+at all — so the split is now implemented but gated on the timestamps
+actually being informative.
+
+- **Timestamp-grid diagnostic**: every audit now measures whether the
+  timestamp column is a synthetic `frame_index / fps` grid (per-episode
+  max deviation, interval-deviation and frame-gap counts). The result
+  is recorded as a top-level `diagnostics` block in `result.json` and
+  shown as a plain-language line in the HTML report — e.g.
+  "Timestamps: synthetic grid (frame_index/fps) — interval-based
+  reasoning not applicable" or "Timestamps: informative (real capture
+  timing)". It is a diagnostic, not a 13th check, and is not scored.
+  All three published report-card datasets turned out to be
+  grid-timestamped (max deviation ≤ 9×10⁻⁷ s).
+- **Gated A2 interval-ratio evidence**: when — and only when — the
+  diagnostic marks timestamps as informative, each A2 finding now
+  carries `interval_ratio` (interval across the jump ÷ the episode's
+  median interval) and `interval_class` (`dropped-frame-looking` at
+  ratio ≥ 1.5, `normal-interval` at 0.8–1.25, otherwise `ambiguous`).
+  On grid-timestamped data the fields are `interval_ratio: null` with
+  an `interval_note` stating why. Evidence only — the ratio does not
+  change any disposition in this version.
+- **A2 state-following evidence**: each A2 finding on the action column
+  now records the dominant action dimension, the `observation.state`
+  step at the jump frame, the state's follow-through within the next
+  10 frames (and the fraction of the action step it covers), and a
+  `state_label` (`state-simultaneous` / `state-follows` /
+  `state-absent`) — so a disposition can cite how the real joints
+  responded, not just the size of the command jump. On the sreetz
+  vials findings this reproduces the published follow-up analysis
+  exactly (14 state-follows, 1 state-absent, 0 state-simultaneous;
+  gripper dominant in only 2 of 15).
+- Rules version is now `rules-2026-11-17.1`.
 
 Opt-in case sharing only — no changes to checks, thresholds, or
 disposition criteria, and nothing is ever transmitted automatically.

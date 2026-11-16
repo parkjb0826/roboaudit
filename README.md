@@ -184,8 +184,8 @@ code 3 (incomplete) as "the indexes are not final" (see
 
 | File | Contents |
 |---|---|
-| `report.html` | Human-readable report card: score and grade, top-3 deduction factors, per-check run status and findings, per-camera decode statistics, scope notices |
-| `result.json` | Machine-readable full result, including a **run manifest** (tool/rules versions, thresholds actually applied, input fingerprint, decode backends) to help reproduce runs and compare their settings and results |
+| `report.html` | Human-readable report card: score and grade, top-3 deduction factors, per-check run status and findings, per-camera decode statistics, a timestamp-provenance line (see below), scope notices |
+| `result.json` | Machine-readable full result, including a **run manifest** (tool/rules versions, thresholds actually applied, input fingerprint, decode backends) to help reproduce runs and compare their settings and results, plus a **diagnostics** block recording whether the dataset's timestamps are a synthetic `frame_index / fps` grid |
 | `clean_index.json` | The episode index file: `clean_episodes` (episodes assigned `keep`), plus the `excluded_episodes` and `review_episodes` lists with the checks that flagged each one |
 | `review_index.json` | Borderline episodes a human should look at before deciding — these are **not** in `clean_episodes` (see below) |
 
@@ -347,6 +347,31 @@ the list as final.
 | Action | A1 out-of-range values · A2 abrupt jumps · A3 dead (never-moving) dimensions · A4 duplicate episodes |
 | Instruction | L1 missing or identical task text · L2 no success/failure labels |
 
+### Timestamp diagnostic and A2 evidence
+
+Every audit also measures the dataset's timestamps themselves. Many
+LeRobot datasets store timestamps synthesised as `frame_index / fps`,
+which carry no capture-timing information. The audit reports which
+case it found — a line in `report.html` and a `diagnostics` block in
+`result.json` — because any reasoning about *when* frames happened is
+only valid when the timestamps are real. (All three report-card
+datasets above are grid-timestamped.)
+
+A2 (abrupt jump) findings carry two extra pieces of evidence:
+
+- **Interval ratio** — the frame interval across the jump divided by
+  the episode's median interval, classified as `dropped-frame-looking`
+  (≥ 1.5), `normal-interval` (0.8–1.25), or `ambiguous`. This is
+  computed **only when the timestamps are informative**; on
+  grid-timestamped data the field is `null` with a note saying why.
+  It is evidence for a human reader — it does not change dispositions.
+- **State following** — for the dimension that jumped, how the real
+  joints (`observation.state`) responded: whether the state stepped at
+  the same frame (`state-simultaneous`), followed over the next frames
+  (`state-follows`), or showed no corresponding movement
+  (`state-absent`). This lets a disposition cite behaviour, not just
+  the size of the command jump.
+
 ## Measured results (not marketing numbers)
 
 On three real public datasets (audited on a small shared-CPU VM, roughly
@@ -465,6 +490,11 @@ MIT — see [LICENSE](LICENSE).
   들어가지 않고, `clean_index.json`의 `excluded_episodes` 항목과
   `result.json`에 걸린 검사 코드와 함께 기록됩니다. 보류 에피소드도
   유지 목록에는 들어가지 않습니다.
+- 타임스탬프가 `frame_index / fps`로 합성된 격자형인지도 진단해
+  리포트와 `result.json`에 표시합니다 (성적표 데이터셋 3개가 모두
+  격자형이었습니다). A2 점프 발견에는 실제 타임스탬프일 때만 간격
+  비율 증거가 붙고, 실제 관절(state)이 명령을 따라갔는지도 증거로
+  기록됩니다. 점수와 처분은 이 증거들로 바뀌지 않습니다.
 - 라이선스는 MIT입니다.
 - 점수는 절대 품질이 아니라 상대 지표입니다. 학습 성능이나 로봇 안전성을
   보증하지 않으며, 처분 기준값(경계 1.5배)은 아직 잠정값입니다.

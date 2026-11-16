@@ -25,10 +25,7 @@ keep / review / exclude for training-data selection.
 ## Quick start
 
 ```bash
-git clone https://github.com/parkjb0826/roboaudit
-cd roboaudit
-python3 -m venv .venv && source .venv/bin/activate   # recommended
-pip install .
+pip install roboaudit
 roboaudit /path/to/lerobot_dataset --out ./audit_out
 ```
 
@@ -111,13 +108,17 @@ money silently. RoboAudit is the cheap inspection you run *before* training.
 ## Install
 
 ```bash
+pip install roboaudit
+```
+
+Or install from source instead:
+
+```bash
 git clone https://github.com/parkjb0826/roboaudit
 cd roboaudit
 python3 -m venv .venv && source .venv/bin/activate   # recommended
 pip install .
 ```
-
-(Not yet on PyPI — install from the cloned repository for now.)
 
 Requires Python ≥ 3.10 (developed and verified on Linux with
 Python 3.12; other platforms are untested).
@@ -468,8 +469,9 @@ MIT — see [LICENSE](LICENSE).
 - 점수는 절대 품질이 아니라 상대 지표입니다. 학습 성능이나 로봇 안전성을
   보증하지 않으며, 처분 기준값(경계 1.5배)은 아직 잠정값입니다.
 
-설치와 사용법은 위 영문 섹션을 따르세요: 저장소를 clone하고
-`pip install .` 한 뒤 `roboaudit <데이터셋 폴더> --out <출력 폴더>`.
+설치와 사용법은 위 영문 섹션을 따르세요: `pip install roboaudit`로
+설치한 뒤 `roboaudit <데이터셋 폴더> --out <출력 폴더>` (또는 저장소를
+clone해 `pip install .`로 설치).
 
 **사례 공유 (선택 참여, 기본 꺼짐)**: 처분 기준값(경계 1.5배 등)은 아직
 잠정값이라, 여러 실제 데이터셋의 감사 사례가 쌓여야 검증할 수 있습니다.

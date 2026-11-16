@@ -20,14 +20,12 @@ RoboAudit is the inspection I wanted to run *before* that training run.
 It is a small CLI for LeRobot datasets — no robot, no GPU, CPU only:
 
 ```
-git clone https://github.com/parkjb0826/roboaudit
-cd roboaudit
-python3 -m venv .venv && source .venv/bin/activate   # recommended
-pip install .
+pip install roboaudit
 roboaudit /path/to/dataset --out ./audit_out
 ```
 
-(Not on PyPI yet — install from the cloned repository.)
+(Or install from source: clone the repository and run `pip install .`
+inside it.)
 
 It runs 12 rule-and-threshold checks (structure, video, action,
 instruction — no AI inside the checks, so every deduction traces back to

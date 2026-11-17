@@ -19,6 +19,15 @@ LeRobot v2.1 / v3.0 데이터셋을 공통 형태로 읽는다.
   기록한다 (검사 상태 분리의 근거 — 실패가 '정상'으로 집계되지 않게).
 - 표본 모드: sample_frames를 주면 에피소드당 최대 그 수만큼 균등 표본 디코딩.
   표본 전 전체 프레임 수(full count)는 따로 기록해 V3 길이 검사에 쓴다.
+
+0.3.1 변경:
+- 공유 파일(>5,000프레임) 구간 디코딩을 프레임 단위 정확 슬라이스로 교체.
+  0.3.0은 ffmpeg -ss/-t에 밀리초로 반올림한 길이를 넘겨, 구간 경계 프레임이
+  이웃 에피소드에서 딸려 오거나(26장) 내용이 한 프레임 밀리는(25장이지만
+  엉뚱한 구간) 오류가 있었다 (xarm_lift_medium에서 실증, report_cards_02
+  SUMMARY.md 검증 노트). 새 방식은 시작 프레임보다 반 프레임 앞당겨 seek한
+  뒤 -frames:v N으로 정확히 N장만 받는다 — 전수 디코딩 슬라이스와 픽셀
+  단위로 일치함을 xarm 첫/중간/끝 에피소드에서 확인했다.
 """
 import json
 import math
@@ -224,23 +233,51 @@ class DatasetReader:
         cap.release()
         return w, h, n
 
-    def _decode_ffmpeg(self, path: Path, start=None, dur=None, step=1):
-        """ffmpeg(rawvideo 파이프)로 디코딩. AV1 등 OpenCV가 못 읽는 코덱용.
-        step>1이면 select 필터로 균등 표본 디코딩 (표본 모드)."""
+    def _decode_ffmpeg(self, path: Path):
+        """ffmpeg(rawvideo 파이프)로 파일 전체를 디코딩한다. AV1 등 OpenCV가
+        못 읽는 코덱용. 구간 디코딩은 _decode_ffmpeg_segment를 쓴다."""
         if shutil.which("ffmpeg") is None or not path.exists():
             return None
         w, h, _ = self._video_size(path)
         if w <= 0 or h <= 0:
             return None
-        cmd = ["ffmpeg", "-v", "error"]
-        if start is not None:
-            cmd += ["-ss", f"{start:.3f}"]
-        cmd += ["-i", str(path)]
-        if dur is not None:
-            cmd += ["-t", f"{dur:.3f}"]
-        if step and step > 1:
-            cmd += ["-vf", f"select='not(mod(n\\,{step}))'"]
-        cmd += ["-f", "rawvideo", "-pix_fmt", "bgr24", "-an", "-"]
+        cmd = ["ffmpeg", "-v", "error", "-i", str(path),
+               "-f", "rawvideo", "-pix_fmt", "bgr24", "-an", "-"]
+        try:
+            out = subprocess.run(cmd, capture_output=True, timeout=1800).stdout
+        except Exception:
+            return None
+        unit = w * h * 3
+        n = len(out) // unit
+        if n == 0:
+            return None
+        arr = np.frombuffer(out[:n * unit], dtype=np.uint8).reshape(n, h, w, 3)
+        return [arr[i] for i in range(n)]
+
+    def _decode_ffmpeg_segment(self, path: Path, start_frame: int,
+                               n_frames: int, fps: float):
+        """공유 파일에서 [start_frame, start_frame + n_frames) 구간을 프레임
+        단위로 정확히 디코딩한다 (0.3.1).
+
+        방법: 시작 프레임의 반 프레임 앞((start_frame - 0.5)/fps)으로 seek한
+        뒤 -frames:v n_frames 로 정확히 n_frames장만 받는다. ffmpeg의 입력
+        seek는 목표 시각 이후 첫 프레임부터 출력하므로, 반 프레임 앞당긴
+        지점을 넘기면 출력은 정확히 start_frame에서 시작한다 (목표 프레임의
+        pts는 seek 지점보다 뒤, 직전 프레임의 pts는 앞이라 경계가 반 프레임
+        여유 안에서 확정된다). 파일이 구간보다 짧으면 있는 만큼만 돌아오고,
+        그 부족분은 V3가 그대로 본다.
+        """
+        if shutil.which("ffmpeg") is None or not path.exists():
+            return None
+        if n_frames <= 0 or fps <= 0:
+            return None
+        w, h, _ = self._video_size(path)
+        if w <= 0 or h <= 0:
+            return None
+        seek = max(0.0, (start_frame - 0.5) / fps) if start_frame > 0 else 0.0
+        cmd = ["ffmpeg", "-v", "error", "-ss", f"{seek:.6f}", "-i", str(path),
+               "-frames:v", str(int(n_frames)),
+               "-f", "rawvideo", "-pix_fmt", "bgr24", "-an", "-"]
         try:
             out = subprocess.run(cmd, capture_output=True, timeout=1800).stdout
         except Exception:
@@ -322,13 +359,20 @@ class DatasetReader:
                     full = len(seg)
                     frames = seg[::step] if step > 1 else seg
             else:
-                frames = self._decode_ffmpeg(path, start=from_ts,
-                                              dur=to_ts - from_ts, step=step)
+                # 프레임 단위 정확 슬라이스 (0.3.1): 메타 타임스탬프 구간을
+                # 프레임 인덱스로 환산해 정확히 그만큼만 디코딩한다. 표본
+                # 모드의 균등 표본은 작은 파일 경로와 동일하게 디코딩 후
+                # [::step]으로 맞추고, full은 실제 디코딩된 구간 길이다.
+                fps = float(self.info.get("fps", 30))
+                start_frame = int(round(from_ts * fps))
+                n_span = int(round((to_ts - from_ts) * fps))
+                frames = self._decode_ffmpeg_segment(path, start_frame,
+                                                      n_span, fps)
                 if frames is not None:
                     backend = "ffmpeg"
-                    fps = float(self.info.get("fps", 30))
-                    full = int(round((to_ts - from_ts) * fps)) if step > 1 \
-                        else len(frames)
+                    full = len(frames)
+                    if step > 1:
+                        frames = frames[::step]
         if not frames:
             stats["episodes_failed"].add(ep)
             return None

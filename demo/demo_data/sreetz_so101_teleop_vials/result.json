@@ -27,6 +27,8 @@
   "diagnostics": {
     "timestamp_grid": {
       "is_grid": true,
+      "clock_provenance": "synthetic_grid",
+      "interval_regularity": "uniform",
       "fps": 30.0,
       "max_deviation_s": 4.45e-07,
       "informative": false,
@@ -35,9 +37,19 @@
       "intervals_checked": 18175,
       "median_interval_s": 0.033333,
       "intervals_deviating_gt_1ms": 0,
+      "intervals_widened_gt_1ms": 0,
       "frame_index_gap_episodes": 0,
+      "index_gaps": {
+        "episodes_with_gaps": 0,
+        "gap_events": 0,
+        "missing_frames": 0,
+        "locations": [],
+        "locations_truncated": false,
+        "meaning": "frame_index gaps mean rows were removed after recording — a capture-time recorder writes contiguous indices",
+        "provenance": "index-derived, not a clock"
+      },
       "message": "Timestamps: synthetic grid (frame_index/fps) — interval-based reasoning not applicable",
-      "note": "grid if max |timestamp - frame_index/fps - episode offset| <= 0.001s across all episodes; offsets are removed per episode because a constant start shift carries no timing information"
+      "note": "clock_provenance: synthetic_grid if max |timestamp - frame_index/fps - episode offset| <= 0.001s across all episodes (offsets are removed per episode because a constant start shift carries no timing information); interval_regularity is judged from the timestamp intervals themselves. index_gaps are a separate index-derived signal (rows removed after recording): they neither change clock_provenance nor open the interval-ratio gate, and no ratio is ever derived from the index."
     }
   },
   "top_factors": [
@@ -344,7 +356,8 @@
         "state_max_follow_10f": 8.5567,
         "state_max_excursion_10f": 14.0851,
         "state_follow_fraction": 0.468,
-        "state_label": "state-absent"
+        "state_label": "state-absent",
+        "state_note": "unresolved: the state neither stepped with the command nor followed within 10 frames. This is an observation, not evidence for a fast command or for a dropped frame."
       },
       "margin_ratio": 1.416
     },
@@ -599,9 +612,9 @@
   "manifest": {
     "tool": {
       "name": "roboaudit",
-      "version": "0.3.0"
+      "version": "0.3.1"
     },
-    "rules_version": "rules-2026-11-17.1",
+    "rules_version": "rules-2026-11-17.2",
     "thresholds": {
       "black_brightness": 12.0,
       "static_diff": 0.5,
@@ -739,7 +752,7 @@
       }
     },
     "sample_frames": null,
-    "audit_seconds": 126.6
+    "audit_seconds": 126.0
   },
   "clean_episodes": [
     0,

@@ -11,6 +11,14 @@
 - 타임스탬프 격자 진단(diagnostics.py)을 결과의 diagnostics 항목과
   성적표 상단 한 줄로 보고한다. 검사 12종에는 넣지 않는다.
 - A2 finding에 게이트된 간격 비율과 state 추종 증거를 덧붙인다 (checks12.py).
+
+0.3.1 변경 (전부 증거·진단 전용, 점수·등급·처분 불변):
+- 공유 영상 구간의 프레임 단위 정확 슬라이스 (reader.py) — 0.3.0의
+  밀리초 반올림 -t 구간 디코딩이 만들던 가짜 V3 발견을 제거한다.
+- 타임스탬프 진단을 두 축(clock_provenance × interval_regularity)으로
+  분리하고 frame_index 빈틈을 별도 신호로 보고한다 (diagnostics.py).
+- A2 증거에 인덱스 빈틈(index_gap_at_jump)과 state-absent 미해결
+  명시(state_note)를 덧붙인다 (checks12.py).
 """
 import hashlib
 import shutil

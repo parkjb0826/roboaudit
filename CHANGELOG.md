@@ -2,7 +2,62 @@
 
 All notable changes to RoboAudit are documented here.
 Rules version is tracked separately inside every report's run manifest
-(`rules-2026-11-17.1` as of 0.3.0).
+(`rules-2026-11-17.2` as of 0.3.1).
+
+## [0.3.1] - 2026-11-17
+
+A bug fix found by our own Report Cards audit series, plus the
+diagnostic rework promised in the forum thread. No check threshold,
+scoring, or disposition rule changed: the three published baselines
+are reproduced exactly (aloha 79/C, so100_battery 84/B, sreetz vials
+44/F), and of the ten public datasets audited for Report Cards #02,
+nine return identical scores and dispositions under 0.3.1. The one
+that moves is the one the bug was manufacturing findings in.
+
+- **BUG FIX — frame-exact video segment decoding.** Episode segments
+  decoded from large shared video files were sliced with an
+  ffmpeg `-ss`/`-t` window whose start and duration were rounded to
+  milliseconds. On shared files that produced three failure shapes:
+  one frame too many (the next episode's first frame admitted by the
+  rounded duration), one frame too few (window truncated), and —
+  worst — a silent one-frame shift with the correct count, which no
+  finding ever reported. Segments are now decoded frame-exactly:
+  seek to half a frame before the segment start, then cap the output
+  at the declared frame count (`-frames:v N`). Verified pixel-identical
+  to a full sequential decode at the first, middle, and last episodes
+  of an 800-episode shared file, at unchanged audit speed.
+  **Effect:** `lerobot/xarm_lift_medium`, reported as 0/F in the
+  Report Cards #02 audits under 0.3.0 (435 false "video frames ≠ meta
+  length" findings, −1,305 points, all artifacts of this reader bug —
+  the file holds exactly 20,000 frames = 800 × 25), corrects to
+  **80/B** (796 keep / 4 review / 0 exclude; the remaining findings
+  are one A1 excursion, three V2 warnings, and the standing L2 note).
+  The other nine audited datasets are unchanged — their segment
+  geometry never crossed the millisecond rounding boundary (the bug
+  needs a segment duration whose rounding crosses a frame boundary,
+  e.g. 25 frames at 15 fps).
+- **Timestamp diagnostic split into two axes.** The single grid
+  verdict is now reported as two independent questions —
+  `clock_provenance` (`synthetic_grid` vs `real_or_unverified`) and
+  `interval_regularity` (`uniform` / `widened_at_points` /
+  `irregular`) — composed into the report's timestamp line, so the
+  report can no longer call timestamps "uninformative" in one place
+  while another check reports the widened intervals. Gaps in
+  `frame_index` itself are reported as a separate labelled signal,
+  `index_gaps`, meaning **rows removed after recording** (a
+  capture-time recorder writes contiguous indices). The signal is
+  index-derived, not a clock: it never opens the interval-ratio gate,
+  never yields a ratio, and an A2 finding at a gap carries it as a
+  separate `index_gap_at_jump` evidence block, distinct from interval
+  evidence. The legacy `is_grid` / `informative` fields keep their
+  0.3.0 semantics; the ratio gate still opens only on real-clock data.
+- **A2 state-absent evidence is explicitly unresolved.** A
+  `state-absent` finding now carries a `state_note` stating that the
+  state neither stepped with the command nor followed within 10
+  frames, and that this is an observation — not evidence for a fast
+  command or for a dropped frame. (The label itself is unchanged, for
+  comparability with the published cross-checks.)
+- Rules version is now `rules-2026-11-17.2`.
 
 ## [0.3.0] - 2026-11-17
 

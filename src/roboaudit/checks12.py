@@ -19,6 +19,15 @@
 - A2 finding에 증거를 덧붙인다: 타임스탬프가 정보성일 때만 계산하는 간격
   비율 분류와, 지배 차원에서의 observation.state 추종 라벨. 타임스탬프
   격자 진단은 diagnostics.py가 맡고 Ctx.timestamp_grid()로 공유한다.
+
+0.3.1 변경 (전부 증거 전용 — 검출·점수·처분 규칙은 바꾸지 않는다):
+- 진단은 두 축(clock_provenance × interval_regularity)으로 분리됐고,
+  frame_index 빈틈은 인덱스 유래 별도 신호로 보고된다 (diagnostics.py).
+  A2 증거: 점프 지점에 인덱스 빈틈이 있으면 index_gap_at_jump을 출처
+  표기와 함께 덧붙인다. 게이트는 실제 시계일 때만 열리며, 인덱스 유래
+  비율이 normal-interval로 표기되는 일은 없다.
+- state-absent는 '빠른 명령' 쪽으로 기운 판정이 아니라 미해결(unresolved)
+  로 명시한다 (state_note).
 """
 from pathlib import Path
 
@@ -27,7 +36,7 @@ import numpy as np
 
 from .reader import DatasetReader
 
-RULES_VERSION = "rules-2026-11-17.1"
+RULES_VERSION = "rules-2026-11-17.2"
 
 SEVERITY = {
     "S1": "critical", "S2": "critical", "S3": "warning",
@@ -500,31 +509,67 @@ def _dim_name(reader, feature_key, dim):
     return f"{feature_key}[{dim}]"
 
 
+def _index_gap_at_jump(d, frame):
+    """점프 지점의 frame_index 빈틈 (0.3.1, 별도 증거).
+
+    인덱스 빈틈은 '기록 후 행 삭제'를 뜻하는 인덱스 유래 신호다. 시계
+    증거가 아니므로 간격 비율 게이트와 합치지 않고, 비율·분류는 만들지
+    않는다 — 특히 인덱스에서 도출한 비율이 normal-interval로 표기되는
+    일은 없다. 빈틈이 없으면 None.
+    """
+    fi = np.asarray(d["frame_index"], dtype=np.int64)
+    if frame + 1 >= len(fi):
+        return None
+    step = int(fi[frame + 1] - fi[frame])
+    if step <= 1:
+        return None
+    return {"index_step": step, "missing_rows": step - 1,
+            "meaning": "rows removed after recording",
+            "provenance": "index-derived, not a clock"}
+
+
 def _interval_evidence(ctx: Ctx, d, frame):
     """A2 증거(0.3.0): 점프 구간 간격 비율. 증거 전용 — 처분에 쓰지 않는다.
 
-    타임스탬프가 정보성(격자가 아님)일 때만 계산한다. 격자 데이터에서는
+    타임스탬프가 정보성(실제 시계)일 때만 계산한다. 격자 데이터에서는
     비율이 항상 1.0이라 원인 정보를 담을 수 없기 때문이다
     (a2_interval_test/RESULTS.md). frame은 np.diff 인덱스 — 점프는
     row frame과 row frame+1 사이에 있다 (기존 A2와 같은 규약).
+
+    0.3.1: 점프 지점에 frame_index 빈틈이 있으면 게이트와 무관하게
+    index_gap_at_jump을 별도 증거로 덧붙인다 (출처: 인덱스 — 시계 아님).
     """
+    gap = _index_gap_at_jump(d, frame)
     diag = ctx.timestamp_grid()
     if not diag.get("informative"):
         note = ("timestamps are a synthetic grid (frame_index/fps); "
                 "interval ratio not applicable") if diag.get("is_grid") else \
                ("timestamp informativeness could not be assessed; "
                 "interval ratio not computed")
-        return {"interval_ratio": None, "interval_class": None,
-                "interval_note": note}
+        ev = {"interval_ratio": None, "interval_class": None,
+              "interval_note": note}
+        if gap is not None:
+            ev["index_gap_at_jump"] = gap
+            ev["interval_note"] = (
+                note + "; a frame_index gap sits at this jump — reported "
+                "as a separate index-derived signal (rows removed after "
+                "recording), not as interval evidence")
+        return ev
     ts = np.asarray(d["timestamp"], dtype=np.float64)
     diffs = np.diff(ts)
     if frame >= len(diffs):
-        return {"interval_ratio": None, "interval_class": None,
-                "interval_note": "no interval at the jump frame"}
+        ev = {"interval_ratio": None, "interval_class": None,
+              "interval_note": "no interval at the jump frame"}
+        if gap is not None:
+            ev["index_gap_at_jump"] = gap
+        return ev
     normal = float(np.median(diffs))
     if not np.isfinite(normal) or normal <= 0:
-        return {"interval_ratio": None, "interval_class": None,
-                "interval_note": "episode median interval is not positive"}
+        ev = {"interval_ratio": None, "interval_class": None,
+              "interval_note": "episode median interval is not positive"}
+        if gap is not None:
+            ev["index_gap_at_jump"] = gap
+        return ev
     jump_iv = float(diffs[frame])
     ratio = jump_iv / normal
     if ratio >= TH["interval_drop_ratio"]:
@@ -533,10 +578,13 @@ def _interval_evidence(ctx: Ctx, d, frame):
         cls = "normal-interval"
     else:
         cls = "ambiguous"
-    return {"jump_interval_s": round(jump_iv, 6),
-            "normal_interval_s": round(normal, 6),
-            "interval_ratio": round(ratio, 4),
-            "interval_class": cls}
+    ev = {"jump_interval_s": round(jump_iv, 6),
+          "normal_interval_s": round(normal, 6),
+          "interval_ratio": round(ratio, 4),
+          "interval_class": cls}
+    if gap is not None:
+        ev["index_gap_at_jump"] = gap
+    return ev
 
 
 def _state_evidence(ctx: Ctx, d, col_name, frame):
@@ -548,6 +596,10 @@ def _state_evidence(ctx: Ctx, d, col_name, frame):
     스텝의 50%를 기준으로 state-simultaneous/follows/absent로 표기한다.
     state 열 자체의 점프는 '명령에 대한 상태 추종' 개념이 성립하지 않아
     지배 차원만 기록하고 라벨은 비운다.
+
+    0.3.1: state-absent는 원인이 정해지지 않은 미해결(unresolved)이다 —
+    state가 명령과 함께 뛰지도, 뒤따라오지도 않았다는 관찰일 뿐, '빠른
+    명령이었다'는 쪽의 증거로 제시하지 않는다 (state_note로 명시).
     """
     arr = d[col_name].astype(np.float64)
     land = frame + 1
@@ -587,6 +639,10 @@ def _state_evidence(ctx: Ctx, d, col_name, frame):
         ev["state_label"] = "state-follows"
     else:
         ev["state_label"] = "state-absent"
+        ev["state_note"] = ("unresolved: the state neither stepped with "
+                            "the command nor followed within 10 frames. "
+                            "This is an observation, not evidence for a "
+                            "fast command or for a dropped frame.")
     return ev
 
 
@@ -602,6 +658,10 @@ def check_a2(ctx: Ctx):
     0.3.0: 검출 규칙은 그대로 두고 finding에 증거만 덧붙인다 — 게이트된
     간격 비율(_interval_evidence)과 state 추종(_state_evidence). 점수·처분
     산정에는 새 증거를 쓰지 않는다.
+
+    0.3.1: 증거 보강만 추가 — 점프 지점의 인덱스 빈틈(index_gap_at_jump,
+    별도 신호)과 state-absent의 미해결 명시(state_note). 검출 규칙·점수·
+    처분은 그대로다.
     """
     findings = []
     per = []  # (ep, col_name, steps)

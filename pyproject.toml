@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "roboaudit"
-version = "0.3.0"
+version = "0.3.1"
 description = "Health-check CLI for LeRobot robot datasets: 100-point score, per-episode dispositions (exclude / review / keep), and an auditable report."
 readme = "README.md"
 requires-python = ">=3.10"

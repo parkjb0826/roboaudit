@@ -185,7 +185,7 @@ code 3 (incomplete) as "the indexes are not final" (see
 | File | Contents |
 |---|---|
 | `report.html` | Human-readable report card: score and grade, top-3 deduction factors, per-check run status and findings, per-camera decode statistics, a timestamp-provenance line (see below), scope notices |
-| `result.json` | Machine-readable full result, including a **run manifest** (tool/rules versions, thresholds actually applied, input fingerprint, decode backends) to help reproduce runs and compare their settings and results, plus a **diagnostics** block recording whether the dataset's timestamps are a synthetic `frame_index / fps` grid |
+| `result.json` | Machine-readable full result, including a **run manifest** (tool/rules versions, thresholds actually applied, input fingerprint, decode backends) to help reproduce runs and compare their settings and results, plus a **diagnostics** block recording the timestamp diagnostic on two axes — clock provenance (whether the timestamps are a synthetic `frame_index / fps` grid) and interval regularity — plus any `frame_index` gaps as a separate signal |
 | `clean_index.json` | The episode index file: `clean_episodes` (episodes assigned `keep`), plus the `excluded_episodes` and `review_episodes` lists with the checks that flagged each one |
 | `review_index.json` | Borderline episodes a human should look at before deciding — these are **not** in `clean_episodes` (see below) |
 
@@ -351,11 +351,16 @@ the list as final.
 
 Every audit also measures the dataset's timestamps themselves. Many
 LeRobot datasets store timestamps synthesised as `frame_index / fps`,
-which carry no capture-timing information. The audit reports which
-case it found — a line in `report.html` and a `diagnostics` block in
-`result.json` — because any reasoning about *when* frames happened is
-only valid when the timestamps are real. (All three report-card
-datasets above are grid-timestamped.)
+which carry no capture-timing information. The audit reports what it
+found on two independent axes — **clock provenance** (synthetic grid
+vs real or unverified) and **interval regularity** (uniform, widened
+at points, irregular) — as a line in `report.html` and a `diagnostics`
+block in `result.json`, because any reasoning about *when* frames
+happened is only valid when the timestamps are real. Gaps in
+`frame_index` itself are reported separately, as an index-derived
+signal meaning rows were removed after recording; they are not a
+clock, never open the interval gate below, and never yield a ratio.
+(All three report-card datasets above are grid-timestamped.)
 
 A2 (abrupt jump) findings carry two extra pieces of evidence:
 
@@ -370,7 +375,18 @@ A2 (abrupt jump) findings carry two extra pieces of evidence:
   the same frame (`state-simultaneous`), followed over the next frames
   (`state-follows`), or showed no corresponding movement
   (`state-absent`). This lets a disposition cite behaviour, not just
-  the size of the command jump.
+  the size of the command jump. A `state-absent` result is explicitly
+  unresolved — it is not evidence for a fast command or for a dropped
+  frame.
+
+Since 0.3.1, episode segments decoded from large shared video files
+are sliced **frame-exactly** (seek to half a frame before the segment,
+then cap at the declared frame count) instead of by a
+millisecond-rounded time window. The old window could return one
+frame too many, one too few, or — silently — the right count shifted
+by one frame; on `lerobot/xarm_lift_medium` that reader bug alone
+manufactured 435 false findings (corrected grade 80/B under 0.3.1;
+see the changelog).
 
 ## Measured results (not marketing numbers)
 
@@ -492,7 +508,10 @@ MIT — see [LICENSE](LICENSE).
   유지 목록에는 들어가지 않습니다.
 - 타임스탬프가 `frame_index / fps`로 합성된 격자형인지도 진단해
   리포트와 `result.json`에 표시합니다 (성적표 데이터셋 3개가 모두
-  격자형이었습니다). A2 점프 발견에는 실제 타임스탬프일 때만 간격
+  격자형이었습니다). 진단은 시계 출처와 간격 규칙성의 두 축으로
+  표시하고, `frame_index` 자체의 빈틈은 "기록 후 삭제"를 뜻하는
+  별도 신호로 보고합니다(시계가 아니므로 간격 비율 증거를 만들지
+  않습니다). A2 점프 발견에는 실제 타임스탬프일 때만 간격
   비율 증거가 붙고, 실제 관절(state)이 명령을 따라갔는지도 증거로
   기록됩니다. 점수와 처분은 이 증거들로 바뀌지 않습니다.
 - 라이선스는 MIT입니다.

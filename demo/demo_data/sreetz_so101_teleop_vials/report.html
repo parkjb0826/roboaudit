@@ -81,7 +81,7 @@
   </div>
 
   <div class="card">
-    <h2 style="margin-top:0; font-size:19px;">검사 12종 결과</h2>
+    <h2 style="margin-top:0; font-size:19px;">검사 17종 결과</h2>
     <table>
       <tr><th>검사</th><th>항목</th><th>심각도</th><th>결과</th><th>실행 상태</th><th>검사 범위</th><th>발견</th><th>감점</th></tr>
       
@@ -109,6 +109,24 @@
         <td class="pass">PASS</td>
         <td class="rs-complete">complete</td>
         <td style="font-size:12px;">데이터 75/75 에피소드</td>
+        <td>0건</td><td>0점</td>
+      </tr>
+      
+      <tr>
+        <td><code>S4</code></td><td>기록 통계 드리프트</td>
+        <td class="sev-warning">warning</td>
+        <td class="pass">PASS</td>
+        <td class="rs-complete">complete</td>
+        <td style="font-size:12px;">데이터 75/75 에피소드</td>
+        <td>0건</td><td>0점</td>
+      </tr>
+      
+      <tr>
+        <td><code>S5</code></td><td>라이선스·카드 기본값</td>
+        <td class="sev-info">info</td>
+        <td class="pass">PASS</td>
+        <td class="rs-not_applicable">not_applicable</td>
+        <td style="font-size:12px;">데이터셋 카드(README.md)가 로컬 복사본에 없음 — 라이선스 판단 보류</td>
         <td>0건</td><td>0점</td>
       </tr>
       
@@ -169,6 +187,33 @@
       <tr>
         <td><code>A4</code></td><td>중복 에피소드</td>
         <td class="sev-info">info</td>
+        <td class="pass">PASS</td>
+        <td class="rs-complete">complete</td>
+        <td style="font-size:12px;">데이터 75/75 에피소드</td>
+        <td>0건</td><td>0점</td>
+      </tr>
+      
+      <tr>
+        <td><code>A5</code></td><td>근접 중복 에피소드</td>
+        <td class="sev-info">info</td>
+        <td class="pass">PASS</td>
+        <td class="rs-complete">complete</td>
+        <td style="font-size:12px;">데이터 75/75 에피소드</td>
+        <td>0건</td><td>0점</td>
+      </tr>
+      
+      <tr>
+        <td><code>A6</code></td><td>에피소드 정지 비율</td>
+        <td class="sev-warning">warning</td>
+        <td class="pass">PASS</td>
+        <td class="rs-complete">complete</td>
+        <td style="font-size:12px;">데이터 75/75 에피소드</td>
+        <td>0건</td><td>0점</td>
+      </tr>
+      
+      <tr>
+        <td><code>A7</code></td><td>캘리브레이션 드리프트</td>
+        <td class="sev-warning">warning</td>
         <td class="pass">PASS</td>
         <td class="rs-complete">complete</td>
         <td style="font-size:12px;">데이터 75/75 에피소드</td>
@@ -374,6 +419,125 @@
 
   
   <div class="card">
+    <h2 style="margin-top:0; font-size:19px;">과제별 점수</h2>
+    <table>
+      <tr><th>과제</th><th>에피소드</th><th>발견</th><th>감점</th><th>점수</th><th>등급</th></tr>
+      
+      <tr>
+        <td>Pick up the vial and place it in the rack</td><td>75개</td><td>15건</td>
+        <td>45점</td><td>55</td><td>F</td>
+      </tr>
+      
+    </table>
+    <p style="font-size:13px; color:#5a6a85;">에피소드 단위 발견만 과제별로 묶었습니다. 데이터셋 단위 발견의 감점 11점은 어느 과제에도 넣지 않았습니다.</p>
+  </div>
+  
+
+  
+  <div class="card">
+    <h2 style="margin-top:0; font-size:19px;">먼저 볼 에피소드 (보류 단축목록)</h2>
+    <table>
+      <tr><th>순위</th><th>에피소드</th><th>걸린 검사</th><th>jerk p95</th><th>최대 스텝</th><th>정지 비율</th><th>최종 자세 거리(σ)</th><th>이상치 점수</th></tr>
+      
+      <tr>
+        <td>1</td>
+        <td>4</td>
+        <td>A2</td>
+        <td>1.1091</td>
+        <td>12.8609</td>
+        <td>0%</td>
+        <td>1.312</td>
+        <td>2.966</td>
+      </tr>
+      
+      <tr>
+        <td>2</td>
+        <td>23</td>
+        <td>A2</td>
+        <td>0.7622</td>
+        <td>12.0848</td>
+        <td>0%</td>
+        <td>1.034</td>
+        <td>2.631</td>
+      </tr>
+      
+      <tr>
+        <td>3</td>
+        <td>61</td>
+        <td>A2</td>
+        <td>0.9669</td>
+        <td>11.1721</td>
+        <td>0%</td>
+        <td>0.579</td>
+        <td>2.238</td>
+      </tr>
+      
+      <tr>
+        <td>4</td>
+        <td>42</td>
+        <td>A2</td>
+        <td>0.766</td>
+        <td>11.1637</td>
+        <td>0%</td>
+        <td>1.271</td>
+        <td>2.234</td>
+      </tr>
+      
+      <tr>
+        <td>5</td>
+        <td>1</td>
+        <td>A2</td>
+        <td>0.8817</td>
+        <td>10.5051</td>
+        <td>0%</td>
+        <td>1.899</td>
+        <td>1.95</td>
+      </tr>
+      
+      <tr>
+        <td>6</td>
+        <td>31</td>
+        <td>A2</td>
+        <td>1.0375</td>
+        <td>10.4728</td>
+        <td>0%</td>
+        <td>1.05</td>
+        <td>1.936</td>
+      </tr>
+      
+      <tr>
+        <td>7</td>
+        <td>34</td>
+        <td>A2</td>
+        <td>1.0273</td>
+        <td>4.9815</td>
+        <td>0%</td>
+        <td>0.773</td>
+        <td>0.987</td>
+      </tr>
+      
+      <tr>
+        <td>8</td>
+        <td>30</td>
+        <td>A2</td>
+        <td>0.9988</td>
+        <td>6.5207</td>
+        <td>0%</td>
+        <td>1.123</td>
+        <td>0.875</td>
+      </tr>
+      
+    </table>
+    <p style="font-size:13px; color:#5a6a85;">보류 에피소드를 지표 이상치 순으로 정렬한 목록입니다. 전부를 보지 말고 위에서부터 확인하세요.</p>
+    
+    <p style="font-size:13px;">제외 에피소드 삭제 명령 (RoboAudit는 실행하지 않습니다 — 확인 후 직접 실행하세요):<br>
+    <code>lerobot-edit-dataset --repo_id sreetz_so101_teleop_vials --root /home/hatch/workspace/your_files/engi-physical-ai/roboaudit/exp/real_data/sreetz_so101_teleop_vials --operation.type delete_episodes --operation.episode_indices &#34;[21, 25, 47, 57, 59, 64, 67]&#34;</code></p>
+    
+  </div>
+  
+
+  
+  <div class="card">
     <h2 style="margin-top:0; font-size:19px;">고지 · 해석 범위</h2>
     <ul style="margin:0; padding-left:20px; line-height:1.8; font-size:14px;">
       
@@ -386,7 +550,7 @@
   
 
   <p style="text-align:center; color:#8a97ad; font-size:12.5px;">
-    RoboAudit v0.3.1 · 규칙 rules-2026-11-17.2 · 입력 지문 0e3fea515dd94f5e…<br>
+    RoboAudit v0.3.2 · 규칙 rules-2026-11-23.1 · 입력 지문 0e3fea515dd94f5e…<br>
     원본 데이터는 읽기만 했습니다 · 깨끗한 에피소드 목록은 clean_index.json, 보류 목록은 review_index.json 참조
   </p>
 </div>

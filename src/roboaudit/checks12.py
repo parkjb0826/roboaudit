@@ -1,8 +1,11 @@
-"""RoboAudit 검사 12종 (설계서 v1, 4절).
+"""RoboAudit 검사 17종 (설계서 v1, 4절 + 0.3.2 확장).
 
 구조 S1 메타·파일 무결성(치명) / S2 차원·스키마·값 유효성(치명) / S3 시간축(경고)
+     S4 기록 통계 드리프트(경고) / S5 라이선스·카드 기본값(참고)
 영상 V1 검은·정지 화면(치명) / V2 흔들림·흐림(경고) / V3 에피소드 길이 이상(경고)
 행동 A1 범위 이탈(치명) / A2 급격한 점프(경고) / A3 무동작 차원(경고) / A4 중복 에피소드(참고)
+     A5 근접 중복 에피소드(참고) / A6 에피소드 정지 비율(경고)
+     A7 리더·팔로워 캘리브레이션 드리프트(경고)
 지시문 L1 누락·전부 동일(경고) / L2 성공·실패 표시 없음(참고)
 
 전부 규칙+임계값. finding마다 근거 수치(evidence)를 남긴다.
@@ -28,6 +31,22 @@
   비율이 normal-interval로 표기되는 일은 없다.
 - state-absent는 '빠른 명령' 쪽으로 기운 판정이 아니라 미해결(unresolved)
   로 명시한다 (state_note).
+
+0.3.2 변경 (신규 검사 5종 — 전부 규칙+임계값, 임계값은 전부 provisional):
+- S4 기록 통계 드리프트: meta/stats.json(v3.0) 또는 episodes_stats.jsonl
+  (v2.1)의 기록 통계와 실제 데이터 재계산 통계를 결정적으로 비교한다.
+  기준은 kinema·lerobot-doctor가 공개한 것과 같은 계열 — 평균 이동
+  0.1σ 초과 또는 표준편차 10% 초과 상대 변화 (근거: research 보고서 #1).
+- S5 라이선스·카드 기본값(기본형): README.md 카드의 license 필드 부재,
+  또는 LeRobot 카드 템플릿 기본값(apache-2.0) 그대로인 경우를 참고급
+  으로 알린다. 원본 대조 같은 큰 기능은 하지 않는다.
+- A5 근접 중복: A4(정확 해시)가 놓치는 '살짝 다른 복사본'을 16점
+  재표본 궤적의 σ 정규화 거리로 잡는다 (방법은 결정적, 허용오차 provisional).
+- A6 에피소드 정지 비율: 에피소드 단위 정지 프레임 비율과 시작 정지를
+  본다 (A3는 차원 단위라 에피소드 단위 정지는 못 봤다).
+- A7 캘리브레이션 드리프트: state와 action의 차원·이름이 같을 때만,
+  action−state 중앙값 오프셋이 state 표준편차의 절반을 넘는 체계적
+  편향을 데이터셋 단위로 보고한다 (리더/팔로워 정렬 문제의 신호).
 """
 from pathlib import Path
 
@@ -36,19 +55,24 @@ import numpy as np
 
 from .reader import DatasetReader
 
-RULES_VERSION = "rules-2026-11-17.2"
+RULES_VERSION = "rules-2026-11-23.1"
 
 SEVERITY = {
     "S1": "critical", "S2": "critical", "S3": "warning",
+    "S4": "warning", "S5": "info",
     "V1": "critical", "V2": "warning", "V3": "warning",
     "A1": "critical", "A2": "warning", "A3": "warning", "A4": "info",
+    "A5": "info", "A6": "warning", "A7": "warning",
     "L1": "warning", "L2": "info",
 }
 CHECK_NAMES = {
     "S1": "메타·파일 무결성", "S2": "차원·스키마 정합성", "S3": "시간축",
+    "S4": "기록 통계 드리프트", "S5": "라이선스·카드 기본값",
     "V1": "검은·정지 화면", "V2": "흔들림·흐림", "V3": "에피소드 길이 이상",
     "A1": "범위 이탈", "A2": "급격한 점프", "A3": "무동작 차원",
-    "A4": "중복 에피소드", "L1": "지시문 누락·전부 동일", "L2": "성공·실패 표시 없음",
+    "A4": "중복 에피소드", "A5": "근접 중복 에피소드",
+    "A6": "에피소드 정지 비율", "A7": "캘리브레이션 드리프트",
+    "L1": "지시문 누락·전부 동일", "L2": "성공·실패 표시 없음",
 }
 
 # ----- 임계값 (전부 여기로 모음) -----
@@ -76,6 +100,18 @@ TH = {
     "interval_normal_lo": 0.8,       # A2 증거: [lo, hi) 구간이면 normal-interval
     "interval_normal_hi": 1.25,      # A2 증거: 그 외 구간은 ambiguous
     "state_follow_frac": 0.5,        # A2 증거: state 동시/추종 판정 비율 (FOLLOWUP 방법)
+    # --- 0.3.2 신규 검사 (전부 provisional — 실데이터 표본으로 재검증 필요) ---
+    "stats_mean_shift": 0.1,         # S4: |기록 평균 - 실제 평균| > 이 값 × 기록 std 이면 드리프트 (kinema 공개 기준과 같은 계열)
+    "stats_std_shift": 0.1,          # S4: std 상대 변화 > 이 비율이면 드리프트
+    "calib_offset_ratio": 0.5,       # A7: |중앙값 오프셋| > 이 비율 × state std 인 차원이 있으면 보고
+    "calib_report_ratio": 0.25,      # A7: 증거에 싣는 차원의 하한 비율
+    "idle_step_eps": 1e-6,           # A6: state+action 스텝 L2 합이 이 값 이하이면 정지 프레임으로 간주 (사실상 완전 반복)
+    "idle_ratio": 0.30,              # A6: 에피소드 정지 비율이 이 값 이상이면 발견
+    "idle_leading_ratio": 0.20,      # A6: 시작 정지 비율이 이 값 이상이면 발견 (녹화 시작 패딩)
+    "neardup_points": 16,            # A5: 궤적 재표본 점 수
+    "neardup_mean_tol": 0.01,        # A5: σ 정규화 평균 절댓값 차이 허용오차
+    "neardup_max_tol": 0.05,         # A5: σ 정규화 최대 절댓값 차이 허용오차
+    "neardup_len_tol": 0.05,         # A5: 길이 차이가 이 비율을 넘는 쌍은 비교하지 않음
 }
 
 
@@ -88,15 +124,16 @@ def _f(check, episode_index, detail, evidence=None):
 class Ctx:
     """검사 실행 컨텍스트: 리더 + 영상 통계 캐시 (카메라별)."""
 
-    def __init__(self, root: Path, sample_frames=None):
+    def __init__(self, root: Path, sample_frames=None, max_episodes=None):
         self.root = root
-        self.reader = DatasetReader(root, sample_frames=sample_frames)
+        self.reader = DatasetReader(root, sample_frames=sample_frames,
+                                    max_episodes=max_episodes)
         self._vstats = {}
         self._ts_grid = None
 
     def timestamp_grid(self):
         """타임스탬프 격자 진단 (diagnostics.py). 감사당 1회만 계산해 캐시한다.
-        검사 12종이 아니며 점수·처분에 쓰이지 않는다 — A2 증거 게이트와
+        검사가 아니며 점수·처분에 쓰이지 않는다 — A2 증거 게이트와
         result.json의 diagnostics 항목이 공유한다."""
         if self._ts_grid is None:
             from .diagnostics import timestamp_grid_diagnostic
@@ -144,13 +181,16 @@ def check_s1(ctx: Ctx):
     reader = ctx.reader
     info = reader.info
     eps = reader.episodes
-    if len(eps) != int(info.get("total_episodes", -1)):
+    # 에피소드 표본 감사(--max-episodes)에서는 선언 총량과 비교할 수 없다:
+    # 총량 대조 2건과 v3.0 연속성 대조는 표본일 때 건너뛴다 (표본 고지 참조).
+    sampled = getattr(reader, "episode_sampled", False)
+    if not sampled and len(eps) != int(info.get("total_episodes", -1)):
         findings.append(_f("S1", None,
                            f"episode count {len(eps)} != total_episodes {info.get('total_episodes')}",
                            {"meta_episodes": len(eps),
                             "total_episodes": info.get("total_episodes")}))
     sum_len = sum(e["length"] for e in eps)
-    if int(info.get("total_frames", sum_len)) != sum_len:
+    if not sampled and int(info.get("total_frames", sum_len)) != sum_len:
         findings.append(_f("S1", None,
                            f"total_frames {info.get('total_frames')} != sum of episode lengths {sum_len}",
                            {"total_frames": info.get("total_frames"), "sum_lengths": sum_len}))
@@ -196,7 +236,7 @@ def check_s1(ctx: Ctx):
                 findings.append(_f("S1", ep,
                                    f"missing video file for camera '{key}'",
                                    {"camera": key}))
-    if reader.version == "v3.0":
+    if reader.version == "v3.0" and not sampled:
         ordered = sorted(eps, key=lambda x: x["episode_index"])
         expect = 0
         for e in ordered:
@@ -309,6 +349,193 @@ def check_s3(ctx: Ctx):
                                    f"median interval {med:.4f}s != 1/fps {1.0 / fps:.4f}s",
                                    {"median_interval_s": med, "expected_s": 1.0 / fps}))
     return findings
+
+
+# ---------------- 기록 통계·라이선스 (0.3.2) ----------------
+
+_STATS_FEATURES = (("observation.state", "state"), ("action", "action"))
+
+
+def _stat_drift_dims(recorded, actual):
+    """기록 통계 1피처 vs 재계산 배열: 임계를 넘는 차원 목록.
+
+    평균 이동은 기록 std(σ) 단위, std 변화는 상대 비율로 잰다. 재계산은
+    ddof=0 — LeRobot의 통계 산출 관행과 같다.
+    """
+    rec_mean = recorded.get("mean")
+    rec_std = recorded.get("std")
+    if rec_mean is None or rec_std is None or actual.size == 0:
+        return []
+    if len(rec_mean) != actual.shape[1] or len(rec_std) != actual.shape[1]:
+        return []  # 차원 자체가 다르면 S2 담당
+    act_mean = actual.mean(axis=0)
+    act_std = actual.std(axis=0)
+    out = []
+    for j in range(actual.shape[1]):
+        rm, rs = float(rec_mean[j]), float(rec_std[j])
+        am, asd = float(act_mean[j]), float(act_std[j])
+        if rs > 1e-12:
+            mean_shift = abs(am - rm) / rs
+            std_rel = abs(asd - rs) / rs
+        else:
+            mean_shift = abs(am - rm)
+            std_rel = 0.0 if asd <= 1e-12 else float("inf")
+        if mean_shift > TH["stats_mean_shift"] or std_rel > TH["stats_std_shift"]:
+            out.append({"dim": j, "recorded_mean": round(rm, 6),
+                        "actual_mean": round(am, 6),
+                        "mean_shift_sigma": round(mean_shift, 4),
+                        "recorded_std": round(rs, 6),
+                        "actual_std": round(asd, 6),
+                        "std_rel_change": round(std_rel, 4)})
+    return out
+
+
+def _recorded_count(rec_feat):
+    cnt = rec_feat.get("count")
+    if isinstance(cnt, (list, tuple)):
+        return int(cnt[0]) if cnt else None
+    return int(cnt) if cnt is not None else None
+
+
+def check_s4(ctx: Ctx):
+    """기록 통계 드리프트: 메타에 기록된 정규화 통계 vs 실제 데이터 재계산.
+
+    통계를 다시 만들지 않고 데이터만 고치면 기록 통계가 낡고, 학습 때
+    정규화가 조용히 틀어진다 (kinema·lerobot-doctor가 공통으로 잡는
+    결함). 비교 대상은 observation.state·action뿐이다 (영상 통계는
+    재계산하지 않는다). 기록이 두 층으로 있으면 둘 다 본다:
+    데이터셋 단위(meta/stats.json — 실제로 정규화에 쓰이는 파일)와
+    에피소드 단위(v2.1 episodes_stats.jsonl / v3.0 에피소드 메타 통계 열).
+    에피소드 표본 감사에서는 데이터셋 단위 비교를 건너뛴다 (표본의
+    분포는 전체 분포와 다를 수 있기 때문이다). 데이터셋 단위 1건으로
+    보고한다.
+    """
+    reader = ctx.reader
+    src = reader.recorded_stats()
+    if src is None:
+        return []  # 기록 통계 없음 — 검사 상태는 not_applicable로 표시된다
+    sampled = getattr(reader, "episode_sampled", False)
+    per_ep_data = {}
+    for e in reader.episodes:
+        try:
+            per_ep_data[e["episode_index"]] = reader.episode_data(e)
+        except Exception:
+            continue
+    if not per_ep_data:
+        return []
+    evidence = {"thresholds": {"mean_shift_sigma": TH["stats_mean_shift"],
+                               "std_rel_change": TH["stats_std_shift"]},
+                "sources": []}
+    notes = []
+    # --- 에피소드 단위 기록 ---
+    if src.get("per_episode"):
+        evidence["sources"].append(src.get("source_per_episode"))
+        drifted = {}
+        feat_ev = {}
+        for ep, rec in sorted(src["per_episode"].items()):
+            if ep not in per_ep_data:
+                continue
+            d = per_ep_data[ep]
+            for feat, key in _STATS_FEATURES:
+                if feat not in rec:
+                    continue
+                dims = _stat_drift_dims(rec[feat],
+                                        d[key].astype(np.float64))
+                cnt = _recorded_count(rec[feat])
+                if dims or (cnt is not None and cnt != len(d[key])):
+                    drifted.setdefault(ep, []).append(feat)
+                    ev = feat_ev.setdefault(feat, {"episodes_drifted": []})
+                    ev["episodes_drifted"].append(ep)
+                    if dims:
+                        ev["max_mean_shift_sigma"] = max(
+                            ev.get("max_mean_shift_sigma", 0.0),
+                            max(x["mean_shift_sigma"] for x in dims))
+                        ev.setdefault("worst_dims", dims[:4])
+        if drifted:
+            eps_list = sorted(drifted)
+            evidence["per_episode"] = {
+                "features": feat_ev,
+                "episodes_drifted": eps_list[:50],
+                "episodes_drifted_total": len(eps_list)}
+            notes.append(f"per-episode recorded stats drift in "
+                         f"{len(eps_list)} episodes (first: {eps_list[:5]})")
+    # --- 데이터셋 단위 기록 (stats.json) ---
+    if src.get("dataset") is not None and not sampled:
+        evidence["sources"].append(src.get("source_dataset"))
+        feat_ev = {}
+        for feat, key in _STATS_FEATURES:
+            rec = src["dataset"].get(feat)
+            if rec is None:
+                continue
+            actual = np.concatenate(
+                [per_ep_data[ep][key].astype(np.float64)
+                 for ep in sorted(per_ep_data)])
+            dims = _stat_drift_dims(rec, actual)
+            cnt = _recorded_count(rec)
+            count_bad = cnt is not None and cnt != len(actual)
+            if not dims and not count_bad:
+                continue
+            ev = {"dims_drifted": dims[:8]}
+            if dims:
+                ev["max_mean_shift_sigma"] = max(
+                    d["mean_shift_sigma"] for d in dims)
+                ev["max_std_rel_change"] = max(
+                    d["std_rel_change"] for d in dims)
+                worst = max(dims, key=lambda d: d["mean_shift_sigma"])
+                notes.append(
+                    f"{feat} dim {worst['dim']}: mean shift "
+                    f"{worst['mean_shift_sigma']:.2f}σ (recorded "
+                    f"{worst['recorded_mean']} vs actual {worst['actual_mean']})")
+            if cnt is not None:
+                ev["count_recorded"] = cnt
+                ev["count_actual"] = int(len(actual))
+                if count_bad:
+                    ev["count_mismatch"] = True
+                    notes.append(f"{feat}: recorded count {cnt} != "
+                                 f"actual rows {len(actual)}")
+            feat_ev[feat] = ev
+        if feat_ev:
+            evidence["dataset_stats"] = {"features": feat_ev}
+    if not notes:
+        return []
+    return [_f("S4", None,
+               "recorded normalization stats drift from the actual data: "
+               + "; ".join(notes[:4]), evidence)]
+
+
+_LICENSE_TEMPLATE_DEFAULT = "apache-2.0"
+
+
+def check_s5(ctx: Ctx):
+    """라이선스·카드 기본값 (기본형): 카드의 license 필드 부재 또는
+    LeRobot 템플릿 기본값(apache-2.0) 그대로인 경우를 참고급으로 알린다.
+
+    근거: 2026-10 Hub LeRobot 데이터셋 3,000개 스캔(rdq 보고)에서
+    56.5%가 템플릿 기본값을 그대로 달고 있었다 — 고른 게 아니라 안
+    지운 값일 가능성이 높다. 카드 파일 자체가 로컬 복사본에 없으면
+    (부분 복사본일 수 있어) 판단하지 않는다. 원본 데이터셋과의 대조
+    같은 큰 기능은 하지 않는다.
+    """
+    card = ctx.reader.dataset_card()
+    if card is None:
+        return []
+    licenses = card.get("licenses") or []
+    if not licenses:
+        return [_f("S5", None,
+                   "dataset card (README.md) declares no license — "
+                   "reuse terms are unstated",
+                   {"card": card["path"], "license": None})]
+    lowered = [str(x).strip().lower() for x in licenses]
+    if all(x == _LICENSE_TEMPLATE_DEFAULT for x in lowered):
+        return [_f("S5", None,
+                   f"license '{licenses[0]}' is the LeRobot dataset-card "
+                   "template default — it may never have been deliberately "
+                   "chosen; verify it is intended",
+                   {"card": card["path"], "license": licenses[0],
+                    "template_default": _LICENSE_TEMPLATE_DEFAULT,
+                    "note": "Oct 2026 scan of 3,000 Hub LeRobot datasets: "
+                            "56.5% carried this template value (rdq)"})]
+    return []
 
 
 # ---------------- 영상 ----------------
@@ -753,6 +980,223 @@ def check_a4(ctx: Ctx):
     return findings
 
 
+def _traj_hash(d):
+    import hashlib
+    return hashlib.sha256(
+        np.round(d["state"], 5).tobytes() + np.round(d["action"], 5).tobytes()
+    ).hexdigest()
+
+
+def check_a5(ctx: Ctx):
+    """근접 중복: 정확히 같지는 않지만 사실상 같은 궤적인 에피소드 쌍.
+
+    방법(결정적): 에피소드마다 state+action을 16개 시점으로 재표본하고
+    차원별 데이터셋 표준편차로 나눈 서명을 만든다. 길이가 비슷한(±5%)
+    쌍끼리 서명의 평균·최대 절댓값 차이를 재서 둘 다 허용오차 이하이면
+    근접 중복으로 본다. A4의 정확 해시와 같은 쌍은 A4 담당이라 제외한다.
+    허용오차는 provisional — 재업로드 시의 미세한 노이즈·반올림 차이는
+    잡고, 같은 과제를 다시 수행한 별개 에피소드는 통과시키는 것이 목표다.
+    """
+    findings = []
+    per = {}
+    for e in ctx.reader.episodes:
+        try:
+            per[e["episode_index"]] = ctx.reader.episode_data(e)
+        except Exception:
+            continue
+    if len(per) < 2:
+        return findings
+    eps_sorted = sorted(per)
+    all_state = np.concatenate(
+        [per[ep]["state"] for ep in eps_sorted]).astype(np.float64)
+    all_action = np.concatenate(
+        [per[ep]["action"] for ep in eps_sorted]).astype(np.float64)
+    std_s = all_state.std(axis=0)
+    std_s = np.where(std_s > 1e-9, std_s, 1.0)
+    std_a = all_action.std(axis=0)
+    std_a = np.where(std_a > 1e-9, std_a, 1.0)
+    pts = int(TH["neardup_points"])
+    sigs, lens, hashes = [], {}, {}
+    for ep in eps_sorted:
+        d = per[ep]
+        n = len(d["state"])
+        lens[ep] = n
+        idx = (np.linspace(0, n - 1, pts).round().astype(int)
+               if n > 0 else np.zeros(pts, dtype=int))
+        sigs.append(np.concatenate([
+            (d["state"][idx].astype(np.float64) / std_s).ravel(),
+            (d["action"][idx].astype(np.float64) / std_a).ravel()]))
+        hashes[ep] = _traj_hash(d)
+    sig_mat = np.stack(sigs)
+    for j, ep in enumerate(eps_sorted):
+        if j == 0:
+            continue
+        cand = np.abs(sig_mat[:j] - sig_mat[j])
+        mean_d = cand.mean(axis=1)
+        max_d = cand.max(axis=1)
+        ok = (mean_d <= TH["neardup_mean_tol"]) & (max_d <= TH["neardup_max_tol"])
+        for i in range(j):
+            ep0 = eps_sorted[i]
+            if hashes[ep] == hashes[ep0]:
+                ok[i] = False  # 정확 중복은 A4 담당
+            elif abs(lens[ep] - lens[ep0]) > max(
+                    2, TH["neardup_len_tol"] * max(lens[ep], lens[ep0])):
+                ok[i] = False
+        if ok.any():
+            i = int(np.argmax(ok))  # 가장 이른 원본
+            ep0 = eps_sorted[i]
+            findings.append(_f(
+                "A5", ep,
+                f"near-duplicate trajectory of episode {ep0} "
+                f"(mean |Δ| {mean_d[i]:.4f}σ, max {max_d[i]:.3f}σ — "
+                "not an exact copy)",
+                {"near_duplicate_of": ep0,
+                 "mean_abs_diff_sigma": round(float(mean_d[i]), 5),
+                 "max_abs_diff_sigma": round(float(max_d[i]), 4),
+                 "method": f"{pts}-point resampled state+action, "
+                           "per-dim σ-normalized"}))
+    return findings
+
+
+def idle_ratios(d):
+    """에피소드 정지 지표 (A6와 리뷰 지표가 공유한다).
+
+    정지 = 연속 프레임의 state+action 스텝 L2 합이 idle_step_eps 이하
+    (사실상 완전히 같은 자세의 반복). 2프레임 미만이면 None.
+    """
+    n = len(d["state"])
+    if n < 2:
+        return None
+    steps = (np.linalg.norm(np.diff(d["state"].astype(np.float64), axis=0),
+                            axis=1)
+             + np.linalg.norm(np.diff(d["action"].astype(np.float64),
+                                     axis=0), axis=1))
+    idle = steps <= TH["idle_step_eps"]
+    lead = 0
+    for x in idle:
+        if x:
+            lead += 1
+        else:
+            break
+    longest = run = 0
+    for x in idle:
+        run = run + 1 if x else 0
+        longest = max(longest, run)
+    return {"idle_ratio": round(float(idle.mean()), 4),
+            "leading_idle_ratio": round(lead / len(idle), 4),
+            "longest_idle_run": int(longest),
+            "idle_steps": int(idle.sum()),
+            "steps_total": int(len(idle))}
+
+
+def check_a6(ctx: Ctx):
+    """에피소드 정지 비율: 녹화 시작 패딩이나 긴 멈춤이 있는 에피소드.
+
+    A3(무동작 차원)는 차원이 통째로 죽은 경우만 본다. 여기서는 에피소드
+    단위로 '자세 전체가 멈춘 프레임'의 비율을 본다 — 학습에 기여 없이
+    길이만 차지하는 구간이다 (kinema idle-segments·rdq idle padding과
+    같은 결함 계열). 임계값은 provisional.
+    """
+    findings = []
+    for e in ctx.reader.episodes:
+        ep = e["episode_index"]
+        try:
+            d = ctx.reader.episode_data(e)
+        except Exception:
+            continue
+        r = idle_ratios(d)
+        if r is None:
+            continue
+        if (r["idle_ratio"] >= TH["idle_ratio"]
+                or r["leading_idle_ratio"] >= TH["idle_leading_ratio"]):
+            ev = dict(r)
+            ev["thresholds"] = {"idle_ratio": TH["idle_ratio"],
+                                "leading_idle_ratio":
+                                    TH["idle_leading_ratio"]}
+            findings.append(_f(
+                "A6", ep,
+                f"idle frames {r['idle_ratio']:.0%} of episode "
+                f"(leading idle {r['leading_idle_ratio']:.0%}, "
+                f"longest run {r['longest_idle_run']} frames)", ev))
+    return findings
+
+
+def _feature_names(reader, key):
+    """info.features[key].names를 문자열 리스트로 (v2.1 리스트/v3.0 dict)."""
+    names = reader.info.get("features", {}).get(key, {}).get("names")
+    if isinstance(names, dict):
+        for v in names.values():
+            if isinstance(v, list):
+                return [str(x) for x in v]
+    elif isinstance(names, list):
+        return [str(x) for x in names]
+    return None
+
+
+def check_a7(ctx: Ctx):
+    """리더·팔로워 캘리브레이션 드리프트: action−state의 체계적 오프셋.
+
+    원격조작 데이터에서는 action이 리더(조작기) 자세, state가 팔로워
+    (로봇) 자세인 경우가 많다. 둘의 중앙값 오프셋이 차원의 움직임
+    표준편차 절반을 넘고 오프셋이 일정(사분위 범위가 표준편차 이하)하면
+    캘리브레이션 어긋남의 신호로 본다 (kinema calibration-drift,
+    LeRobot 이슈 #3758 계열). 차원 수나 차원 이름이 다르면 자세 대 자세
+    비교가 성립하지 않아 적용하지 않는다. 임계값은 provisional.
+    """
+    reader = ctx.reader
+    states, actions = [], []
+    for e in reader.episodes:
+        try:
+            d = reader.episode_data(e)
+        except Exception:
+            continue
+        states.append(d["state"].astype(np.float64))
+        actions.append(d["action"].astype(np.float64))
+    if not states:
+        return []
+    state = np.concatenate(states)
+    action = np.concatenate(actions)
+    if state.shape[1] != action.shape[1]:
+        return []
+    ns = _feature_names(reader, "observation.state")
+    na = _feature_names(reader, "action")
+    if ns is not None and na is not None and ns != na:
+        return []
+    diff = action - state
+    offsets = np.median(diff, axis=0)
+    stds = state.std(axis=0)
+    iqrs = (np.quantile(diff, 0.75, axis=0)
+            - np.quantile(diff, 0.25, axis=0))
+    dims = []
+    for j in range(state.shape[1]):
+        if stds[j] <= 1e-9:
+            continue
+        ratio = abs(float(offsets[j])) / float(stds[j])
+        if ratio > TH["calib_report_ratio"] and float(iqrs[j]) <= float(stds[j]):
+            dims.append({"dim": j, "name": _dim_name(reader, "action", j),
+                         "median_offset": round(float(offsets[j]), 4),
+                         "state_std": round(float(stds[j]), 4),
+                         "offset_ratio": round(ratio, 3),
+                         "offset_iqr": round(float(iqrs[j]), 4)})
+    if not dims:
+        return []
+    dims.sort(key=lambda d: -d["offset_ratio"])
+    worst = dims[0]
+    if worst["offset_ratio"] <= TH["calib_offset_ratio"]:
+        return []
+    return [_f("A7", None,
+               f"systematic action-state offset: dim '{worst['name']}' "
+               f"median offset {worst['median_offset']:+.3f} = "
+               f"{worst['offset_ratio']:.2f} x state std "
+               "(leader/follower calibration drift suspected)",
+               {"dims": dims[:8],
+                "max_offset_ratio": worst["offset_ratio"],
+                "threshold": TH["calib_offset_ratio"],
+                "method": "median(action - state) per dim over all frames "
+                          "vs pooled state std; offset IQR <= state std "
+                          "required (systematic, not noise)"})]
+
+
 # ---------------- 지시문 ----------------
 
 def check_l1(ctx: Ctx):
@@ -791,7 +1235,9 @@ def check_l2(ctx: Ctx):
 
 CHECKS12 = {
     "S1": check_s1, "S2": check_s2, "S3": check_s3,
+    "S4": check_s4, "S5": check_s5,
     "V1": check_v1, "V2": check_v2, "V3": check_v3,
     "A1": check_a1, "A2": check_a2, "A3": check_a3, "A4": check_a4,
+    "A5": check_a5, "A6": check_a6, "A7": check_a7,
     "L1": check_l1, "L2": check_l2,
 }

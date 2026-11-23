@@ -2,7 +2,76 @@
 
 All notable changes to RoboAudit are documented here.
 Rules version is tracked separately inside every report's run manifest
-(`rules-2026-11-17.2` as of 0.3.1).
+(`rules-2026-11-23.1` as of 0.3.2).
+
+## [0.3.2] - 2026-11-23
+
+Five new checks (17 total) and the workflow features around them. All
+new thresholds are provisional working values; their grounds are stated
+in the README's "New in 0.3.2" section and in the code.
+
+### New checks
+
+- **S4 recorded-statistics drift** (warning, −3): recomputes per-feature
+  mean/std deterministically and compares them with the recorded stats
+  (dataset-level `meta/stats.json` and per-episode recorded stats, both
+  formats). Flags a recorded mean off by > 0.1σ or a recorded std off
+  by > 0.1σ (0.1σ mean-shift criterion as published by the kinema
+  dataset tool).
+- **S5 dataset-card defaults** (info, −1): no `license` field in the
+  dataset card, or the LeRobot template default `apache-2.0` left in
+  place with an untouched template body. A local copy without a card
+  is not flagged.
+- **A5 near-duplicate episodes** (info, −1): deterministic trajectory
+  signatures (16 resampled points, σ-normalised) catch episode pairs
+  that are near-copies but not byte-identical (A4's territory).
+- **A6 idle ratio** (warning, −3): episodes with ≥ 30% bit-identical
+  consecutive action frames, or ≥ 20% leading idle.
+- **A7 calibration drift** (warning, −3): systematic median
+  state−action offset > 0.5× the state spread (reported from 0.25×)
+  when state/action share dimension names and the offset is consistent.
+
+### New features
+
+- **Review shortlist**: episodes ranked for human review (robust
+  outlier score over jerk p95, max step, idle ratio, final-pose
+  distance, then finding count), a per-episode metrics table
+  (`episode_metrics` in result.json), and copyable
+  `lerobot-edit-dataset` delete commands for the excluded set —
+  printed only, never executed.
+- **CI gate**: `--fail-under N` exits with code 1 when the score is
+  below N. Exit-code contract otherwise unchanged (0 complete,
+  2 input error, 3 incomplete; 3 takes precedence over 1). A GitHub
+  Action wrapper (`action.yml`) ships with the repository.
+- **Visualizer deep links**: when the Hub repo-id is known (Hub input
+  or `--repo-id`), finding rows in `report.html` link to the official
+  LeRobot dataset visualizer episode page. No link is ever fabricated
+  for unknown datasets.
+- **`--markdown`** writes `report.md`; **`badge.svg`** (score/grade)
+  is now always written.
+- **`roboaudit diff old.json new.json`**: score/grade delta, per-check
+  finding-count changes, added/removed findings, disposition changes.
+- **Per-task scores**: `task_scores` in result.json and a task table
+  in the reports (episode-level deductions grouped by task;
+  dataset-level deductions reported separately).
+- **Hub input**: pass a repo-id instead of a local folder (optional
+  `roboaudit[hub]` extra), pin with `--revision`, and sample-audit
+  large datasets with `--max-episodes N` (dataset-wide checks that
+  need every episode are skipped or restricted, and say so).
+
+### Verification
+
+- Regression: planted-defect suites still 17/17 and 26/26, zero
+  false positives on clean data, original files SHA-256 unchanged.
+  Each new check has its own planted-defect fixture (detected) and
+  stays silent on clean data.
+- The original 12 checks reproduce their 0.3.1 findings **exactly**
+  on all ten public datasets re-audited. Scores moved only where the
+  new checks genuinely fired: aloha_sim_transfer_cube_scripted
+  79/C → 77/C (A5 near-duplicate pair, S5 template license),
+  so100_battery 84/B → 71/C (four A6 idle episodes at 31–38% frozen
+  frames — one episode excluded on a 31% leading freeze — plus S5),
+  sreetz vials unchanged at 44/F.
 
 ## [0.3.1] - 2026-11-17
 

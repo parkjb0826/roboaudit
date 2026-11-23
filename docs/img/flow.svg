@@ -17,12 +17,13 @@
 
   <!-- Checks group -->
   <rect x="195" y="40" width="330" height="220" rx="8" fill="#f7fafc" stroke="#2c5282" stroke-width="1.5"/>
-  <text x="360" y="64" text-anchor="middle" font-size="14.5" font-weight="bold" fill="#1f3a5f">12 rule-based checks</text>
+  <text x="360" y="64" text-anchor="middle" font-size="14.5" font-weight="bold" fill="#1f3a5f">17 rule-based checks</text>
 
   <rect x="210" y="78" width="148" height="80" rx="6" fill="#ffffff" stroke="#b6c2d2"/>
-  <text x="284" y="100" text-anchor="middle" font-size="13" font-weight="bold" fill="#1f3a5f">Structure · 3</text>
+  <text x="284" y="100" text-anchor="middle" font-size="13" font-weight="bold" fill="#1f3a5f">Structure · 5</text>
   <text x="284" y="120" text-anchor="middle" font-size="11.5" fill="#4a5568">S1 metadata &amp; files</text>
   <text x="284" y="136" text-anchor="middle" font-size="11.5" fill="#4a5568">S2 schema · S3 time axis</text>
+  <text x="284" y="152" text-anchor="middle" font-size="11.5" fill="#4a5568">S4 stats drift · S5 license</text>
 
   <rect x="366" y="78" width="148" height="80" rx="6" fill="#ffffff" stroke="#b6c2d2"/>
   <text x="440" y="100" text-anchor="middle" font-size="13" font-weight="bold" fill="#1f3a5f">Video · 3</text>
@@ -30,9 +31,10 @@
   <text x="440" y="136" text-anchor="middle" font-size="11.5" fill="#4a5568">V2 shake &amp; blur · V3 length</text>
 
   <rect x="210" y="166" width="148" height="80" rx="6" fill="#ffffff" stroke="#b6c2d2"/>
-  <text x="284" y="188" text-anchor="middle" font-size="13" font-weight="bold" fill="#1f3a5f">Action · 4</text>
+  <text x="284" y="188" text-anchor="middle" font-size="13" font-weight="bold" fill="#1f3a5f">Action · 7</text>
   <text x="284" y="208" text-anchor="middle" font-size="11.5" fill="#4a5568">A1 range · A2 jumps</text>
   <text x="284" y="224" text-anchor="middle" font-size="11.5" fill="#4a5568">A3 dead dims · A4 duplicates</text>
+  <text x="284" y="240" text-anchor="middle" font-size="11.5" fill="#4a5568">A5–A7 near-dup·idle·drift</text>
 
   <rect x="366" y="166" width="148" height="80" rx="6" fill="#ffffff" stroke="#b6c2d2"/>
   <text x="440" y="188" text-anchor="middle" font-size="13" font-weight="bold" fill="#1f3a5f">Instruction · 2</text>

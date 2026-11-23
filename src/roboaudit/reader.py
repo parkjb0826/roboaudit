@@ -31,6 +31,7 @@ LeRobot v2.1 / v3.0 데이터셋을 공통 형태로 읽는다.
 """
 import json
 import math
+import re
 import shutil
 import subprocess
 from pathlib import Path
@@ -111,6 +112,7 @@ def episodes_meta(root: Path, info: dict):
                 "length": int(e["length"]),
                 "tasks": list(e.get("tasks", [])),
                 "meta_keys": sorted(e.keys()),
+                "recorded_stats": {},
                 "data_path": root / "data" / f"chunk-{chunk:03d}" / f"episode_{ep:06d}.parquet",
                 "video_path": cameras[vkey]["path"] if vkey in cameras else None,
                 "cameras": cameras,
@@ -136,11 +138,23 @@ def episodes_meta(root: Path, info: dict):
                 else:
                     cameras[k] = {"path": None, "from_ts": None, "to_ts": None}
             prim = cameras.get(vkey, {"path": None, "from_ts": None, "to_ts": None})
+            # 에피소드 단위 기록 통계 (S4 비교용): stats/<피처>/<항목> 열이
+            # 있으면 그 값을 그대로 보관한다.
+            rec_stats = {}
+            for feat in ("observation.state", "action"):
+                st = {}
+                for stat in ("mean", "std", "count"):
+                    k = f"stats/{feat}/{stat}"
+                    if k in e and e[k] is not None:
+                        st[stat] = list(e[k])
+                if st:
+                    rec_stats[feat] = st
             eps.append({
                 "episode_index": int(e["episode_index"]),
                 "length": int(e["length"]),
                 "tasks": list(e.get("tasks", []) or []),
                 "meta_keys": sorted(e.keys()),
+                "recorded_stats": rec_stats,
                 "data_path": root / "data" / f"chunk-{int(e['data/chunk_index']):03d}" / f"file-{int(e['data/file_index']):03d}.parquet",
                 "video_path": prim["path"],
                 "cameras": cameras,
@@ -173,7 +187,7 @@ def _table_to_arrays(tbl):
 class DatasetReader:
     """버전 공통 에피소드 데이터·영상 접근. 파일 단위로 캐시한다."""
 
-    def __init__(self, root: Path, sample_frames=None):
+    def __init__(self, root: Path, sample_frames=None, max_episodes=None):
         self.root = root
         self.info = load_info(root)
         self.version = version_of(self.info)
@@ -181,7 +195,19 @@ class DatasetReader:
         self.video_keys = declared_video_keys(self.info)
         self.episodes = episodes_meta(root, self.info)
         self.sample_frames = sample_frames
+        # 에피소드 표본 감사 (0.3.2, --max-episodes): 인덱스 순 첫 N개만
+        # 감사한다. 선언 총량과 대조하는 검사는 이 플래그를 보고 건너뛴다.
+        self.max_episodes = max_episodes
+        self.episode_sampled = False
+        if max_episodes is not None:
+            ordered = sorted(self.episodes,
+                             key=lambda e: e["episode_index"])
+            if len(ordered) > max_episodes:
+                self.episodes = ordered[:max_episodes]
+                self.episode_sampled = True
         self._cache = {}
+        self._recorded_stats = ...
+        self._dataset_card = ...
         # 카메라별 디코딩 통계 (검사 상태·범위의 근거)
         self.decode_stats = {}
         self._frame_counts = {}  # (episode_index, video_key) -> 표본 전 프레임 수
@@ -404,3 +430,89 @@ class DatasetReader:
                 return True
         feats = self.info.get("features", {})
         return any(_looks_like_label(k) for k in feats.keys())
+
+    # ----- 기록 통계·카드 (0.3.2, S4·S5용) -----
+    def recorded_stats(self):
+        """메타에 기록된 통계. 없으면 None.
+
+        반환: {"dataset": stats.json 내용 또는 None,
+               "per_episode": {episode_index: {피처: {mean/std/count}}} 또는 None,
+               "source_dataset": 출처 문자열, "source_per_episode": 출처 문자열}
+        에피소드 단위 기록은 v2.1의 episodes_stats.jsonl, v3.0의 에피소드
+        메타 stats 열에서 온다.
+        """
+        if self._recorded_stats is not ...:
+            return self._recorded_stats
+        dataset, dataset_src = None, None
+        p = self.root / "meta" / "stats.json"
+        if p.exists():
+            try:
+                dataset = json.loads(p.read_text())
+                dataset_src = "meta/stats.json"
+            except Exception:
+                dataset = None
+        per_ep, per_ep_src = None, None
+        if self.version == "v2.1":
+            p = self.root / "meta" / "episodes_stats.jsonl"
+            if p.exists():
+                per_ep = {}
+                try:
+                    for line in p.read_text().splitlines():
+                        if line.strip():
+                            row = json.loads(line)
+                            per_ep[int(row["episode_index"])] = \
+                                row.get("stats", {})
+                    per_ep_src = "meta/episodes_stats.jsonl"
+                except Exception:
+                    per_ep = None
+        elif self.version == "v3.0":
+            collected = {e["episode_index"]: e["recorded_stats"]
+                         for e in self.episodes if e.get("recorded_stats")}
+            if collected:
+                per_ep = collected
+                per_ep_src = "meta/episodes parquet stats columns"
+        if dataset is None and per_ep is None:
+            self._recorded_stats = None
+        else:
+            self._recorded_stats = {
+                "dataset": dataset, "per_episode": per_ep,
+                "source_dataset": dataset_src,
+                "source_per_episode": per_ep_src}
+        return self._recorded_stats
+
+    def dataset_card(self):
+        """데이터셋 카드(README.md)의 YAML 프론트매터 license 값.
+
+        카드 파일이 없으면 None (부분 복사본일 수 있어 판단 보류).
+        있으면 {"path": "README.md", "licenses": [값, ...]}.
+        license가 리스트 형태면 항목을 전부 모은다.
+        """
+        if self._dataset_card is not ...:
+            return self._dataset_card
+        p = self.root / "README.md"
+        if not p.exists():
+            self._dataset_card = None
+            return None
+        text = p.read_text(encoding="utf-8", errors="replace")
+        licenses = []
+        if text.startswith("---"):
+            end = text.find("\n---", 3)
+            fm = text[3:end] if end != -1 else text[3:]
+            lines = fm.splitlines()
+            for i, line in enumerate(lines):
+                m = re.match(r"^license\s*:\s*(.*)$", line.strip())
+                if not m:
+                    continue
+                val = m.group(1).strip().strip("'\"")
+                if val:
+                    licenses.append(val)
+                else:
+                    for nxt in lines[i + 1:]:
+                        mm = re.match(r"^-\s*(.+)$", nxt.strip())
+                        if mm:
+                            licenses.append(mm.group(1).strip().strip("'\""))
+                        elif nxt.strip():
+                            break
+                break
+        self._dataset_card = {"path": "README.md", "licenses": licenses}
+        return self._dataset_card

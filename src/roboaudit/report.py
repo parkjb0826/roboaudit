@@ -1,8 +1,134 @@
-"""출력 4종: HTML 성적표 / JSON 결과 / clean_index.json / review_index.json."""
+"""출력: HTML 성적표 / JSON 결과 / clean_index.json / review_index.json /
+배지 SVG / (옵션) 마크다운 성적표."""
 import json
 from pathlib import Path
 
 from jinja2 import Template
+
+_GRADE_COLORS = {"A": "#2e7d32", "B": "#558b2f", "C": "#e0a800",
+                 "D": "#e07b00", "F": "#c62828"}
+
+
+def render_badge(result: dict) -> str:
+    """점수·등급 배지 SVG (shields.io 스타일, 외부 서비스 없이 자체 생성)."""
+    score, grade = result["score"], result["grade"]
+    label, value = "roboaudit", f"{score} · {grade}"
+    color = _GRADE_COLORS.get(grade, "#5a6a85")
+    lw = 10 + int(6.6 * len(label))
+    vw = 10 + int(6.6 * len(value))
+    w = lw + vw
+    return (
+        f'<svg xmlns="http://www.w3.org/2000/svg" width="{w}" height="20" '
+        f'role="img" aria-label="{label}: {value}">'
+        f"<title>{label}: {value}</title>"
+        f'<rect width="{lw}" height="20" fill="#555"/>'
+        f'<rect x="{lw}" width="{vw}" height="20" fill="{color}"/>'
+        f'<g fill="#fff" font-family="Verdana,DejaVu Sans,sans-serif" '
+        f'font-size="11">'
+        f'<text x="{lw / 2:.0f}" y="14" text-anchor="middle">{label}</text>'
+        f'<text x="{lw + vw / 2:.0f}" y="14" text-anchor="middle">'
+        f"{value}</text></g></svg>")
+
+
+def _md_cell(x):
+    return str(x).replace("|", "\\|").replace("\n", " ")
+
+
+def render_markdown(result: dict) -> str:
+    """마크다운 성적표 (0.3.2): PR·이슈·데이터셋 카드에 붙이는 용도."""
+    s = result["summary"]
+    lines = [
+        f"# 🩺 RoboAudit 성적표 — {s['dataset']}",
+        "",
+        f"**점수: {result['score']}/100 · 등급 {result['grade']}** "
+        f"(총 감점 {result['total_deduction']}점 · 발견 "
+        f"{len(result['findings'])}건)",
+        "",
+        f"- 형식: LeRobot {s['format']} · 에피소드 {s['total_episodes']}개"
+        f" · FPS {s['fps']} · 로봇 {s['robot_type']}",
+        f"- 제외 {len(result['excluded_episodes'])}개 · 보류 "
+        f"{len(result['review_episodes'])}개 · 깨끗함 "
+        f"{len(result['clean_episodes'])}개",
+    ]
+    if s.get("repo_id"):
+        lines.append(f"- Hub: [{s['repo_id']}]"
+                     f"(https://huggingface.co/datasets/{s['repo_id']})")
+    if result.get("incomplete_audit"):
+        lines.append("- ⚠ **불완전한 감사** — 일부 검사가 전체 범위를 "
+                     "검사하지 못했습니다.")
+    dg = result.get("diagnostics", {}).get("timestamp_grid") or {}
+    if dg.get("message"):
+        lines.append(f"- ⏱ {dg['message']}")
+    if result.get("top_factors"):
+        lines += ["", "## 감점 이유 Top "
+                  f"{len(result['top_factors'])}", ""]
+        for i, t in enumerate(result["top_factors"], 1):
+            lines.append(f"{i}. `{t['check']}` {t['name']} — "
+                         f"{t['findings']}건, -{t['deduction']}점 "
+                         f"(감점의 {t['share_pct']}%)")
+    lines += ["", f"## 검사 {len(result['checks'])}종 결과", "",
+              "| 검사 | 항목 | 심각도 | 결과 | 발견 | 감점 |",
+              "|---|---|---|---|---|---|"]
+    for c in result["checks"]:
+        lines.append(f"| `{c['check']}` | {_md_cell(c['name'])} | "
+                     f"{c['severity']} | {c['status']} | {c['findings']}건 "
+                     f"| {c['deduction']}점 |")
+    if result.get("task_scores"):
+        lines += ["", "## 과제별 점수", "",
+                  "| 과제 | 에피소드 | 발견 | 감점 | 점수 | 등급 |",
+                  "|---|---|---|---|---|---|"]
+        for t in result["task_scores"]:
+            lines.append(f"| {_md_cell(t['task'])} | {t['episodes']} "
+                         f"| {t['findings']} | {t['deduction']} "
+                         f"| {t['score']} | {t['grade']} |")
+        lines.append("")
+        lines.append(f"데이터셋 단위 발견의 감점 "
+                     f"{result.get('dataset_level_deduction', 0)}점은 "
+                     "어느 과제에도 넣지 않았습니다.")
+    if result.get("review_shortlist"):
+        lines += ["", "## 먼저 볼 에피소드 (보류 단축목록)", "",
+                  "| 순위 | 에피소드 | 걸린 검사 | jerk p95 | 최대 스텝 "
+                  "| 정지 비율 | 최종 자세 거리(σ) |",
+                  "|---|---|---|---|---|---|---|"]
+        for it in result["review_shortlist"]:
+            m = it.get("metrics") or {}
+            ep_cell = str(it["episode_index"])
+            if it.get("visualizer_url"):
+                ep_cell = f"[{it['episode_index']}]" \
+                          f"({it['visualizer_url']})"
+            idle = ("-" if m.get("idle_ratio") is None
+                    else f"{100 * m['idle_ratio']:.0f}%")
+            lines.append(
+                f"| {it['rank']} | {ep_cell} | "
+                f"{', '.join(it['checks'])} | "
+                f"{m.get('jerk_p95', '-')} | {m.get('max_step', '-')} | "
+                f"{idle} | {m.get('final_pose_distance', '-')} |")
+    dc = result.get("delete_commands") or {}
+    if dc.get("excluded_command"):
+        lines += ["", "제외 에피소드 삭제 명령 (RoboAudit는 실행하지 "
+                  "않습니다 — 확인 후 직접 실행하세요):", "",
+                  "```bash", dc["excluded_command"], "```"]
+    if result["findings"]:
+        lines += ["", "## 에피소드별 결함 목록", "",
+                  "| 검사 | 에피소드 | 심각도 | 처분 | 내용 |",
+                  "|---|---|---|---|---|"]
+        for f in result["findings"]:
+            ep = ("전체" if f["episode_index"] is None
+                  else f["episode_index"])
+            disp = ("-" if f["episode_index"] is None else
+                    result["dispositions"].get(str(f["episode_index"]), "-"))
+            lines.append(f"| `{f['check']}` | {ep} | {f['severity']} "
+                         f"| {disp} | {_md_cell(f['detail'])} |")
+    if result.get("notices"):
+        lines += ["", "## 고지 · 해석 범위", ""]
+        lines += [f"- {n}" for n in result["notices"]]
+    man = result["manifest"]
+    lines += ["", "---",
+              f"RoboAudit v{man['tool']['version']} · 규칙 "
+              f"{man['rules_version']} · 입력 지문 "
+              f"{man['input_fingerprint']['value'][:16]}… · "
+              "원본 데이터는 읽기만 했습니다"]
+    return "\n".join(lines) + "\n"
 
 # autoescape 필수: 데이터셋 이름·과제 문자열·detail 등 데이터 유래 문자열이
 # HTML 태그로 해석되지 않게 한다 (추가 검토 smoke test에서 원문 주입 확인 후 수정).
@@ -88,7 +214,7 @@ _TEMPLATE = Template("""<!DOCTYPE html>
   </div>
 
   <div class="card">
-    <h2 style="margin-top:0; font-size:19px;">검사 12종 결과</h2>
+    <h2 style="margin-top:0; font-size:19px;">검사 {{ r.checks | length }}종 결과</h2>
     <table>
       <tr><th>검사</th><th>항목</th><th>심각도</th><th>결과</th><th>실행 상태</th><th>검사 범위</th><th>발견</th><th>감점</th></tr>
       {% for c in r.checks %}
@@ -129,7 +255,7 @@ _TEMPLATE = Template("""<!DOCTYPE html>
       {% for f in r.findings %}
       <tr>
         <td><code>{{ f.check }}</code></td>
-        <td>{{ f.episode_index if f.episode_index is not none else '전체' }}</td>
+        <td>{% if f.episode_index is not none %}{{ f.episode_index }}{% if r.summary.repo_id %} · <a href="https://huggingface.co/spaces/lerobot/visualize_dataset?path=/{{ r.summary.repo_id }}/episode_{{ f.episode_index }}" target="_blank" rel="noopener">비주얼라이저</a>{% endif %}{% else %}전체{% endif %}</td>
         <td class="sev-{{ f.severity }}">{{ f.severity }}</td>
         <td>{% if f.episode_index is not none %}<span class="disp-{{ r.dispositions[f.episode_index | string] }}">{{ r.dispositions[f.episode_index | string] }}</span>{% else %}-{% endif %}</td>
         <td>{{ f.detail }}</td>
@@ -146,6 +272,48 @@ _TEMPLATE = Template("""<!DOCTYPE html>
     <p class="fail">검사 실행 오류: {{ r.errors }}</p>
     {% endif %}
   </div>
+
+  {% if r.task_scores %}
+  <div class="card">
+    <h2 style="margin-top:0; font-size:19px;">과제별 점수</h2>
+    <table>
+      <tr><th>과제</th><th>에피소드</th><th>발견</th><th>감점</th><th>점수</th><th>등급</th></tr>
+      {% for t in r.task_scores %}
+      <tr>
+        <td>{{ t.task }}</td><td>{{ t.episodes }}개</td><td>{{ t.findings }}건</td>
+        <td>{{ t.deduction }}점</td><td>{{ t.score }}</td><td>{{ t.grade }}</td>
+      </tr>
+      {% endfor %}
+    </table>
+    <p style="font-size:13px; color:#5a6a85;">에피소드 단위 발견만 과제별로 묶었습니다. 데이터셋 단위 발견의 감점 {{ r.dataset_level_deduction }}점은 어느 과제에도 넣지 않았습니다.</p>
+  </div>
+  {% endif %}
+
+  {% if r.review_shortlist %}
+  <div class="card">
+    <h2 style="margin-top:0; font-size:19px;">먼저 볼 에피소드 (보류 단축목록)</h2>
+    <table>
+      <tr><th>순위</th><th>에피소드</th><th>걸린 검사</th><th>jerk p95</th><th>최대 스텝</th><th>정지 비율</th><th>최종 자세 거리(σ)</th><th>이상치 점수</th></tr>
+      {% for s in r.review_shortlist %}
+      <tr>
+        <td>{{ s.rank }}</td>
+        <td>{{ s.episode_index }}{% if s.visualizer_url %} · <a href="{{ s.visualizer_url }}" target="_blank" rel="noopener">열어보기</a>{% endif %}</td>
+        <td>{{ s.checks | join(', ') }}</td>
+        <td>{{ s.metrics.jerk_p95 if s.metrics and s.metrics.jerk_p95 is not none else '-' }}</td>
+        <td>{{ s.metrics.max_step if s.metrics and s.metrics.max_step is not none else '-' }}</td>
+        <td>{{ '%.0f%%' % (100 * s.metrics.idle_ratio) if s.metrics and s.metrics.idle_ratio is not none else '-' }}</td>
+        <td>{{ s.metrics.final_pose_distance if s.metrics and s.metrics.final_pose_distance is not none else '-' }}</td>
+        <td>{{ s.outlier_score }}</td>
+      </tr>
+      {% endfor %}
+    </table>
+    <p style="font-size:13px; color:#5a6a85;">보류 에피소드를 지표 이상치 순으로 정렬한 목록입니다. 전부를 보지 말고 위에서부터 확인하세요.</p>
+    {% if r.delete_commands and r.delete_commands.excluded_command %}
+    <p style="font-size:13px;">제외 에피소드 삭제 명령 (RoboAudit는 실행하지 않습니다 — 확인 후 직접 실행하세요):<br>
+    <code>{{ r.delete_commands.excluded_command }}</code></p>
+    {% endif %}
+  </div>
+  {% endif %}
 
   {% if r.notices %}
   <div class="card">
@@ -168,7 +336,7 @@ _TEMPLATE = Template("""<!DOCTYPE html>
 """, autoescape=True)
 
 
-def write_outputs(result: dict, out_dir) -> dict:
+def write_outputs(result: dict, out_dir, markdown: bool = False) -> dict:
     out = Path(out_dir)
     out.mkdir(parents=True, exist_ok=True)
     html_path = out / "report.html"
@@ -176,6 +344,14 @@ def write_outputs(result: dict, out_dir) -> dict:
     json_path = out / "result.json"
     json_path.write_text(json.dumps(result, indent=2, ensure_ascii=False, default=str),
                          encoding="utf-8")
+    badge_path = out / "badge.svg"
+    badge_path.write_text(render_badge(result), encoding="utf-8")
+    paths = {"html": str(html_path), "json": str(json_path),
+             "badge": str(badge_path)}
+    if markdown:
+        md_path = out / "report.md"
+        md_path.write_text(render_markdown(result), encoding="utf-8")
+        paths["markdown"] = str(md_path)
     clean_index = {
         "dataset": result["summary"]["dataset"],
         "format": result["summary"]["format"],
@@ -200,5 +376,6 @@ def write_outputs(result: dict, out_dir) -> dict:
     ri_path = out / "review_index.json"
     ri_path.write_text(json.dumps(review_index, indent=2, ensure_ascii=False),
                        encoding="utf-8")
-    return {"html": str(html_path), "json": str(json_path),
-            "clean_index": str(ci_path), "review_index": str(ri_path)}
+    paths["clean_index"] = str(ci_path)
+    paths["review_index"] = str(ri_path)
+    return paths

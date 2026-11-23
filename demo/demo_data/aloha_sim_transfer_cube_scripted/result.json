@@ -2,6 +2,7 @@
   "summary": {
     "dataset": "aloha_sim_transfer_cube_scripted",
     "path": "/home/hatch/workspace/your_files/engi-physical-ai/roboaudit/exp/real_data/aloha_sim_transfer_cube_scripted",
+    "repo_id": null,
     "format": "v3.0",
     "video_key": "observation.images.top",
     "video_keys": [
@@ -9,15 +10,17 @@
     ],
     "robot_type": "aloha",
     "total_episodes": 50,
+    "episodes_audited": 50,
+    "max_episodes": null,
     "total_frames_meta": 20000,
     "fps": 50,
     "total_tasks": 1,
     "incomplete_audit": false,
     "sample_frames": null
   },
-  "score": 79,
+  "score": 77,
   "grade": "C",
-  "total_deduction": 21,
+  "total_deduction": 23,
   "incomplete_audit": false,
   "notices": [
     "범위 고지: RoboAudit는 데이터셋의 구조·통계적 이상을 검사하는 도구이며, 학습 성능이나 로봇의 안전성을 보증하지 않습니다."
@@ -56,16 +59,497 @@
       "name": "범위 이탈",
       "findings": 2,
       "deduction": 20,
-      "share_pct": 95.2
+      "share_pct": 87.0
+    },
+    {
+      "check": "A5",
+      "name": "근접 중복 에피소드",
+      "findings": 1,
+      "deduction": 1,
+      "share_pct": 4.3
     },
     {
       "check": "L2",
       "name": "성공·실패 표시 없음",
       "findings": 1,
       "deduction": 1,
-      "share_pct": 4.8
+      "share_pct": 4.3
     }
   ],
+  "task_scores": [
+    {
+      "task": "Pick up the cube with the right arm and transfer it to the left arm.",
+      "episodes": 50,
+      "findings": 3,
+      "deduction": 21,
+      "score": 79,
+      "grade": "C"
+    }
+  ],
+  "dataset_level_deduction": 2,
+  "episode_metrics": {
+    "0": {
+      "length": 400,
+      "jerk_p95": 0.011,
+      "max_step": 0.4329,
+      "idle_ratio": 0.0,
+      "leading_idle_ratio": 0.0,
+      "final_pose_distance": 0.005
+    },
+    "1": {
+      "length": 400,
+      "jerk_p95": 0.0102,
+      "max_step": 0.4343,
+      "idle_ratio": 0.0,
+      "leading_idle_ratio": 0.0,
+      "final_pose_distance": 0.007
+    },
+    "2": {
+      "length": 400,
+      "jerk_p95": 0.0097,
+      "max_step": 0.4329,
+      "idle_ratio": 0.0,
+      "leading_idle_ratio": 0.0,
+      "final_pose_distance": 0.006
+    },
+    "3": {
+      "length": 400,
+      "jerk_p95": 0.0086,
+      "max_step": 0.4344,
+      "idle_ratio": 0.0,
+      "leading_idle_ratio": 0.0,
+      "final_pose_distance": 0.005
+    },
+    "4": {
+      "length": 400,
+      "jerk_p95": 0.0098,
+      "max_step": 0.4337,
+      "idle_ratio": 0.0,
+      "leading_idle_ratio": 0.0,
+      "final_pose_distance": 0.003
+    },
+    "5": {
+      "length": 400,
+      "jerk_p95": 0.0092,
+      "max_step": 0.4345,
+      "idle_ratio": 0.0,
+      "leading_idle_ratio": 0.0,
+      "final_pose_distance": 0.002
+    },
+    "6": {
+      "length": 400,
+      "jerk_p95": 0.01,
+      "max_step": 0.4367,
+      "idle_ratio": 0.0,
+      "leading_idle_ratio": 0.0,
+      "final_pose_distance": 0.003
+    },
+    "7": {
+      "length": 400,
+      "jerk_p95": 0.0092,
+      "max_step": 0.4353,
+      "idle_ratio": 0.0,
+      "leading_idle_ratio": 0.0,
+      "final_pose_distance": 0.007
+    },
+    "8": {
+      "length": 400,
+      "jerk_p95": 0.0113,
+      "max_step": 0.433,
+      "idle_ratio": 0.0,
+      "leading_idle_ratio": 0.0,
+      "final_pose_distance": 0.004
+    },
+    "9": {
+      "length": 400,
+      "jerk_p95": 0.0093,
+      "max_step": 0.4363,
+      "idle_ratio": 0.0,
+      "leading_idle_ratio": 0.0,
+      "final_pose_distance": 0.005
+    },
+    "10": {
+      "length": 400,
+      "jerk_p95": 0.0106,
+      "max_step": 0.433,
+      "idle_ratio": 0.0,
+      "leading_idle_ratio": 0.0,
+      "final_pose_distance": 0.004
+    },
+    "11": {
+      "length": 400,
+      "jerk_p95": 0.0118,
+      "max_step": 0.4358,
+      "idle_ratio": 0.0,
+      "leading_idle_ratio": 0.0,
+      "final_pose_distance": 0.005
+    },
+    "12": {
+      "length": 400,
+      "jerk_p95": 0.0092,
+      "max_step": 0.4346,
+      "idle_ratio": 0.0,
+      "leading_idle_ratio": 0.0,
+      "final_pose_distance": 0.004
+    },
+    "13": {
+      "length": 400,
+      "jerk_p95": 0.0098,
+      "max_step": 0.4347,
+      "idle_ratio": 0.0,
+      "leading_idle_ratio": 0.0,
+      "final_pose_distance": 0.005
+    },
+    "14": {
+      "length": 400,
+      "jerk_p95": 0.0105,
+      "max_step": 0.4333,
+      "idle_ratio": 0.0,
+      "leading_idle_ratio": 0.0,
+      "final_pose_distance": 0.001
+    },
+    "15": {
+      "length": 400,
+      "jerk_p95": 0.0092,
+      "max_step": 0.4368,
+      "idle_ratio": 0.0,
+      "leading_idle_ratio": 0.0,
+      "final_pose_distance": 0.005
+    },
+    "16": {
+      "length": 400,
+      "jerk_p95": 0.0097,
+      "max_step": 0.4353,
+      "idle_ratio": 0.0,
+      "leading_idle_ratio": 0.0,
+      "final_pose_distance": 0.002
+    },
+    "17": {
+      "length": 400,
+      "jerk_p95": 0.0107,
+      "max_step": 0.4332,
+      "idle_ratio": 0.0,
+      "leading_idle_ratio": 0.0,
+      "final_pose_distance": 0.01
+    },
+    "18": {
+      "length": 400,
+      "jerk_p95": 0.0087,
+      "max_step": 0.4365,
+      "idle_ratio": 0.0,
+      "leading_idle_ratio": 0.0,
+      "final_pose_distance": 0.016
+    },
+    "19": {
+      "length": 400,
+      "jerk_p95": 0.0097,
+      "max_step": 0.4355,
+      "idle_ratio": 0.0,
+      "leading_idle_ratio": 0.0,
+      "final_pose_distance": 0.002
+    },
+    "20": {
+      "length": 400,
+      "jerk_p95": 0.009,
+      "max_step": 0.4362,
+      "idle_ratio": 0.0,
+      "leading_idle_ratio": 0.0,
+      "final_pose_distance": 0.002
+    },
+    "21": {
+      "length": 400,
+      "jerk_p95": 0.0102,
+      "max_step": 0.437,
+      "idle_ratio": 0.0,
+      "leading_idle_ratio": 0.0,
+      "final_pose_distance": 0.002
+    },
+    "22": {
+      "length": 400,
+      "jerk_p95": 0.0101,
+      "max_step": 0.433,
+      "idle_ratio": 0.0,
+      "leading_idle_ratio": 0.0,
+      "final_pose_distance": 0.007
+    },
+    "23": {
+      "length": 400,
+      "jerk_p95": 0.0089,
+      "max_step": 0.4362,
+      "idle_ratio": 0.0,
+      "leading_idle_ratio": 0.0,
+      "final_pose_distance": 0.004
+    },
+    "24": {
+      "length": 400,
+      "jerk_p95": 0.0099,
+      "max_step": 0.4341,
+      "idle_ratio": 0.0,
+      "leading_idle_ratio": 0.0,
+      "final_pose_distance": 0.005
+    },
+    "25": {
+      "length": 400,
+      "jerk_p95": 0.0091,
+      "max_step": 0.4362,
+      "idle_ratio": 0.0,
+      "leading_idle_ratio": 0.0,
+      "final_pose_distance": 0.001
+    },
+    "26": {
+      "length": 400,
+      "jerk_p95": 0.0089,
+      "max_step": 0.4352,
+      "idle_ratio": 0.0,
+      "leading_idle_ratio": 0.0,
+      "final_pose_distance": 0.003
+    },
+    "27": {
+      "length": 400,
+      "jerk_p95": 0.0097,
+      "max_step": 0.4367,
+      "idle_ratio": 0.0,
+      "leading_idle_ratio": 0.0,
+      "final_pose_distance": 0.005
+    },
+    "28": {
+      "length": 400,
+      "jerk_p95": 0.0093,
+      "max_step": 0.4333,
+      "idle_ratio": 0.0,
+      "leading_idle_ratio": 0.0,
+      "final_pose_distance": 0.007
+    },
+    "29": {
+      "length": 400,
+      "jerk_p95": 0.0099,
+      "max_step": 0.4341,
+      "idle_ratio": 0.0,
+      "leading_idle_ratio": 0.0,
+      "final_pose_distance": 0.008
+    },
+    "30": {
+      "length": 400,
+      "jerk_p95": 0.0094,
+      "max_step": 0.4339,
+      "idle_ratio": 0.0,
+      "leading_idle_ratio": 0.0,
+      "final_pose_distance": 0.004
+    },
+    "31": {
+      "length": 400,
+      "jerk_p95": 0.0102,
+      "max_step": 0.4334,
+      "idle_ratio": 0.0,
+      "leading_idle_ratio": 0.0,
+      "final_pose_distance": 0.011
+    },
+    "32": {
+      "length": 400,
+      "jerk_p95": 0.0099,
+      "max_step": 0.4346,
+      "idle_ratio": 0.0,
+      "leading_idle_ratio": 0.0,
+      "final_pose_distance": 0.004
+    },
+    "33": {
+      "length": 400,
+      "jerk_p95": 0.0092,
+      "max_step": 0.4336,
+      "idle_ratio": 0.0,
+      "leading_idle_ratio": 0.0,
+      "final_pose_distance": 0.002
+    },
+    "34": {
+      "length": 400,
+      "jerk_p95": 0.0105,
+      "max_step": 0.4336,
+      "idle_ratio": 0.0,
+      "leading_idle_ratio": 0.0,
+      "final_pose_distance": 0.007
+    },
+    "35": {
+      "length": 400,
+      "jerk_p95": 0.0087,
+      "max_step": 0.436,
+      "idle_ratio": 0.0,
+      "leading_idle_ratio": 0.0,
+      "final_pose_distance": 0.004
+    },
+    "36": {
+      "length": 400,
+      "jerk_p95": 0.0091,
+      "max_step": 0.4333,
+      "idle_ratio": 0.0,
+      "leading_idle_ratio": 0.0,
+      "final_pose_distance": 0.006
+    },
+    "37": {
+      "length": 400,
+      "jerk_p95": 0.0113,
+      "max_step": 0.4331,
+      "idle_ratio": 0.0,
+      "leading_idle_ratio": 0.0,
+      "final_pose_distance": 0.003
+    },
+    "38": {
+      "length": 400,
+      "jerk_p95": 0.0101,
+      "max_step": 0.4335,
+      "idle_ratio": 0.0,
+      "leading_idle_ratio": 0.0,
+      "final_pose_distance": 0.01
+    },
+    "39": {
+      "length": 400,
+      "jerk_p95": 0.0084,
+      "max_step": 0.4336,
+      "idle_ratio": 0.0,
+      "leading_idle_ratio": 0.0,
+      "final_pose_distance": 0.004
+    },
+    "40": {
+      "length": 400,
+      "jerk_p95": 0.0167,
+      "max_step": 0.437,
+      "idle_ratio": 0.0,
+      "leading_idle_ratio": 0.0,
+      "final_pose_distance": 0.007
+    },
+    "41": {
+      "length": 400,
+      "jerk_p95": 0.0114,
+      "max_step": 0.436,
+      "idle_ratio": 0.0,
+      "leading_idle_ratio": 0.0,
+      "final_pose_distance": 0.013
+    },
+    "42": {
+      "length": 400,
+      "jerk_p95": 0.0114,
+      "max_step": 0.4325,
+      "idle_ratio": 0.0,
+      "leading_idle_ratio": 0.0,
+      "final_pose_distance": 0.016
+    },
+    "43": {
+      "length": 400,
+      "jerk_p95": 0.0104,
+      "max_step": 0.433,
+      "idle_ratio": 0.0,
+      "leading_idle_ratio": 0.0,
+      "final_pose_distance": 0.005
+    },
+    "44": {
+      "length": 400,
+      "jerk_p95": 0.0104,
+      "max_step": 0.4353,
+      "idle_ratio": 0.0,
+      "leading_idle_ratio": 0.0,
+      "final_pose_distance": 0.004
+    },
+    "45": {
+      "length": 400,
+      "jerk_p95": 0.0124,
+      "max_step": 0.4369,
+      "idle_ratio": 0.0,
+      "leading_idle_ratio": 0.0,
+      "final_pose_distance": 0.014
+    },
+    "46": {
+      "length": 400,
+      "jerk_p95": 0.012,
+      "max_step": 0.4367,
+      "idle_ratio": 0.0,
+      "leading_idle_ratio": 0.0,
+      "final_pose_distance": 0.004
+    },
+    "47": {
+      "length": 400,
+      "jerk_p95": 0.0116,
+      "max_step": 0.4325,
+      "idle_ratio": 0.0,
+      "leading_idle_ratio": 0.0,
+      "final_pose_distance": 0.004
+    },
+    "48": {
+      "length": 400,
+      "jerk_p95": 0.0089,
+      "max_step": 0.4367,
+      "idle_ratio": 0.0,
+      "leading_idle_ratio": 0.0,
+      "final_pose_distance": 0.002
+    },
+    "49": {
+      "length": 400,
+      "jerk_p95": 0.0109,
+      "max_step": 0.4355,
+      "idle_ratio": 0.0,
+      "leading_idle_ratio": 0.0,
+      "final_pose_distance": 0.002
+    }
+  },
+  "review_shortlist": [
+    {
+      "rank": 1,
+      "episode_index": 45,
+      "checks": [
+        "A1"
+      ],
+      "outlier_score": 2.375,
+      "metrics": {
+        "length": 400,
+        "jerk_p95": 0.0124,
+        "max_step": 0.4369,
+        "idle_ratio": 0.0,
+        "leading_idle_ratio": 0.0,
+        "final_pose_distance": 0.014
+      },
+      "visualizer_url": null,
+      "delete_command": "lerobot-edit-dataset --repo_id aloha_sim_transfer_cube_scripted --root /home/hatch/workspace/your_files/engi-physical-ai/roboaudit/exp/real_data/aloha_sim_transfer_cube_scripted --operation.type delete_episodes --operation.episode_indices \"[45]\""
+    },
+    {
+      "rank": 2,
+      "episode_index": 46,
+      "checks": [
+        "A1"
+      ],
+      "outlier_score": 1.527,
+      "metrics": {
+        "length": 400,
+        "jerk_p95": 0.012,
+        "max_step": 0.4367,
+        "idle_ratio": 0.0,
+        "leading_idle_ratio": 0.0,
+        "final_pose_distance": 0.004
+      },
+      "visualizer_url": null,
+      "delete_command": "lerobot-edit-dataset --repo_id aloha_sim_transfer_cube_scripted --root /home/hatch/workspace/your_files/engi-physical-ai/roboaudit/exp/real_data/aloha_sim_transfer_cube_scripted --operation.type delete_episodes --operation.episode_indices \"[46]\""
+    },
+    {
+      "rank": 3,
+      "episode_index": 32,
+      "checks": [
+        "A5"
+      ],
+      "outlier_score": 0.125,
+      "metrics": {
+        "length": 400,
+        "jerk_p95": 0.0099,
+        "max_step": 0.4346,
+        "idle_ratio": 0.0,
+        "leading_idle_ratio": 0.0,
+        "final_pose_distance": 0.004
+      },
+      "visualizer_url": null,
+      "delete_command": "lerobot-edit-dataset --repo_id aloha_sim_transfer_cube_scripted --root /home/hatch/workspace/your_files/engi-physical-ai/roboaudit/exp/real_data/aloha_sim_transfer_cube_scripted --operation.type delete_episodes --operation.episode_indices \"[32]\""
+    }
+  ],
+  "delete_commands": {
+    "excluded_episodes": [],
+    "excluded_command": null,
+    "note": "RoboAudit는 이 명령을 실행하지 않습니다. 비주얼라이저로 확인한 뒤, 지울 에피소드만 골라 직접 실행하세요. (lerobot-edit-dataset은 원본을 고치는 도구입니다)"
+  },
   "checks": [
     {
       "check": "S1",
@@ -96,6 +580,28 @@
       "findings": 0,
       "deduction": 0,
       "status": "PASS",
+      "run_status": "complete",
+      "scope": "데이터 50/50 에피소드",
+      "error": null
+    },
+    {
+      "check": "S4",
+      "name": "기록 통계 드리프트",
+      "severity": "warning",
+      "findings": 0,
+      "deduction": 0,
+      "status": "PASS",
+      "run_status": "complete",
+      "scope": "데이터 50/50 에피소드",
+      "error": null
+    },
+    {
+      "check": "S5",
+      "name": "라이선스·카드 기본값",
+      "severity": "info",
+      "findings": 1,
+      "deduction": 1,
+      "status": "FAIL",
       "run_status": "complete",
       "scope": "데이터 50/50 에피소드",
       "error": null
@@ -170,6 +676,39 @@
       "check": "A4",
       "name": "중복 에피소드",
       "severity": "info",
+      "findings": 0,
+      "deduction": 0,
+      "status": "PASS",
+      "run_status": "complete",
+      "scope": "데이터 50/50 에피소드",
+      "error": null
+    },
+    {
+      "check": "A5",
+      "name": "근접 중복 에피소드",
+      "severity": "info",
+      "findings": 1,
+      "deduction": 1,
+      "status": "FAIL",
+      "run_status": "complete",
+      "scope": "데이터 50/50 에피소드",
+      "error": null
+    },
+    {
+      "check": "A6",
+      "name": "에피소드 정지 비율",
+      "severity": "warning",
+      "findings": 0,
+      "deduction": 0,
+      "status": "PASS",
+      "run_status": "complete",
+      "scope": "데이터 50/50 에피소드",
+      "error": null
+    },
+    {
+      "check": "A7",
+      "name": "캘리브레이션 드리프트",
+      "severity": "warning",
       "findings": 0,
       "deduction": 0,
       "status": "PASS",
@@ -296,6 +835,19 @@
       "margin_ratio": 0.277
     },
     {
+      "check": "A5",
+      "severity": "info",
+      "episode_index": 32,
+      "detail": "near-duplicate trajectory of episode 12 (mean |Δ| 0.0011σ, max 0.033σ — not an exact copy)",
+      "evidence": {
+        "near_duplicate_of": 12,
+        "mean_abs_diff_sigma": 0.00107,
+        "max_abs_diff_sigma": 0.0332,
+        "method": "16-point resampled state+action, per-dim σ-normalized"
+      },
+      "margin_ratio": null
+    },
+    {
       "check": "L2",
       "severity": "info",
       "episode_index": null,
@@ -304,15 +856,28 @@
         "episodes": 50
       },
       "margin_ratio": null
+    },
+    {
+      "check": "S5",
+      "severity": "info",
+      "episode_index": null,
+      "detail": "license 'apache-2.0' is the LeRobot dataset-card template default — it may never have been deliberately chosen; verify it is intended",
+      "evidence": {
+        "card": "README.md",
+        "license": "apache-2.0",
+        "template_default": "apache-2.0",
+        "note": "Oct 2026 scan of 3,000 Hub LeRobot datasets: 56.5% carried this template value (rdq)"
+      },
+      "margin_ratio": null
     }
   ],
   "errors": {},
   "manifest": {
     "tool": {
       "name": "roboaudit",
-      "version": "0.3.1"
+      "version": "0.3.2"
     },
-    "rules_version": "rules-2026-11-17.2",
+    "rules_version": "rules-2026-11-23.1",
     "thresholds": {
       "black_brightness": 12.0,
       "static_diff": 0.5,
@@ -335,7 +900,18 @@
       "interval_drop_ratio": 1.5,
       "interval_normal_lo": 0.8,
       "interval_normal_hi": 1.25,
-      "state_follow_frac": 0.5
+      "state_follow_frac": 0.5,
+      "stats_mean_shift": 0.1,
+      "stats_std_shift": 0.1,
+      "calib_offset_ratio": 0.5,
+      "calib_report_ratio": 0.25,
+      "idle_step_eps": 1e-06,
+      "idle_ratio": 0.3,
+      "idle_leading_ratio": 0.2,
+      "neardup_points": 16,
+      "neardup_mean_tol": 0.01,
+      "neardup_max_tol": 0.05,
+      "neardup_len_tol": 0.05
     },
     "disposition": {
       "borderline_margin": 1.5,
@@ -366,7 +942,9 @@
       }
     },
     "sample_frames": null,
-    "audit_seconds": 191.4
+    "max_episodes": null,
+    "repo_id": null,
+    "audit_seconds": 262.9
   },
   "clean_episodes": [
     0,
@@ -401,7 +979,6 @@
     29,
     30,
     31,
-    32,
     33,
     34,
     35,
@@ -420,6 +997,12 @@
   ],
   "excluded_episodes": [],
   "review_episodes": [
+    {
+      "episode_index": 32,
+      "checks": [
+        "A5"
+      ]
+    },
     {
       "episode_index": 45,
       "checks": [
@@ -466,7 +1049,7 @@
     "29": "keep",
     "30": "keep",
     "31": "keep",
-    "32": "keep",
+    "32": "review",
     "33": "keep",
     "34": "keep",
     "35": "keep",

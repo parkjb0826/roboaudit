@@ -80,8 +80,19 @@ def _margin_a2(f):
     return None
 
 
+def _margin_a6(f):
+    """정지 비율 / 임계값 (두 트리거 중 큰 쪽)."""
+    ev = f.get("evidence", {})
+    parts = []
+    if "idle_ratio" in ev:
+        parts.append(ev["idle_ratio"] / TH["idle_ratio"])
+    if "leading_idle_ratio" in ev:
+        parts.append(ev["leading_idle_ratio"] / TH["idle_leading_ratio"])
+    return max(parts) if parts else None
+
+
 _MARGIN = {"V1": _margin_v1, "V2": _margin_v2, "V3": _margin_v3,
-           "A1": _margin_a1, "A2": _margin_a2}
+           "A1": _margin_a1, "A2": _margin_a2, "A6": _margin_a6}
 
 
 def margin_ratio(f):

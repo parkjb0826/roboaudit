@@ -1,7 +1,7 @@
 {
   "dataset": "aloha_sim_transfer_cube_scripted",
   "format": "v3.0",
-  "score": 79,
+  "score": 77,
   "grade": "C",
   "total_episodes": 50,
   "clean_episodes": [
@@ -37,7 +37,6 @@
     29,
     30,
     31,
-    32,
     33,
     34,
     35,
@@ -56,6 +55,12 @@
   ],
   "excluded_episodes": [],
   "review_episodes": [
+    {
+      "episode_index": 32,
+      "checks": [
+        "A5"
+      ]
+    },
     {
       "episode_index": 45,
       "checks": [

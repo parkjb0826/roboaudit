@@ -2,6 +2,7 @@
   "summary": {
     "dataset": "sreetz_so101_teleop_vials",
     "path": "/home/hatch/workspace/your_files/engi-physical-ai/roboaudit/exp/real_data/sreetz_so101_teleop_vials",
+    "repo_id": null,
     "format": "v3.0",
     "video_key": "observation.images.external_D455",
     "video_keys": [
@@ -10,6 +11,8 @@
     ],
     "robot_type": "so101_follower",
     "total_episodes": 75,
+    "episodes_audited": 75,
+    "max_episodes": null,
     "total_frames_meta": 18250,
     "fps": 30,
     "total_tasks": 1,
@@ -75,6 +78,778 @@
       "share_pct": 1.8
     }
   ],
+  "task_scores": [
+    {
+      "task": "Pick up the vial and place it in the rack",
+      "episodes": 75,
+      "findings": 15,
+      "deduction": 45,
+      "score": 55,
+      "grade": "F"
+    }
+  ],
+  "dataset_level_deduction": 11,
+  "episode_metrics": {
+    "0": {
+      "length": 254,
+      "jerk_p95": 0.5691,
+      "max_step": 5.6636,
+      "idle_ratio": 0.0,
+      "leading_idle_ratio": 0.0,
+      "final_pose_distance": 1.635
+    },
+    "1": {
+      "length": 270,
+      "jerk_p95": 0.8817,
+      "max_step": 10.5051,
+      "idle_ratio": 0.0,
+      "leading_idle_ratio": 0.0,
+      "final_pose_distance": 1.899
+    },
+    "2": {
+      "length": 231,
+      "jerk_p95": 0.6113,
+      "max_step": 5.3765,
+      "idle_ratio": 0.0,
+      "leading_idle_ratio": 0.0,
+      "final_pose_distance": 1.734
+    },
+    "3": {
+      "length": 238,
+      "jerk_p95": 0.6752,
+      "max_step": 6.2319,
+      "idle_ratio": 0.0,
+      "leading_idle_ratio": 0.0,
+      "final_pose_distance": 1.878
+    },
+    "4": {
+      "length": 209,
+      "jerk_p95": 1.1091,
+      "max_step": 12.8609,
+      "idle_ratio": 0.0,
+      "leading_idle_ratio": 0.0,
+      "final_pose_distance": 1.312
+    },
+    "5": {
+      "length": 204,
+      "jerk_p95": 0.6977,
+      "max_step": 6.5231,
+      "idle_ratio": 0.0,
+      "leading_idle_ratio": 0.0,
+      "final_pose_distance": 1.158
+    },
+    "6": {
+      "length": 239,
+      "jerk_p95": 0.4225,
+      "max_step": 4.9258,
+      "idle_ratio": 0.0,
+      "leading_idle_ratio": 0.0,
+      "final_pose_distance": 1.355
+    },
+    "7": {
+      "length": 216,
+      "jerk_p95": 0.888,
+      "max_step": 4.9381,
+      "idle_ratio": 0.0,
+      "leading_idle_ratio": 0.0,
+      "final_pose_distance": 1.447
+    },
+    "8": {
+      "length": 198,
+      "jerk_p95": 0.9066,
+      "max_step": 6.0847,
+      "idle_ratio": 0.0,
+      "leading_idle_ratio": 0.0,
+      "final_pose_distance": 0.845
+    },
+    "9": {
+      "length": 222,
+      "jerk_p95": 0.5615,
+      "max_step": 4.4054,
+      "idle_ratio": 0.0,
+      "leading_idle_ratio": 0.0,
+      "final_pose_distance": 1.604
+    },
+    "10": {
+      "length": 291,
+      "jerk_p95": 0.5592,
+      "max_step": 5.5593,
+      "idle_ratio": 0.0,
+      "leading_idle_ratio": 0.0,
+      "final_pose_distance": 1.831
+    },
+    "11": {
+      "length": 222,
+      "jerk_p95": 0.6613,
+      "max_step": 6.1141,
+      "idle_ratio": 0.0,
+      "leading_idle_ratio": 0.0,
+      "final_pose_distance": 1.296
+    },
+    "12": {
+      "length": 232,
+      "jerk_p95": 0.9147,
+      "max_step": 5.2862,
+      "idle_ratio": 0.0,
+      "leading_idle_ratio": 0.0,
+      "final_pose_distance": 1.105
+    },
+    "13": {
+      "length": 237,
+      "jerk_p95": 0.6996,
+      "max_step": 5.3928,
+      "idle_ratio": 0.0,
+      "leading_idle_ratio": 0.0,
+      "final_pose_distance": 1.302
+    },
+    "14": {
+      "length": 262,
+      "jerk_p95": 0.5344,
+      "max_step": 7.2323,
+      "idle_ratio": 0.0,
+      "leading_idle_ratio": 0.0,
+      "final_pose_distance": 1.984
+    },
+    "15": {
+      "length": 284,
+      "jerk_p95": 0.6475,
+      "max_step": 5.1241,
+      "idle_ratio": 0.0,
+      "leading_idle_ratio": 0.0,
+      "final_pose_distance": 1.559
+    },
+    "16": {
+      "length": 295,
+      "jerk_p95": 0.7245,
+      "max_step": 5.7086,
+      "idle_ratio": 0.0,
+      "leading_idle_ratio": 0.0,
+      "final_pose_distance": 1.289
+    },
+    "17": {
+      "length": 230,
+      "jerk_p95": 0.7381,
+      "max_step": 6.0426,
+      "idle_ratio": 0.0,
+      "leading_idle_ratio": 0.0,
+      "final_pose_distance": 0.882
+    },
+    "18": {
+      "length": 237,
+      "jerk_p95": 0.5496,
+      "max_step": 5.0631,
+      "idle_ratio": 0.0,
+      "leading_idle_ratio": 0.0,
+      "final_pose_distance": 1.242
+    },
+    "19": {
+      "length": 246,
+      "jerk_p95": 0.8021,
+      "max_step": 5.9822,
+      "idle_ratio": 0.0,
+      "leading_idle_ratio": 0.0,
+      "final_pose_distance": 0.905
+    },
+    "20": {
+      "length": 327,
+      "jerk_p95": 0.7611,
+      "max_step": 6.7637,
+      "idle_ratio": 0.0,
+      "leading_idle_ratio": 0.0,
+      "final_pose_distance": 1.313
+    },
+    "21": {
+      "length": 214,
+      "jerk_p95": 1.2588,
+      "max_step": 11.3942,
+      "idle_ratio": 0.0,
+      "leading_idle_ratio": 0.0,
+      "final_pose_distance": 1.237
+    },
+    "22": {
+      "length": 192,
+      "jerk_p95": 0.8008,
+      "max_step": 7.561,
+      "idle_ratio": 0.0,
+      "leading_idle_ratio": 0.0,
+      "final_pose_distance": 0.801
+    },
+    "23": {
+      "length": 275,
+      "jerk_p95": 0.7622,
+      "max_step": 12.0848,
+      "idle_ratio": 0.0,
+      "leading_idle_ratio": 0.0,
+      "final_pose_distance": 1.034
+    },
+    "24": {
+      "length": 214,
+      "jerk_p95": 0.8492,
+      "max_step": 5.5351,
+      "idle_ratio": 0.0,
+      "leading_idle_ratio": 0.0,
+      "final_pose_distance": 0.558
+    },
+    "25": {
+      "length": 254,
+      "jerk_p95": 0.8864,
+      "max_step": 13.8228,
+      "idle_ratio": 0.0,
+      "leading_idle_ratio": 0.0,
+      "final_pose_distance": 1.548
+    },
+    "26": {
+      "length": 223,
+      "jerk_p95": 1.049,
+      "max_step": 7.5592,
+      "idle_ratio": 0.0,
+      "leading_idle_ratio": 0.0,
+      "final_pose_distance": 1.221
+    },
+    "27": {
+      "length": 298,
+      "jerk_p95": 0.7073,
+      "max_step": 4.9709,
+      "idle_ratio": 0.0,
+      "leading_idle_ratio": 0.0,
+      "final_pose_distance": 1.814
+    },
+    "28": {
+      "length": 258,
+      "jerk_p95": 0.765,
+      "max_step": 5.7508,
+      "idle_ratio": 0.0,
+      "leading_idle_ratio": 0.0,
+      "final_pose_distance": 1.018
+    },
+    "29": {
+      "length": 264,
+      "jerk_p95": 0.8305,
+      "max_step": 5.1166,
+      "idle_ratio": 0.0,
+      "leading_idle_ratio": 0.0,
+      "final_pose_distance": 1.548
+    },
+    "30": {
+      "length": 251,
+      "jerk_p95": 0.9988,
+      "max_step": 6.5207,
+      "idle_ratio": 0.0,
+      "leading_idle_ratio": 0.0,
+      "final_pose_distance": 1.123
+    },
+    "31": {
+      "length": 269,
+      "jerk_p95": 1.0375,
+      "max_step": 10.4728,
+      "idle_ratio": 0.0,
+      "leading_idle_ratio": 0.0,
+      "final_pose_distance": 1.05
+    },
+    "32": {
+      "length": 263,
+      "jerk_p95": 0.7355,
+      "max_step": 3.7466,
+      "idle_ratio": 0.0,
+      "leading_idle_ratio": 0.0,
+      "final_pose_distance": 0.855
+    },
+    "33": {
+      "length": 243,
+      "jerk_p95": 0.7268,
+      "max_step": 4.6103,
+      "idle_ratio": 0.0,
+      "leading_idle_ratio": 0.0,
+      "final_pose_distance": 1.129
+    },
+    "34": {
+      "length": 286,
+      "jerk_p95": 1.0273,
+      "max_step": 4.9815,
+      "idle_ratio": 0.0,
+      "leading_idle_ratio": 0.0,
+      "final_pose_distance": 0.773
+    },
+    "35": {
+      "length": 229,
+      "jerk_p95": 0.7427,
+      "max_step": 5.5698,
+      "idle_ratio": 0.0,
+      "leading_idle_ratio": 0.0,
+      "final_pose_distance": 1.764
+    },
+    "36": {
+      "length": 231,
+      "jerk_p95": 0.6352,
+      "max_step": 5.6146,
+      "idle_ratio": 0.0,
+      "leading_idle_ratio": 0.0,
+      "final_pose_distance": 1.059
+    },
+    "37": {
+      "length": 267,
+      "jerk_p95": 1.0446,
+      "max_step": 10.3474,
+      "idle_ratio": 0.0,
+      "leading_idle_ratio": 0.0,
+      "final_pose_distance": 1.798
+    },
+    "38": {
+      "length": 260,
+      "jerk_p95": 0.6094,
+      "max_step": 5.8213,
+      "idle_ratio": 0.0,
+      "leading_idle_ratio": 0.0,
+      "final_pose_distance": 0.621
+    },
+    "39": {
+      "length": 221,
+      "jerk_p95": 0.5876,
+      "max_step": 4.5612,
+      "idle_ratio": 0.0,
+      "leading_idle_ratio": 0.0,
+      "final_pose_distance": 0.782
+    },
+    "40": {
+      "length": 222,
+      "jerk_p95": 0.5643,
+      "max_step": 4.4831,
+      "idle_ratio": 0.0,
+      "leading_idle_ratio": 0.0,
+      "final_pose_distance": 0.762
+    },
+    "41": {
+      "length": 291,
+      "jerk_p95": 0.8663,
+      "max_step": 6.4285,
+      "idle_ratio": 0.0,
+      "leading_idle_ratio": 0.0,
+      "final_pose_distance": 0.964
+    },
+    "42": {
+      "length": 279,
+      "jerk_p95": 0.766,
+      "max_step": 11.1637,
+      "idle_ratio": 0.0,
+      "leading_idle_ratio": 0.0,
+      "final_pose_distance": 1.271
+    },
+    "43": {
+      "length": 249,
+      "jerk_p95": 0.7769,
+      "max_step": 7.5964,
+      "idle_ratio": 0.0,
+      "leading_idle_ratio": 0.0,
+      "final_pose_distance": 1.28
+    },
+    "44": {
+      "length": 218,
+      "jerk_p95": 0.8126,
+      "max_step": 5.0214,
+      "idle_ratio": 0.0,
+      "leading_idle_ratio": 0.0,
+      "final_pose_distance": 0.876
+    },
+    "45": {
+      "length": 239,
+      "jerk_p95": 0.9088,
+      "max_step": 7.9441,
+      "idle_ratio": 0.0,
+      "leading_idle_ratio": 0.0,
+      "final_pose_distance": 1.283
+    },
+    "46": {
+      "length": 222,
+      "jerk_p95": 0.678,
+      "max_step": 5.1883,
+      "idle_ratio": 0.0,
+      "leading_idle_ratio": 0.0,
+      "final_pose_distance": 1.411
+    },
+    "47": {
+      "length": 250,
+      "jerk_p95": 1.1458,
+      "max_step": 13.4432,
+      "idle_ratio": 0.0,
+      "leading_idle_ratio": 0.0,
+      "final_pose_distance": 1.587
+    },
+    "48": {
+      "length": 246,
+      "jerk_p95": 0.5521,
+      "max_step": 4.8842,
+      "idle_ratio": 0.0,
+      "leading_idle_ratio": 0.0,
+      "final_pose_distance": 0.903
+    },
+    "49": {
+      "length": 248,
+      "jerk_p95": 0.6304,
+      "max_step": 5.2323,
+      "idle_ratio": 0.0,
+      "leading_idle_ratio": 0.0,
+      "final_pose_distance": 1.031
+    },
+    "50": {
+      "length": 182,
+      "jerk_p95": 0.8708,
+      "max_step": 4.7169,
+      "idle_ratio": 0.0,
+      "leading_idle_ratio": 0.0,
+      "final_pose_distance": 0.959
+    },
+    "51": {
+      "length": 233,
+      "jerk_p95": 0.9226,
+      "max_step": 7.0339,
+      "idle_ratio": 0.0,
+      "leading_idle_ratio": 0.0,
+      "final_pose_distance": 0.822
+    },
+    "52": {
+      "length": 206,
+      "jerk_p95": 0.7236,
+      "max_step": 5.5411,
+      "idle_ratio": 0.0,
+      "leading_idle_ratio": 0.0,
+      "final_pose_distance": 1.346
+    },
+    "53": {
+      "length": 234,
+      "jerk_p95": 0.6698,
+      "max_step": 5.5852,
+      "idle_ratio": 0.0,
+      "leading_idle_ratio": 0.0,
+      "final_pose_distance": 1.426
+    },
+    "54": {
+      "length": 247,
+      "jerk_p95": 1.1883,
+      "max_step": 4.377,
+      "idle_ratio": 0.0,
+      "leading_idle_ratio": 0.0,
+      "final_pose_distance": 0.99
+    },
+    "55": {
+      "length": 228,
+      "jerk_p95": 0.8036,
+      "max_step": 7.7235,
+      "idle_ratio": 0.0,
+      "leading_idle_ratio": 0.0,
+      "final_pose_distance": 1.682
+    },
+    "56": {
+      "length": 241,
+      "jerk_p95": 0.709,
+      "max_step": 6.6256,
+      "idle_ratio": 0.0,
+      "leading_idle_ratio": 0.0,
+      "final_pose_distance": 1.847
+    },
+    "57": {
+      "length": 218,
+      "jerk_p95": 0.9641,
+      "max_step": 13.8828,
+      "idle_ratio": 0.0,
+      "leading_idle_ratio": 0.0,
+      "final_pose_distance": 0.904
+    },
+    "58": {
+      "length": 244,
+      "jerk_p95": 0.7897,
+      "max_step": 10.1708,
+      "idle_ratio": 0.0,
+      "leading_idle_ratio": 0.0,
+      "final_pose_distance": 0.617
+    },
+    "59": {
+      "length": 193,
+      "jerk_p95": 0.9296,
+      "max_step": 13.365,
+      "idle_ratio": 0.0,
+      "leading_idle_ratio": 0.0,
+      "final_pose_distance": 2.05
+    },
+    "60": {
+      "length": 262,
+      "jerk_p95": 0.9038,
+      "max_step": 5.6486,
+      "idle_ratio": 0.0,
+      "leading_idle_ratio": 0.0,
+      "final_pose_distance": 1.32
+    },
+    "61": {
+      "length": 266,
+      "jerk_p95": 0.9669,
+      "max_step": 11.1721,
+      "idle_ratio": 0.0,
+      "leading_idle_ratio": 0.0,
+      "final_pose_distance": 0.579
+    },
+    "62": {
+      "length": 229,
+      "jerk_p95": 0.6621,
+      "max_step": 6.9292,
+      "idle_ratio": 0.0,
+      "leading_idle_ratio": 0.0,
+      "final_pose_distance": 1.344
+    },
+    "63": {
+      "length": 206,
+      "jerk_p95": 0.964,
+      "max_step": 10.0173,
+      "idle_ratio": 0.0,
+      "leading_idle_ratio": 0.0,
+      "final_pose_distance": 0.455
+    },
+    "64": {
+      "length": 240,
+      "jerk_p95": 0.9365,
+      "max_step": 13.0741,
+      "idle_ratio": 0.0,
+      "leading_idle_ratio": 0.0,
+      "final_pose_distance": 0.859
+    },
+    "65": {
+      "length": 262,
+      "jerk_p95": 0.8182,
+      "max_step": 5.3479,
+      "idle_ratio": 0.0,
+      "leading_idle_ratio": 0.0,
+      "final_pose_distance": 1.37
+    },
+    "66": {
+      "length": 224,
+      "jerk_p95": 1.01,
+      "max_step": 6.5923,
+      "idle_ratio": 0.0,
+      "leading_idle_ratio": 0.0,
+      "final_pose_distance": 0.927
+    },
+    "67": {
+      "length": 280,
+      "jerk_p95": 0.7381,
+      "max_step": 13.9576,
+      "idle_ratio": 0.0,
+      "leading_idle_ratio": 0.0,
+      "final_pose_distance": 0.851
+    },
+    "68": {
+      "length": 231,
+      "jerk_p95": 1.0662,
+      "max_step": 7.5086,
+      "idle_ratio": 0.0,
+      "leading_idle_ratio": 0.0,
+      "final_pose_distance": 1.153
+    },
+    "69": {
+      "length": 238,
+      "jerk_p95": 0.9488,
+      "max_step": 5.9581,
+      "idle_ratio": 0.0,
+      "leading_idle_ratio": 0.0,
+      "final_pose_distance": 0.869
+    },
+    "70": {
+      "length": 268,
+      "jerk_p95": 0.5608,
+      "max_step": 5.0117,
+      "idle_ratio": 0.0,
+      "leading_idle_ratio": 0.0,
+      "final_pose_distance": 0.846
+    },
+    "71": {
+      "length": 245,
+      "jerk_p95": 1.3376,
+      "max_step": 7.0036,
+      "idle_ratio": 0.0041,
+      "leading_idle_ratio": 0.0,
+      "final_pose_distance": 1.927
+    },
+    "72": {
+      "length": 263,
+      "jerk_p95": 0.7186,
+      "max_step": 5.5642,
+      "idle_ratio": 0.0,
+      "leading_idle_ratio": 0.0,
+      "final_pose_distance": 0.618
+    },
+    "73": {
+      "length": 243,
+      "jerk_p95": 1.0062,
+      "max_step": 5.4943,
+      "idle_ratio": 0.0,
+      "leading_idle_ratio": 0.0,
+      "final_pose_distance": 0.829
+    },
+    "74": {
+      "length": 247,
+      "jerk_p95": 0.6501,
+      "max_step": 6.4739,
+      "idle_ratio": 0.0,
+      "leading_idle_ratio": 0.0,
+      "final_pose_distance": 0.68
+    }
+  },
+  "review_shortlist": [
+    {
+      "rank": 1,
+      "episode_index": 4,
+      "checks": [
+        "A2"
+      ],
+      "outlier_score": 2.966,
+      "metrics": {
+        "length": 209,
+        "jerk_p95": 1.1091,
+        "max_step": 12.8609,
+        "idle_ratio": 0.0,
+        "leading_idle_ratio": 0.0,
+        "final_pose_distance": 1.312
+      },
+      "visualizer_url": null,
+      "delete_command": "lerobot-edit-dataset --repo_id sreetz_so101_teleop_vials --root /home/hatch/workspace/your_files/engi-physical-ai/roboaudit/exp/real_data/sreetz_so101_teleop_vials --operation.type delete_episodes --operation.episode_indices \"[4]\""
+    },
+    {
+      "rank": 2,
+      "episode_index": 23,
+      "checks": [
+        "A2"
+      ],
+      "outlier_score": 2.631,
+      "metrics": {
+        "length": 275,
+        "jerk_p95": 0.7622,
+        "max_step": 12.0848,
+        "idle_ratio": 0.0,
+        "leading_idle_ratio": 0.0,
+        "final_pose_distance": 1.034
+      },
+      "visualizer_url": null,
+      "delete_command": "lerobot-edit-dataset --repo_id sreetz_so101_teleop_vials --root /home/hatch/workspace/your_files/engi-physical-ai/roboaudit/exp/real_data/sreetz_so101_teleop_vials --operation.type delete_episodes --operation.episode_indices \"[23]\""
+    },
+    {
+      "rank": 3,
+      "episode_index": 61,
+      "checks": [
+        "A2"
+      ],
+      "outlier_score": 2.238,
+      "metrics": {
+        "length": 266,
+        "jerk_p95": 0.9669,
+        "max_step": 11.1721,
+        "idle_ratio": 0.0,
+        "leading_idle_ratio": 0.0,
+        "final_pose_distance": 0.579
+      },
+      "visualizer_url": null,
+      "delete_command": "lerobot-edit-dataset --repo_id sreetz_so101_teleop_vials --root /home/hatch/workspace/your_files/engi-physical-ai/roboaudit/exp/real_data/sreetz_so101_teleop_vials --operation.type delete_episodes --operation.episode_indices \"[61]\""
+    },
+    {
+      "rank": 4,
+      "episode_index": 42,
+      "checks": [
+        "A2"
+      ],
+      "outlier_score": 2.234,
+      "metrics": {
+        "length": 279,
+        "jerk_p95": 0.766,
+        "max_step": 11.1637,
+        "idle_ratio": 0.0,
+        "leading_idle_ratio": 0.0,
+        "final_pose_distance": 1.271
+      },
+      "visualizer_url": null,
+      "delete_command": "lerobot-edit-dataset --repo_id sreetz_so101_teleop_vials --root /home/hatch/workspace/your_files/engi-physical-ai/roboaudit/exp/real_data/sreetz_so101_teleop_vials --operation.type delete_episodes --operation.episode_indices \"[42]\""
+    },
+    {
+      "rank": 5,
+      "episode_index": 1,
+      "checks": [
+        "A2"
+      ],
+      "outlier_score": 1.95,
+      "metrics": {
+        "length": 270,
+        "jerk_p95": 0.8817,
+        "max_step": 10.5051,
+        "idle_ratio": 0.0,
+        "leading_idle_ratio": 0.0,
+        "final_pose_distance": 1.899
+      },
+      "visualizer_url": null,
+      "delete_command": "lerobot-edit-dataset --repo_id sreetz_so101_teleop_vials --root /home/hatch/workspace/your_files/engi-physical-ai/roboaudit/exp/real_data/sreetz_so101_teleop_vials --operation.type delete_episodes --operation.episode_indices \"[1]\""
+    },
+    {
+      "rank": 6,
+      "episode_index": 31,
+      "checks": [
+        "A2"
+      ],
+      "outlier_score": 1.936,
+      "metrics": {
+        "length": 269,
+        "jerk_p95": 1.0375,
+        "max_step": 10.4728,
+        "idle_ratio": 0.0,
+        "leading_idle_ratio": 0.0,
+        "final_pose_distance": 1.05
+      },
+      "visualizer_url": null,
+      "delete_command": "lerobot-edit-dataset --repo_id sreetz_so101_teleop_vials --root /home/hatch/workspace/your_files/engi-physical-ai/roboaudit/exp/real_data/sreetz_so101_teleop_vials --operation.type delete_episodes --operation.episode_indices \"[31]\""
+    },
+    {
+      "rank": 7,
+      "episode_index": 34,
+      "checks": [
+        "A2"
+      ],
+      "outlier_score": 0.987,
+      "metrics": {
+        "length": 286,
+        "jerk_p95": 1.0273,
+        "max_step": 4.9815,
+        "idle_ratio": 0.0,
+        "leading_idle_ratio": 0.0,
+        "final_pose_distance": 0.773
+      },
+      "visualizer_url": null,
+      "delete_command": "lerobot-edit-dataset --repo_id sreetz_so101_teleop_vials --root /home/hatch/workspace/your_files/engi-physical-ai/roboaudit/exp/real_data/sreetz_so101_teleop_vials --operation.type delete_episodes --operation.episode_indices \"[34]\""
+    },
+    {
+      "rank": 8,
+      "episode_index": 30,
+      "checks": [
+        "A2"
+      ],
+      "outlier_score": 0.875,
+      "metrics": {
+        "length": 251,
+        "jerk_p95": 0.9988,
+        "max_step": 6.5207,
+        "idle_ratio": 0.0,
+        "leading_idle_ratio": 0.0,
+        "final_pose_distance": 1.123
+      },
+      "visualizer_url": null,
+      "delete_command": "lerobot-edit-dataset --repo_id sreetz_so101_teleop_vials --root /home/hatch/workspace/your_files/engi-physical-ai/roboaudit/exp/real_data/sreetz_so101_teleop_vials --operation.type delete_episodes --operation.episode_indices \"[30]\""
+    }
+  ],
+  "delete_commands": {
+    "excluded_episodes": [
+      21,
+      25,
+      47,
+      57,
+      59,
+      64,
+      67
+    ],
+    "excluded_command": "lerobot-edit-dataset --repo_id sreetz_so101_teleop_vials --root /home/hatch/workspace/your_files/engi-physical-ai/roboaudit/exp/real_data/sreetz_so101_teleop_vials --operation.type delete_episodes --operation.episode_indices \"[21, 25, 47, 57, 59, 64, 67]\"",
+    "note": "RoboAudit는 이 명령을 실행하지 않습니다. 비주얼라이저로 확인한 뒤, 지울 에피소드만 골라 직접 실행하세요. (lerobot-edit-dataset은 원본을 고치는 도구입니다)"
+  },
   "checks": [
     {
       "check": "S1",
@@ -107,6 +882,28 @@
       "status": "PASS",
       "run_status": "complete",
       "scope": "데이터 75/75 에피소드",
+      "error": null
+    },
+    {
+      "check": "S4",
+      "name": "기록 통계 드리프트",
+      "severity": "warning",
+      "findings": 0,
+      "deduction": 0,
+      "status": "PASS",
+      "run_status": "complete",
+      "scope": "데이터 75/75 에피소드",
+      "error": null
+    },
+    {
+      "check": "S5",
+      "name": "라이선스·카드 기본값",
+      "severity": "info",
+      "findings": 0,
+      "deduction": 0,
+      "status": "PASS",
+      "run_status": "not_applicable",
+      "scope": "데이터셋 카드(README.md)가 로컬 복사본에 없음 — 라이선스 판단 보류",
       "error": null
     },
     {
@@ -179,6 +976,39 @@
       "check": "A4",
       "name": "중복 에피소드",
       "severity": "info",
+      "findings": 0,
+      "deduction": 0,
+      "status": "PASS",
+      "run_status": "complete",
+      "scope": "데이터 75/75 에피소드",
+      "error": null
+    },
+    {
+      "check": "A5",
+      "name": "근접 중복 에피소드",
+      "severity": "info",
+      "findings": 0,
+      "deduction": 0,
+      "status": "PASS",
+      "run_status": "complete",
+      "scope": "데이터 75/75 에피소드",
+      "error": null
+    },
+    {
+      "check": "A6",
+      "name": "에피소드 정지 비율",
+      "severity": "warning",
+      "findings": 0,
+      "deduction": 0,
+      "status": "PASS",
+      "run_status": "complete",
+      "scope": "데이터 75/75 에피소드",
+      "error": null
+    },
+    {
+      "check": "A7",
+      "name": "캘리브레이션 드리프트",
+      "severity": "warning",
       "findings": 0,
       "deduction": 0,
       "status": "PASS",
@@ -612,9 +1442,9 @@
   "manifest": {
     "tool": {
       "name": "roboaudit",
-      "version": "0.3.1"
+      "version": "0.3.2"
     },
-    "rules_version": "rules-2026-11-17.2",
+    "rules_version": "rules-2026-11-23.1",
     "thresholds": {
       "black_brightness": 12.0,
       "static_diff": 0.5,
@@ -637,7 +1467,18 @@
       "interval_drop_ratio": 1.5,
       "interval_normal_lo": 0.8,
       "interval_normal_hi": 1.25,
-      "state_follow_frac": 0.5
+      "state_follow_frac": 0.5,
+      "stats_mean_shift": 0.1,
+      "stats_std_shift": 0.1,
+      "calib_offset_ratio": 0.5,
+      "calib_report_ratio": 0.25,
+      "idle_step_eps": 1e-06,
+      "idle_ratio": 0.3,
+      "idle_leading_ratio": 0.2,
+      "neardup_points": 16,
+      "neardup_mean_tol": 0.01,
+      "neardup_max_tol": 0.05,
+      "neardup_len_tol": 0.05
     },
     "disposition": {
       "borderline_margin": 1.5,
@@ -752,7 +1593,9 @@
       }
     },
     "sample_frames": null,
-    "audit_seconds": 126.0
+    "max_episodes": null,
+    "repo_id": null,
+    "audit_seconds": 246.9
   },
   "clean_episodes": [
     0,

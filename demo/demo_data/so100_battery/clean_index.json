@@ -1,8 +1,8 @@
 {
   "dataset": "so100_battery",
   "format": "v2.1",
-  "score": 84,
-  "grade": "B",
+  "score": 71,
+  "grade": "C",
   "total_episodes": 50,
   "clean_episodes": [
     0,
@@ -13,7 +13,6 @@
     5,
     6,
     7,
-    8,
     9,
     10,
     11,
@@ -22,7 +21,6 @@
     15,
     16,
     18,
-    19,
     20,
     21,
     22,
@@ -34,8 +32,6 @@
     29,
     30,
     31,
-    32,
-    33,
     34,
     35,
     36,
@@ -51,8 +47,21 @@
     47,
     49
   ],
-  "excluded_episodes": [],
+  "excluded_episodes": [
+    {
+      "episode_index": 19,
+      "checks": [
+        "A6"
+      ]
+    }
+  ],
   "review_episodes": [
+    {
+      "episode_index": 8,
+      "checks": [
+        "A6"
+      ]
+    },
     {
       "episode_index": 13,
       "checks": [
@@ -69,6 +78,18 @@
       "episode_index": 28,
       "checks": [
         "V2"
+      ]
+    },
+    {
+      "episode_index": 32,
+      "checks": [
+        "A6"
+      ]
+    },
+    {
+      "episode_index": 33,
+      "checks": [
+        "A6"
       ]
     },
     {

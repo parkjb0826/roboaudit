@@ -6,7 +6,7 @@ dataset folder and it returns a **100-point score with a grade**, a list of
 what is wrong and where, and episode indexes that sort episodes into
 keep / review / exclude for training-data selection.
 
-![RoboAudit pipeline: a LeRobot dataset (v2.1 or v3.0) goes through 12 rule-based checks in four groups — structure, video, action, instruction — and comes out as a 100-point score with a grade, top-3 deduction factors, and four output files: report.html, result.json, clean_index.json, and review_index.json, plus an optional opt-in share bundle.](docs/img/flow.svg)
+![RoboAudit pipeline: a LeRobot dataset (v2.1 or v3.0) goes through 17 rule-based checks in four groups — structure, video, action, instruction — and comes out as a 100-point score with a grade, top-3 deduction factors, and four output files: report.html, result.json, clean_index.json, and review_index.json, plus an optional opt-in share bundle.](docs/img/flow.svg)
 
 > **Why it exists**
 >
@@ -34,7 +34,8 @@ roboaudit /path/to/lerobot_dataset --out ./audit_out
 > data from ever being written into.
 
 That writes `report.html` (the report card), `result.json`,
-`clean_index.json`, and `review_index.json` into `./audit_out`. No robot,
+`clean_index.json`, `review_index.json`, and a `badge.svg` score badge
+into `./audit_out` (add `--markdown` for a `report.md` as well). No robot,
 no GPU — CPU only. Getting to the first command takes about a minute;
 the audit itself takes minutes, not seconds — measured on this
 project's (small, shared) VM CPU: 152–180 s for 50–75-episode datasets
@@ -44,7 +45,7 @@ mode, exit codes) are in [Install](#install) and [Usage](#usage) below.
 
 ## Report cards from real datasets
 
-![Report cards for three real public datasets: aloha transfer cube (sim) scores 79 out of 100, grade C, with 0 episodes excluded and 2 sent to review; so100_battery scores 84, grade B, with 0 excluded and 5 in review; so101_teleop_vials (partial copy) scores 44, grade F, flagged as an incomplete audit, with 7 excluded and 8 in review.](docs/img/report_cards.svg)
+![Report cards for three real public datasets: aloha transfer cube (sim) scores 77 out of 100, grade C, with 0 episodes excluded and 3 sent to review; so100_battery scores 71, grade C, with 1 excluded and 8 in review; so101_teleop_vials (partial copy) scores 44, grade F, flagged as an incomplete audit, with 7 excluded and 8 in review.](docs/img/report_cards.svg)
 
 Real audits of three public datasets — not demos, not synthetic data
 (full method and caveats in [Measured results](#measured-results-not-marketing-numbers)).
@@ -53,9 +54,15 @@ the disposition thresholds, so read their grades as in-sample results:
 
 | Dataset | Format | Episodes | Score | Exclude / Review | One-line verdict |
 |---|---|---|---|---|---|
-| `lerobot/aloha_sim_transfer_cube_scripted` | v3.0 | 50 | **79 / C** | 0 / 2 | Two episodes sit just past a range-band edge (measured at 0.28–0.44 of the exclusion margin) — sent to a human, not dropped |
-| `00ri/so100_battery` | v2.1 | 50 | **84 / B** | 0 / 5 | Five "shake" flags that look like busy episodes rather than camera shake — all review, none auto-dropped; both declared cameras audited |
+| `lerobot/aloha_sim_transfer_cube_scripted` | v3.0 | 50 | **77 / C** | 0 / 3 | Two episodes sit just past a range-band edge (measured at 0.28–0.44 of the exclusion margin) — sent to a human, not dropped; 0.3.2 also found one near-duplicate episode pair and the untouched template license |
+| `00ri/so100_battery` | v2.1 | 50 | **71 / C** | 1 / 8 | Five "shake" flags that look like busy episodes rather than camera shake — all review, none auto-dropped; both declared cameras audited; 0.3.2's idle check found four episodes with 31–38% frozen frames (one excluded on a 31% leading freeze) |
 | `sreetz-nv/so101_teleop_vials_rack_left` (partial copy) | v3.0 | 75 | **44 / F** | 7 / 8 | Audited from a **partial copy** (a 166 MB download covering only one of the two declared cameras): the missing camera is a property of this copy — the upstream dataset may be complete. The audit is flagged **incomplete** instead of passing silently; 15 jump findings split by measured strength |
+
+Scores are the 0.3.2 re-audit (rules `rules-2026-11-23.1`). Under 0.3.1
+the same datasets scored 79/C, 84/B, 44/F: the 0.3.2 drops come only
+from the five new checks (idle frames and a template-default license
+on battery, a near-duplicate pair and the same license note on aloha);
+every 0.3.1 finding reproduced identically.
 
 ## How it compares
 
@@ -82,12 +89,13 @@ reach a verdict, plus dispositions a human can overrule.
 
 ## Demo
 
-A fixed-data demo lives in [`demo/`](demo/): pick one of the three
-pre-audited datasets above and browse its stored score summary and full
-HTML report. The demo files are prepared and verified locally; the demo
-itself is not deployed yet. Arbitrary uploads are deliberately not
-supported — auditing is CPU-heavy (minutes per dataset), so a public
-demo needs a queue and abuse controls first.
+A fixed-data demo is live on Hugging Face:
+<https://huggingface.co/spaces/jbpark0826/roboaudit-demo> — pick one of
+the pre-audited datasets and browse its stored score summary and full
+HTML report (the same fixed data lives in [`demo/`](demo/)). Arbitrary
+uploads are deliberately not supported — auditing is CPU-heavy (minutes
+per dataset), so a public upload demo would need a queue and abuse
+controls first.
 
 ---
 
@@ -98,7 +106,7 @@ money silently. RoboAudit is the cheap inspection you run *before* training.
 - Reads **LeRobot v2.1 and v3.0** with its own parser — no conversion step.
   v2.1 is read directly, even though with LeRobot 0.7.0 the official
   loader refuses v2.1 datasets (BackwardCompatibilityError).
-- **12 rule/threshold checks** (structure, video, action, instruction).
+- **17 rule/threshold checks** (structure, video, action, instruction).
   No AI inside the checks: every deduction traces back to a rule and a
   measured value, so a score can always be explained.
 - **Original data is read-only.** RoboAudit never modifies the dataset
@@ -129,16 +137,22 @@ fallback decoder for video codecs OpenCV cannot read (e.g. AV1).
 
 ## Usage
 
-Basic audit — writes `report.html`, `result.json`, `clean_index.json`, and
-`review_index.json` into the output folder:
+Basic audit — writes `report.html`, `result.json`, `clean_index.json`,
+`review_index.json`, and `badge.svg` into the output folder:
 
 ```bash
 roboaudit /path/to/lerobot_dataset --out ./audit_out
 ```
 
-The argument is the dataset **root folder on local disk** — RoboAudit
-does not download anything, so fetch the dataset first (e.g. from the
-Hugging Face Hub). The root is the folder that contains `meta/info.json`:
+The argument is normally the dataset **root folder on local disk**.
+Since 0.3.2 you can also pass a **Hub repo-id** directly
+(`roboaudit lerobot/pusht --out ./audit_out`): the dataset is downloaded
+with `huggingface_hub` (install the extra: `pip install roboaudit[hub]`)
+and the audit records the repo-id, so findings in the HTML report link
+to the official LeRobot dataset visualizer. Use `--revision <sha>` to
+pin an exact Hub revision, and `--repo-id <id>` to attach visualizer
+links when auditing a local copy of a known Hub dataset. The root is
+the folder that contains `meta/info.json`:
 
 ```
 my_dataset/                       ← pass this folder
@@ -164,14 +178,38 @@ frame. Faster, but approximate (see *Limitations*):
 roboaudit /path/to/big_dataset --out ./audit_out --sample-frames 60
 ```
 
+Episode sampling audits only the first N episodes (`--max-episodes N`)
+— useful for a quick look at a very large dataset. The report states
+that the audit is episode-sampled; dataset-wide checks that need every
+episode (recorded-stats comparison, total counts) are skipped or
+restricted to the sampled episodes and say so.
+
+CI gating, a markdown report, and comparing two audits:
+
+```bash
+# Fail the job (exit code 1) when the score is under 80:
+roboaudit /path/to/dataset --out ./audit_out --fail-under 80
+
+# Also write report.md next to report.html:
+roboaudit /path/to/dataset --out ./audit_out --markdown
+
+# What changed between two audits of the same dataset?
+roboaudit diff old_out/result.json new_out/result.json
+```
+
+A ready-made GitHub Action wrapper ships with the repository
+(`action.yml`): `uses: parkjb0826/roboaudit@v0.3.2` with inputs
+`dataset`, `fail-under`, `out`, `max-episodes`, `revision`, and outputs
+`score` / `grade`.
+
 Exit codes are part of the interface, so the tool can gate a pipeline:
 
 | Code | Meaning |
 |---|---|
 | 0 | Audit complete — every check covered its full scope (regardless of how many defects were found) |
-| 1 | Unexpected runtime failure |
+| 1 | Score gate failed — the audit completed but its score is below `--fail-under N` (without `--fail-under`, code 1 still means an unexpected runtime failure) |
 | 2 | Input error — not a LeRobot dataset folder, or `--out` points inside the dataset folder (refused, to protect the original data) |
-| 3 | Audit finished but **incomplete** — some check ran partially or errored; the report says which and why |
+| 3 | Audit finished but **incomplete** — some check ran partially or errored; the report says which and why. Takes precedence over code 1 when both apply (the gate failure is still printed) |
 
 **Exit code 0 means the audit ran to completion with full coverage. It
 does NOT mean the dataset passed** — a complete audit can still find
@@ -184,8 +222,10 @@ code 3 (incomplete) as "the indexes are not final" (see
 
 | File | Contents |
 |---|---|
-| `report.html` | Human-readable report card: score and grade, top-3 deduction factors, per-check run status and findings, per-camera decode statistics, a timestamp-provenance line (see below), scope notices |
-| `result.json` | Machine-readable full result, including a **run manifest** (tool/rules versions, thresholds actually applied, input fingerprint, decode backends) to help reproduce runs and compare their settings and results, plus a **diagnostics** block recording the timestamp diagnostic on two axes — clock provenance (whether the timestamps are a synthetic `frame_index / fps` grid) and interval regularity — plus any `frame_index` gaps as a separate signal |
+| `report.html` | Human-readable report card: score and grade, top-3 deduction factors, per-check run status and findings, per-camera decode statistics, a timestamp-provenance line (see below), scope notices, a **per-task score table**, and a **review shortlist** (worst episodes ranked by measured signals, with a copyable `lerobot-edit-dataset` delete command for the excluded set — printed only, never executed). When the dataset's Hub repo-id is known, finding rows link to the official LeRobot visualizer for that episode |
+| `result.json` | Machine-readable full result, including a **run manifest** (tool/rules versions, thresholds actually applied, input fingerprint, decode backends) to help reproduce runs and compare their settings and results, a **diagnostics** block recording the timestamp diagnostic on two axes — clock provenance (whether the timestamps are a synthetic `frame_index / fps` grid) and interval regularity — plus any `frame_index` gaps as a separate signal, and (0.3.2) `task_scores` (per-task score breakdown), `episode_metrics` (per-episode jerk p95, max step, idle ratios, final-pose distance), `review_shortlist`, and `delete_commands` |
+| `badge.svg` | Shields-style score/grade badge (SVG) for READMEs and dashboards |
+| `report.md` | Markdown version of the report card — only with `--markdown` |
 | `clean_index.json` | The episode index file: `clean_episodes` (episodes assigned `keep`), plus the `excluded_episodes` and `review_episodes` lists with the checks that flagged each one |
 | `review_index.json` | Borderline episodes a human should look at before deciding — these are **not** in `clean_episodes` (see below) |
 
@@ -338,13 +378,13 @@ as clean. Check
 `incomplete_audit` in `result.json` (or the exit code) before treating
 the list as final.
 
-## The 12 checks
+## The 17 checks
 
 | Group | Checks |
 |---|---|
-| Structure | S1 metadata & file integrity · S2 dimension/schema consistency · S3 time axis (monotonic timestamps, episode boundaries) |
+| Structure | S1 metadata & file integrity · S2 dimension/schema consistency · S3 time axis (monotonic timestamps, episode boundaries) · **S4 recorded-statistics drift** (0.3.2) · **S5 dataset-card / license defaults** (0.3.2) |
 | Video | V1 black / frozen frames · V2 shake & blur · V3 episode length anomalies |
-| Action | A1 out-of-range values · A2 abrupt jumps · A3 dead (never-moving) dimensions · A4 duplicate episodes |
+| Action | A1 out-of-range values · A2 abrupt jumps · A3 dead (never-moving) dimensions · A4 duplicate episodes · **A5 near-duplicate episodes** (0.3.2) · **A6 idle (frozen-action) ratio** (0.3.2) · **A7 leader/follower calibration drift** (0.3.2) |
 | Instruction | L1 missing or identical task text · L2 no success/failure labels |
 
 ### Timestamp diagnostic and A2 evidence
@@ -388,15 +428,63 @@ by one frame; on `lerobot/xarm_lift_medium` that reader bug alone
 manufactured 435 false findings (corrected grade 80/B under 0.3.1;
 see the changelog).
 
+### New in 0.3.2
+
+Five checks join the original twelve. All of their thresholds are
+**provisional** working values, stated here with their grounds:
+
+- **S4 — recorded-statistics drift (warning).** Recomputes per-feature
+  mean/std from the data itself and compares them with the statistics
+  recorded in the dataset (dataset-level `meta/stats.json` and the
+  per-episode recorded stats). A feature is flagged when its recorded
+  mean is off by more than 0.1σ or its recorded std differs by more
+  than 0.1σ from the recomputed value — the 0.1σ mean-shift criterion
+  is the one published by the kinema dataset tool; the recompute is
+  deterministic (population statistics over every stored value).
+  Catches datasets whose stats were recorded before an edit, or never
+  refreshed.
+- **S5 — dataset-card defaults (info).** Fires when the dataset card
+  has no `license` field, or declares `apache-2.0` — the value the
+  LeRobot card template pre-fills — while the card body is still the
+  untouched template, i.e. the license may never have been chosen
+  deliberately. A local copy without a card is not flagged (partial
+  copies legitimately lack one).
+- **A5 — near-duplicate episodes (info).** A4 catches byte-identical
+  action data; A5 compares a deterministic trajectory signature (16
+  resampled points of the σ-normalised action trajectory) and flags
+  episode pairs that are not exact copies but track each other within
+  0.01σ on average (0.05σ worst point, lengths within 5%).
+- **A6 — idle ratio (warning).** Fraction of frames whose action is
+  bit-identical to the previous frame (the arm was commanded to hold
+  perfectly still). Flags episodes with ≥ 30% idle frames overall, or
+  ≥ 20% leading idle (recording started long before the motion did).
+- **A7 — calibration drift (warning).** When state and action share
+  dimension names (leader/follower teleoperation), a healthy pair
+  tracks with a near-zero median offset. Flags a systematic offset
+  whose median exceeds 0.5× the state's own spread (reported from
+  0.25×) when the offset is consistent (IQR within the state spread).
+
+Also new: a **review shortlist** ranking the episodes a human should
+look at first (robust outlier score over jerk p95, max step, idle
+ratio and final-pose distance, then finding count), with copyable
+`lerobot-edit-dataset` delete commands for the excluded set —
+**printed only; RoboAudit never modifies data**; **per-task scores**;
+a **`--fail-under` CI gate** and a GitHub Action wrapper; **visualizer
+deep links** when the Hub repo-id is known; **`--markdown`** and
+**`badge.svg`** outputs; a **`roboaudit diff`** subcommand comparing
+two audit results; and **Hub repo-id input** with `--revision` pinning
+and `--max-episodes` sample audits.
+
 ## Measured results (not marketing numbers)
 
 On three real public datasets (audited on a small shared-CPU VM, roughly
-2–5 minutes each):
+2–5 minutes each; scores are the 0.3.2 re-audit — see the report-card
+table above for why two of them moved):
 
 | Dataset | Format | Episodes | Score | Notes |
 |---|---|---|---|---|
-| `lerobot/aloha_sim_transfer_cube_scripted` | v3.0 | 50 | **79 / C** | 2 borderline episodes sent to review |
-| `00ri/so100_battery` | v2.1 | 50 | **84 / B** | 5 borderline episodes sent to review; both cameras audited |
+| `lerobot/aloha_sim_transfer_cube_scripted` | v3.0 | 50 | **77 / C** | 3 review (2 borderline range + 1 near-duplicate); template license note |
+| `00ri/so100_battery` | v2.1 | 50 | **71 / C** | 1 excluded + 8 review; four episodes with 31–38% idle frames; both cameras audited |
 | `sreetz-nv/so101_teleop_vials_rack_left` (partial copy) | v3.0 | 75 | **44 / F** | Partial copy (166 MB, one of the two declared cameras): audit flagged **incomplete** — that camera's files are absent from this copy; the upstream dataset may differ |
 
 On a defect-injection suite built by the RoboAudit authors (43 known defects
@@ -442,9 +530,10 @@ which is exactly why the `review` disposition now exists.
 
 - **Exit code 2 — the error says `meta/info.json` is missing.** You
   pointed the command at the wrong folder. Pass the dataset root (the
-  folder containing `meta/info.json`), not a parent or child folder,
-  and make sure the dataset is downloaded locally first — RoboAudit
-  reads local folders only.
+  folder containing `meta/info.json`), not a parent or child folder.
+  For a local audit the dataset must be downloaded first — or pass its
+  Hub repo-id instead and let RoboAudit download it (needs the `hub`
+  extra).
 - **Exit code 2 — `--out` refused.** The output folder must be outside
   the dataset folder. This is deliberate: it makes it impossible to
   write audit output into the original data.
@@ -487,14 +576,25 @@ MIT — see [LICENSE](LICENSE).
 
 | 데이터셋 | 형식 | 점수 | 제외/보류 | 한 줄 소견 |
 |---|---|---|---|---|
-| `lerobot/aloha_sim_transfer_cube_scripted` | v3.0 | **79 / C** | 0 / 2 | 범위 경계를 살짝 넘은 2건은 자동 제외가 아니라 사람 확인(보류)으로 |
-| `00ri/so100_battery` | v2.1 | **84 / B** | 0 / 5 | 흔들림으로 잡힌 5건이 실제로는 동작 많은 에피소드로 보여 전부 보류; 카메라 2대 모두 감사 |
+| `lerobot/aloha_sim_transfer_cube_scripted` | v3.0 | **77 / C** | 0 / 3 | 범위 경계를 살짝 넘은 2건은 자동 제외가 아니라 사람 확인(보류)으로; 0.3.2에서 근접 중복 1쌍과 템플릿 라이선스 기본값이 추가로 잡힘 |
+| `00ri/so100_battery` | v2.1 | **71 / C** | 1 / 8 | 흔들림으로 잡힌 5건이 실제로는 동작 많은 에피소드로 보여 전부 보류; 카메라 2대 모두 감사; 0.3.2 정지(idle) 검사에서 정지 프레임 31~38%인 에피소드 4건 발견(시작 정지 31%인 1건은 제외) |
 | `sreetz-nv/so101_teleop_vials_rack_left` (부분 복사본) | v3.0 | **44 / F** | 7 / 8 | 부분 복사본(166MB, 선언된 카메라 2대 중 1대만 다운로드)으로 감사 — 없는 카메라는 이 복사본의 속성이고 원본 데이터셋은 완전할 수 있음; "불완전한 감사"로 명시; 점프 15건은 측정 강도로 제외/보류 분리 |
+
+(0.3.1 점수는 79/C·84/B·44/F였습니다. 0.3.2의 하락은 전부 신규 검사
+5종의 발견에서만 왔고, 기존 12종의 발견은 세 데이터셋 모두 0.3.1과
+정확히 같았습니다.)
 
 - v2.1·v3.0 형식을 자체 파서로 직접 읽습니다 (LeRobot 0.7.0 기준 공식
   로더가 거부하는 v2.1도 변환 없이 읽음).
-- 검사는 규칙+임계값 12종뿐이라 감점 이유를 전부 설명할 수 있고, 원본
-  데이터는 읽기만 하며 절대 수정하지 않습니다.
+- 검사는 규칙+임계값 17종뿐이라 감점 이유를 전부 설명할 수 있고, 원본
+  데이터는 읽기만 하며 절대 수정하지 않습니다. 0.3.2 신규 검사는
+  기록 통계(stats) 드리프트·카드 라이선스 기본값·근접 중복·에피소드
+  정지 비율·리더/팔로워 캘리브레이션 드리프트이며, 신규 임계값은 전부
+  잠정값입니다. 그 밖에 과제별 점수표, 리뷰 단축목록(삭제 명령은
+  출력만 하고 실행하지 않음), `--fail-under` CI 게이트와 GitHub
+  Action, `--markdown`·배지 SVG, `roboaudit diff` 비교, Hub repo-id
+  직접 입력(`--revision` 고정, `--max-episodes` 표본 감사)이
+  추가됐습니다.
 - 애매한 에피소드는 자동으로 버리지 않고 `review_index.json`으로 분리해
   사람이 확인하게 합니다. 검사가 일부라도 실패하면 "불완전한 감사"라고
   성적표와 종료 코드(3)로 명시합니다.

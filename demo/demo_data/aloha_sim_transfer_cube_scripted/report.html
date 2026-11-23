@@ -40,8 +40,8 @@
       <div>FPS<b>50</b></div>
       <div>지시문 종류<b>1종</b></div>
       <div>제외 에피소드<b>0개</b></div>
-      <div>보류 에피소드<b>2개</b></div>
-      <div>깨끗한 에피소드<b>48개</b></div>
+      <div>보류 에피소드<b>3개</b></div>
+      <div>깨끗한 에피소드<b>47개</b></div>
       <div>감사 카메라<b>observation.images.top</b></div>
     </div>
     
@@ -55,28 +55,30 @@
 
   <div class="card">
     <div class="scorebox">
-      <div class="score">79<span style="font-size:22px; color:#5a6a85;">/100</span></div>
+      <div class="score">77<span style="font-size:22px; color:#5a6a85;">/100</span></div>
       <div class="grade gC">C</div>
       <div style="font-size:14px; color:#44506a; line-height:1.6;">
-        총 감점 <b>21점</b> (치명 -10 · 경고 -3 · 참고 -1)<br>
-        발견된 문제 <b>3건</b> · 검사 오류 0건
+        총 감점 <b>23점</b> (치명 -10 · 경고 -3 · 참고 -1)<br>
+        발견된 문제 <b>5건</b> · 검사 오류 0건
         
       </div>
     </div>
     
     <div class="top3">
-      <b>감점 이유 Top 2</b><br>
+      <b>감점 이유 Top 3</b><br>
       
-      1. <code>A1</code> 범위 이탈 — 2건, -20점 (감점의 95.2%)<br>
+      1. <code>A1</code> 범위 이탈 — 2건, -20점 (감점의 87.0%)<br>
       
-      2. <code>L2</code> 성공·실패 표시 없음 — 1건, -1점 (감점의 4.8%)<br>
+      2. <code>A5</code> 근접 중복 에피소드 — 1건, -1점 (감점의 4.3%)<br>
+      
+      3. <code>L2</code> 성공·실패 표시 없음 — 1건, -1점 (감점의 4.3%)<br>
       
     </div>
     
   </div>
 
   <div class="card">
-    <h2 style="margin-top:0; font-size:19px;">검사 12종 결과</h2>
+    <h2 style="margin-top:0; font-size:19px;">검사 17종 결과</h2>
     <table>
       <tr><th>검사</th><th>항목</th><th>심각도</th><th>결과</th><th>실행 상태</th><th>검사 범위</th><th>발견</th><th>감점</th></tr>
       
@@ -105,6 +107,24 @@
         <td class="rs-complete">complete</td>
         <td style="font-size:12px;">데이터 50/50 에피소드</td>
         <td>0건</td><td>0점</td>
+      </tr>
+      
+      <tr>
+        <td><code>S4</code></td><td>기록 통계 드리프트</td>
+        <td class="sev-warning">warning</td>
+        <td class="pass">PASS</td>
+        <td class="rs-complete">complete</td>
+        <td style="font-size:12px;">데이터 50/50 에피소드</td>
+        <td>0건</td><td>0점</td>
+      </tr>
+      
+      <tr>
+        <td><code>S5</code></td><td>라이선스·카드 기본값</td>
+        <td class="sev-info">info</td>
+        <td class="fail">FAIL</td>
+        <td class="rs-complete">complete</td>
+        <td style="font-size:12px;">데이터 50/50 에피소드</td>
+        <td>1건</td><td>1점</td>
       </tr>
       
       <tr>
@@ -164,6 +184,33 @@
       <tr>
         <td><code>A4</code></td><td>중복 에피소드</td>
         <td class="sev-info">info</td>
+        <td class="pass">PASS</td>
+        <td class="rs-complete">complete</td>
+        <td style="font-size:12px;">데이터 50/50 에피소드</td>
+        <td>0건</td><td>0점</td>
+      </tr>
+      
+      <tr>
+        <td><code>A5</code></td><td>근접 중복 에피소드</td>
+        <td class="sev-info">info</td>
+        <td class="fail">FAIL</td>
+        <td class="rs-complete">complete</td>
+        <td style="font-size:12px;">데이터 50/50 에피소드</td>
+        <td>1건</td><td>1점</td>
+      </tr>
+      
+      <tr>
+        <td><code>A6</code></td><td>에피소드 정지 비율</td>
+        <td class="sev-warning">warning</td>
+        <td class="pass">PASS</td>
+        <td class="rs-complete">complete</td>
+        <td style="font-size:12px;">데이터 50/50 에피소드</td>
+        <td>0건</td><td>0점</td>
+      </tr>
+      
+      <tr>
+        <td><code>A7</code></td><td>캘리브레이션 드리프트</td>
+        <td class="sev-warning">warning</td>
         <td class="pass">PASS</td>
         <td class="rs-complete">complete</td>
         <td style="font-size:12px;">데이터 50/50 에피소드</td>
@@ -231,6 +278,14 @@
       </tr>
       
       <tr>
+        <td><code>A5</code></td>
+        <td>32</td>
+        <td class="sev-info">info</td>
+        <td><span class="disp-review">review</span></td>
+        <td>near-duplicate trajectory of episode 12 (mean |Δ| 0.0011σ, max 0.033σ — not an exact copy)</td>
+      </tr>
+      
+      <tr>
         <td><code>L2</code></td>
         <td>전체</td>
         <td class="sev-info">info</td>
@@ -238,13 +293,82 @@
         <td>no success/failure label found in episode metadata (failed episodes cannot be told apart)</td>
       </tr>
       
+      <tr>
+        <td><code>S5</code></td>
+        <td>전체</td>
+        <td class="sev-info">info</td>
+        <td>-</td>
+        <td>license &#39;apache-2.0&#39; is the LeRobot dataset-card template default — it may never have been deliberately chosen; verify it is intended</td>
+      </tr>
+      
     </table>
     
     
-    <p>보류(review) 에피소드 2개는 review_index.json에 따로 정리했습니다 — 경계 측정값이라 자동 제외하지 않고 사람 확인이 필요합니다.</p>
+    <p>보류(review) 에피소드 3개는 review_index.json에 따로 정리했습니다 — 경계 측정값이라 자동 제외하지 않고 사람 확인이 필요합니다.</p>
     
     
   </div>
+
+  
+  <div class="card">
+    <h2 style="margin-top:0; font-size:19px;">과제별 점수</h2>
+    <table>
+      <tr><th>과제</th><th>에피소드</th><th>발견</th><th>감점</th><th>점수</th><th>등급</th></tr>
+      
+      <tr>
+        <td>Pick up the cube with the right arm and transfer it to the left arm.</td><td>50개</td><td>3건</td>
+        <td>21점</td><td>79</td><td>C</td>
+      </tr>
+      
+    </table>
+    <p style="font-size:13px; color:#5a6a85;">에피소드 단위 발견만 과제별로 묶었습니다. 데이터셋 단위 발견의 감점 2점은 어느 과제에도 넣지 않았습니다.</p>
+  </div>
+  
+
+  
+  <div class="card">
+    <h2 style="margin-top:0; font-size:19px;">먼저 볼 에피소드 (보류 단축목록)</h2>
+    <table>
+      <tr><th>순위</th><th>에피소드</th><th>걸린 검사</th><th>jerk p95</th><th>최대 스텝</th><th>정지 비율</th><th>최종 자세 거리(σ)</th><th>이상치 점수</th></tr>
+      
+      <tr>
+        <td>1</td>
+        <td>45</td>
+        <td>A1</td>
+        <td>0.0124</td>
+        <td>0.4369</td>
+        <td>0%</td>
+        <td>0.014</td>
+        <td>2.375</td>
+      </tr>
+      
+      <tr>
+        <td>2</td>
+        <td>46</td>
+        <td>A1</td>
+        <td>0.012</td>
+        <td>0.4367</td>
+        <td>0%</td>
+        <td>0.004</td>
+        <td>1.527</td>
+      </tr>
+      
+      <tr>
+        <td>3</td>
+        <td>32</td>
+        <td>A5</td>
+        <td>0.0099</td>
+        <td>0.4346</td>
+        <td>0%</td>
+        <td>0.004</td>
+        <td>0.125</td>
+      </tr>
+      
+    </table>
+    <p style="font-size:13px; color:#5a6a85;">보류 에피소드를 지표 이상치 순으로 정렬한 목록입니다. 전부를 보지 말고 위에서부터 확인하세요.</p>
+    
+  </div>
+  
 
   
   <div class="card">
@@ -258,7 +382,7 @@
   
 
   <p style="text-align:center; color:#8a97ad; font-size:12.5px;">
-    RoboAudit v0.3.1 · 규칙 rules-2026-11-17.2 · 입력 지문 2bed4cdc1f1822f3…<br>
+    RoboAudit v0.3.2 · 규칙 rules-2026-11-23.1 · 입력 지문 2bed4cdc1f1822f3…<br>
     원본 데이터는 읽기만 했습니다 · 깨끗한 에피소드 목록은 clean_index.json, 보류 목록은 review_index.json 참조
   </p>
 </div>
